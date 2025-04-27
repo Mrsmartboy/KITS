@@ -13,16 +13,8 @@ import axios from "axios";
 import { decryptData } from '../../cryptoUtils.jsx';
 
 const techStacks = {
-  // vijayawada: ["Python Full Stack (PFS)", "Java Full Stack (JFS)","DSA","C"],
-  // hyderabad: [
-  //   "Python Full Stack (PFS)",
-  //   "Java Full Stack (JFS)",
-  //   "Data Science",
-  //   "Data Analytics",
-
-  // ],
-  // bangalore: ["Java Full Stack (JFS)"],
-  KITS:['C',"Python","DS-C"]
+ 
+  KITS:["KITS"]
 };
 
 const BatchForm = () => {
