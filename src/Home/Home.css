@@ -6,7 +6,7 @@
 }
 
 .scroll-container {
-    background-color: #132EE0 !important;
+    background-color: #00007F !important;
     padding: 10px;
     text-align: center;
     box-shadow: 0px 4px 4px 0px #00000040;
@@ -25,6 +25,7 @@
     text-decoration: none;
     padding-top: 5px;
     padding-bottom: 5px;
+    letter-spacing: 2px;
    
 }
 
@@ -49,6 +50,7 @@
     background-color: #FDFA01;
     color: #000000;
     border-radius: 20px;
+
     padding: 0px 10px;
     font-weight: 600;
     font-size: 16px;

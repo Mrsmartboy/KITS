@@ -33,19 +33,19 @@ const BatchScheduler = () => {
   const location = decryptData(sessionStorage.getItem('location')); // Hardcode to KITS
 
   const techStackSubjects = {
-    KITS: ["C", "Python", "DSA-C"],
+    KITS: ["C", "Python", "DS-C"],
   };
 
   const mockBatches = {
     C: ["C"],
     Python: ["Python"],
-    "DSA-C": ["DSA-C"],
+    "DS-C": ["DS-C"],
   };
 
   const mockSubjects = {
     C: ["C"],
     Python: ["Python"],
-    "DSA-C": ["DSA-C"],
+    "DS-C": ["DS-C"],
   };
 
   const handleTechStackChange = (value) => {

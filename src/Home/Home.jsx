@@ -12,6 +12,8 @@ import CourseQuerySection from "./CourseQuerySection";
 import Collaboration from "./Collaboration";
 import BannerPage from "./BannerPage";
 import Footer from "../Footer/Footer";
+import KitsCollaboration from "./KitsCollaboration";
+import SuccessStories from "./StudentSuccess";
 
 export default function Home() {
   return (
@@ -46,7 +48,8 @@ export default function Home() {
       <TestimonialsV />
 
       <RotatingCarousel />
-      <Dashboard />
+      <KitsCollaboration/>
+      <SuccessStories/>
       <CourseQuerySection />
       <Collaboration />
       <TeamPage />

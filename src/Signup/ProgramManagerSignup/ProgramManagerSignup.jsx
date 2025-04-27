@@ -18,11 +18,15 @@ import {
   FaCalendarAlt,
   FaWhatsapp,
   FaDownload,
-  FaBookOpen,
 } from "react-icons/fa";
 
+const subjects = [
+  { value: "C", label: "C" },
+  { value: "DS-C", label: "DS-C" },
+  { value: "Python", label: "Python" }
+];
+
 export default function ProgramManagerSignup() {
-  // const navigate = useNavigate();
   const { fetchStudentsData } = useStudentsData();
   const { batches, fetchBatches } = useUniqueBatches();
   const emailRegex = /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -32,18 +36,16 @@ export default function ProgramManagerSignup() {
     email: "",
     studentPhNumber: "",
     parentNumber: "",
-    modeOfStudy: "Offline",
+    subjects: []
   });
 
   const [studentCountryCode, setStudentCountryCode] = useState(null);
   const [parentCountryCode, setParentCountryCode] = useState(null);
   const [countryCodes, setCountryCodes] = useState([]);
-
-  // Added states for phone error messages
   const [studentPhoneError, setStudentPhoneError] = useState("");
   const [parentPhoneError, setParentPhoneError] = useState("");
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
 
-  // 🔹 Fetch Country Codes from API
   useEffect(() => {
     axios
       .get("https://restcountries.com/v3.1/all")
@@ -53,11 +55,11 @@ export default function ProgramManagerSignup() {
             value: `${country.idd.root}${country.idd.suffixes?.[0] || ""}`,
             label: `${country.idd.root}${country.idd.suffixes?.[0] || ""}`,
           }))
-          .filter((country) => country.value !== "undefined"); // Ensure valid country codes
+          .filter((country) => country.value !== "undefined");
 
         setCountryCodes(countryList);
-        setStudentCountryCode(countryList.find((c) => c.value === "+91")); // Default: India
-        setParentCountryCode(countryList.find((c) => c.value === "+91")); // Default: India
+        setStudentCountryCode(countryList.find((c) => c.value === "+91"));
+        setParentCountryCode(countryList.find((c) => c.value === "+91"));
       })
       .catch((error) => console.error("Error fetching country codes:", error));
   }, []);
@@ -73,7 +75,14 @@ export default function ProgramManagerSignup() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // onBlur validation for student phone number
+  const handleSubjectsChange = (selectedOptions) => {
+    setSelectedSubjects(selectedOptions);
+    setFormData((prev) => ({
+      ...prev,
+      subjects: selectedOptions.map(option => option.value)
+    }));
+  };
+
   const handleStudentPhoneBlur = () => {
     const studentPhone = formData.studentPhNumber;
     const fullStudentPhone = studentCountryCode?.value + studentPhone;
@@ -91,7 +100,6 @@ export default function ProgramManagerSignup() {
     }
   };
 
-  // onBlur validation for parent phone number
   const handleParentPhoneBlur = () => {
     const parentPhone = formData.parentNumber;
     const fullParentPhone = parentCountryCode?.value + parentPhone;
@@ -114,7 +122,6 @@ export default function ProgramManagerSignup() {
   }, [fetchBatches, location]);
 
   const handleFileUpload = (e) => {
-    // Clear previous Excel data if any
     setExcelData([]);
     const file = e.target.files[0];
     if (!file) return;
@@ -133,10 +140,7 @@ export default function ProgramManagerSignup() {
         const rows = utils.sheet_to_json(sheet, { header: 1 });
 
         if (rows.length > 1) {
-          // 1️⃣ Get the headers and map them to lower-case
           const headers = rows[0].map((header) => header.toLowerCase().trim());
-
-          // 2️⃣ Build your `formattedData` from row 1 onward
           const formattedData = rows.slice(1).map((row) => {
             const studentPh =
               row[headers.indexOf("studentphnumber")]?.toString().trim() || "";
@@ -144,6 +148,8 @@ export default function ProgramManagerSignup() {
               row[headers.indexOf("parentnumber")]?.toString().trim() || "";
             const batchNo =
               row[headers.indexOf("batchno")]?.toString().toUpperCase() || "";
+            const subjectsStr = 
+              row[headers.indexOf("subjects")]?.toString().trim() || "";
 
             return {
               studentId:
@@ -162,12 +168,10 @@ export default function ProgramManagerSignup() {
                 : parentPh,
               location:
                 row[headers.indexOf("location")]?.toString().toLowerCase() || "",
-              modeOfStudy:
-                row[headers.indexOf("modeofstudy")]?.toString() || "",
+              subjects: subjectsStr ? subjectsStr.split(",").map(s => s.trim()) : []
             };
           });
 
-          // 3️⃣ Check for invalid batch numbers
           const validBatchNos = batches.map((batch) => batch.Batch);
           const invalidEntries = formattedData.filter(
             (entry) => !validBatchNos.includes(entry.batchNo)
@@ -184,7 +188,6 @@ export default function ProgramManagerSignup() {
             return;
           }
 
-          // 4️⃣ Check for invalid emails
           const invalidEmails = formattedData.filter(
             (entry) => !emailRegex.test(entry.email)
           );
@@ -200,7 +203,6 @@ export default function ProgramManagerSignup() {
             return;
           }
 
-          // 5️⃣ Check if studentPhNumber == parentNumber
           const duplicates = formattedData.filter(
             (entry) =>
               entry.studentPhNumber &&
@@ -225,10 +227,25 @@ export default function ProgramManagerSignup() {
               icon: "error",
             });
             setExcelData([]);
-            return; // Stop processing if duplicates are found
+            return;
           }
 
-          // 6️⃣ If everything is valid, update state
+          const validSubjectValues = subjects.map(s => s.value);
+          const invalidSubjects = formattedData.filter(
+            (entry) => entry.subjects.some(s => !validSubjectValues.includes(s))
+          );
+          if (invalidSubjects.length > 0) {
+            Swal.fire({
+              title: "Invalid Subjects Found!",
+              text: `The following subjects are invalid: ${invalidSubjects
+                .map((e) => e.subjects.join(", "))
+                .join(", ")}`,
+              icon: "error",
+            });
+            setExcelData([]);
+            return;
+          }
+
           setExcelData(formattedData);
         } else {
           Swal.fire({
@@ -257,8 +274,8 @@ export default function ProgramManagerSignup() {
         email: "example@gmail.com",
         studentPhNumber: "+918688031605",
         parentNumber: "+918688031603",
-        modeOfStudy: "Offline",
         location,
+        subjects: "C,Python"
       },
     ];
 
@@ -276,7 +293,6 @@ export default function ProgramManagerSignup() {
     const studentPhone = studentCountryCode?.value + formData.studentPhNumber;
     const parentPhone = parentCountryCode?.value + formData.parentNumber;
 
-    // Optionally prevent submission if onBlur errors exist
     if (studentPhoneError || parentPhoneError) {
       Swal.fire({
         icon: "error",
@@ -292,7 +308,6 @@ export default function ProgramManagerSignup() {
       const endpoint = `${import.meta.env.VITE_BACKEND_URL}/api/v1/addstudent`;
       let response;
 
-      // Validate phone numbers if not using Excel
       if (!useExcel) {
         if (!emailRegex.test(formData.email)) {
           Swal.fire({
@@ -317,6 +332,16 @@ export default function ProgramManagerSignup() {
           return;
         }
 
+        if (formData.subjects.length === 0) {
+          Swal.fire({
+            icon: "error",
+            title: "No Subjects Selected!",
+            text: "Please select at least one subject.",
+          });
+          setLoading(false);
+          return;
+        }
+
         response = await axios.post(endpoint, {
           ...formData,
           studentId: formData.studentId.toUpperCase(),
@@ -329,7 +354,7 @@ export default function ProgramManagerSignup() {
       } else {
         const updatedExcelData = excelData.map((entry) => ({
           ...entry,
-          profileStatus: false, // Added default profile status
+          profileStatus: false,
         }));
         response = await axios.post(endpoint, { excelData: updatedExcelData });
       }
@@ -344,6 +369,7 @@ export default function ProgramManagerSignup() {
 
         setExcelData([]);
         setUseExcel(false);
+        setSelectedSubjects([]);
 
         const excelUploadElement = document.getElementById("excelUpload");
         if (excelUploadElement) {
@@ -356,7 +382,7 @@ export default function ProgramManagerSignup() {
           email: "",
           studentPhNumber: "",
           parentNumber: "",
-          modeOfStudy: "Offline",
+          subjects: []
         });
 
         await fetchStudentsData();
@@ -391,14 +417,15 @@ export default function ProgramManagerSignup() {
         email: "",
         studentPhNumber: "",
         parentNumber: "",
-        modeOfStudy: "Offline",
+        subjects: []
       });
       setExcelData([]);
+      setSelectedSubjects([]);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center  p-4 min-h-[89vh] mt-0">
+    <div className="flex flex-col justify-center items-center p-4 min-h-[89vh] mt-0">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
         {useExcel && (
           <div className="flex justify-center gap-4 mb-4 text-center items-center">
@@ -510,26 +537,25 @@ export default function ProgramManagerSignup() {
                     />
                   </div>
                 </div>
-                {/* Mode of Study */}
-                <div>
-                  <label className="block text-black font-semibold mb-2">
-                    Mode of Study
+                {/* Subjects */}
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="subjects"
+                    className="block text-black font-semibold mb-2"
+                  >
+                    Subjects
                   </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-1">
-                    <FaBookOpen className="text-black mr-2" />
-                    <select
-                      name="modeOfStudy"
-                      value={formData.modeOfStudy}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 text-gray-800 font-medium"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Mode
-                      </option>
-                      <option value="Online">Online</option>
-                      <option value="Offline">Offline</option>
-                    </select>
+                  <div className="flex items-center border border-gray-300 rounded-md p-2">
+                    <Select
+                      id="subjects"
+                      isMulti
+                      options={subjects}
+                      value={selectedSubjects}
+                      onChange={handleSubjectsChange}
+                      placeholder="Select Subjects"
+                      className="flex-1"
+                      classNamePrefix="select"
+                    />
                   </div>
                 </div>
                 {/* Student Whatsapp Number */}

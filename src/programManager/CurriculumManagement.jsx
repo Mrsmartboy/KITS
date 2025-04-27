@@ -179,7 +179,7 @@ const CurriculumManagement = () => {
   };
 
   const subjects = [
-   "C","Python","DSA-C",
+   "C","Python","DS-C",
 
 
   ];
