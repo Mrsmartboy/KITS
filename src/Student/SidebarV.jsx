@@ -165,6 +165,13 @@ export const SidebarV = ({
             path: "/leave-request-page",
             icon: LeaveRequestIcon,
           },
+          {
+            label: "codepractice",
+            path: "/codepractice",
+            icon: LeaveRequestIcon,
+          }
+          
+          ,
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
       case "super":
