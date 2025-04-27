@@ -141,8 +141,7 @@ export const SidebarV = ({
       case "student_login_details":
         return [
           { label: "Profile", path: "/student-profile", icon: ProfileIcon },
-          // { label: "Jobs List", path: "/jobslist", icon: JobsListIcon },
-          // { label: "Course", path: "/courses", icon: CourseIcon },
+
           { label: "Exams", path: "/exam-dashboard", icon: ExamIcon },
 
           {
@@ -154,11 +153,6 @@ export const SidebarV = ({
             label: "Mock Interviews",
             path: "/mock-interviews",
             icon: MockInterviewIcon,
-          },
-          {
-            label: "Code Playground",
-            path: "/codeplayground",
-            icon: CodePlayGroundIcon,
           },
           {
             label: "codepractice",
@@ -274,11 +268,7 @@ export const SidebarV = ({
             path: "/studentdata",
             icon: MentorStudentDataIcon,
           },
-          {
-            label: "Code Playground",
-            path: "/codeplayground",
-            icon: CodePlayGroundIcon,
-          },
+
 
           {
             label: "Students Performance",

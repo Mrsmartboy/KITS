@@ -3,7 +3,6 @@ import { useDashboard } from "../contexts/DashboardContext";
 
 const SuccessStories = () => {
   const { dashboardData, loading, error } = useDashboard();
-  console.log("dashboard data " + JSON.stringify(dashboardData));
 
   const [companySearchQuery, setCompanySearchQuery] = useState("");
   const [collegeSearchQuery, setCollegeSearchQuery] = useState("");
