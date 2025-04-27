@@ -181,15 +181,7 @@ const DailyReports = () => {
       </style>
 
       <div className="w-full px-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
-        <div
-          onClick={() => navigate("/exam-reports-dashboard")}
-          className="flex flex-row items-center gap-2 cursor-pointer"
-        >
-          <div className="w-[33px] h-[25px] flex items-center justify-center rounded">
-            <FiArrowLeft size={22} color="#181D27" />
-          </div>
-          <span className="text-black text-[18px] sm:text-[20px] font-medium leading-[24px]">Back</span>
-        </div>
+    <div></div>
         <div className="flex items-center gap-3">
           <label className="text-sm font-medium text-black hidden sm:block">Select Date</label>
           <div className="custom-date-input-wrapper">

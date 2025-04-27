@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const PreLogin = () => {
+const PreLogin = ({ onToggleSidebar, userProfile, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -10,20 +10,21 @@ const PreLogin = () => {
 
   return (
     <div className="fixed w-full h-16 bg-white flex items-center justify-between px-4 z-50">
-      <div className="flex items-center ">
+      {/* Logo Section */}
+      <div className="flex items-center space-x-4 cursor-pointer" onClick={() => navigate("/")}>
         <img
           src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/codegnan-logo_qxnxrq.webp"
           alt="Codegnan Logo"
-          className="cursor-pointer ml-2 md:ml-10 w-24 md:w-32" // slightly bigger
-          onClick={() => navigate("/")}
+          className="h-12 w-auto object-contain"
         />
         <img
           src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658094/logo_s2toqb.png"
-          alt="KITS Badge"
-          className="cursor-pointer  md:ml-10 w-24 md:w-32" // slightly bigger
+          alt="KITS Logo"
+          className="h-10 w-auto object-contain"
         />
-
       </div>
+
+      {/* Login Button */}
       {!hideLoginButton && (
         <button
           className="p-1 bg-[#ED1334] text-white ml-1 font-serif font-medium text-md rounded-lg shadow-lg hover:bg-[#132EE0] hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out pr-4 pl-4"
