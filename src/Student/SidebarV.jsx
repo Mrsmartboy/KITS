@@ -147,7 +147,7 @@ export const SidebarV = ({
 
           {
             label: "Exam Reports",
-            path: "/exam-reports-dashboard",
+            path: "/daily-exam-reports",
             icon: ExamReportsIcon,
           },
           {
