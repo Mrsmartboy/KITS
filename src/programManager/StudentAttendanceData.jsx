@@ -33,15 +33,13 @@ function isSunday(isoDate) {
 }
 
 const techStackSubjects = {
-  vijayawada: ["Python Full Stack (PFS)", "Java Full Stack (JFS)", "C"],
-  hyderabad: ["Python Full Stack (PFS)", "Java Full Stack (JFS)", "Data Science", "Data Analytics"],
-  bangalore: ["Java Full Stack (JFS)"],
+  KITS: ["C", "Python", "DSA-C"],
 };
 
 const StudentAttendanceData = () => {
-  const [selectedLocation, setSelectedLocation] = useState("SelectLocation");
+  const [selectedLocation, setSelectedLocation] = useState("KITS");
   const [selectedTechStack, setSelectedTechStack] = useState("SelectTechStack");
-  const [availableTechStacks, setAvailableTechStacks] = useState([]);
+  const [availableTechStacks, setAvailableTechStacks] = useState(techStackSubjects.KITS);
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [selectedBatch, setSelectedBatch] = useState("SelectBatch");
   const [selectedCourse, setSelectedCourse] = useState("AllCourses");
@@ -63,17 +61,17 @@ const StudentAttendanceData = () => {
 
     if (isAdmin || isAllLocation) {
       setIsAdminOrSuper(true);
-      setSelectedLocation("SelectLocation");
-    } else if (location) {
-      setSelectedLocation(location);
-      fetchBatches(location);
+      setSelectedLocation("KITS"); // Default to KITS for admin users
+    } else {
+      setSelectedLocation("KITS"); // Hardcode to KITS for non-admin users
+      fetchBatches("KITS");
     }
   }, [fetchBatches]);
 
   useEffect(() => {
-    if (selectedLocation !== "SelectLocation") {
-      fetchBatches(selectedLocation);
-      setAvailableTechStacks(techStackSubjects[selectedLocation] || []);
+    if (selectedLocation === "KITS") {
+      fetchBatches("KITS");
+      setAvailableTechStacks(techStackSubjects.KITS);
     } else {
       setAvailableTechStacks([]);
       setFilteredBatches([]);
@@ -110,7 +108,7 @@ const StudentAttendanceData = () => {
   }, [selectedBatch, courseWiseData]);
 
   const fetchAttendanceData = useCallback(async () => {
-    if (selectedLocation === "SelectLocation" || selectedBatch === "SelectBatch") {
+    if (selectedLocation !== "KITS" || selectedBatch === "SelectBatch") {
       setAttendanceRecords([]);
       setCourseWiseData({});
       return;
@@ -120,7 +118,7 @@ const StudentAttendanceData = () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/batchwiseattends`, {
         params: {
-          location: selectedLocation,
+          location: "KITS",
           batch: selectedBatch,
         },
       });
@@ -287,7 +285,6 @@ const StudentAttendanceData = () => {
       const courseData = courseWiseData[course];
       if (Object.keys(courseData.studentMap).length > 0) {
         const rows = generateCourseSheetData(course, courseData);
-        // Sanitize sheet name to avoid invalid characters and length issues
         const safeCourseName = course.replace(/[:*?\/\\[\]]/g, "_").substring(0, 31);
         const ws = XLSX.utils.json_to_sheet(rows);
         XLSX.utils.book_append_sheet(wb, ws, safeCourseName);
@@ -299,39 +296,17 @@ const StudentAttendanceData = () => {
       return;
     }
 
-    XLSX.writeFile(wb, `All_Courses_Attendance_${selectedBatch}_${selectedLocation}.xlsx`);
+    XLSX.writeFile(wb, `All_Courses_Attendance_${selectedBatch}_KITS.xlsx`);
   };
 
   return (
     <div className="bg-gradient-to-b p-4 md:p-6 mt-0 font-[inter]">
       <h1 className="text-2xl md:text-3xl font-medium text-center text-gray-800 mb-4 md:mb-8">
-        <span className="text-black bg-clip-text">Student Attendance</span>
+        <span className="text-black bg-clip-text">Student Attendance - KITS</span>
       </h1>
 
       {/* FILTERS */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-4 md:mb-6">
-        {isAdminOrSuper && (
-          <div>
-            <label className="block mb-1 md:mb-2 font-semibold text-gray-700 text-xs md:text-sm">
-              Select Location
-            </label>
-            <select
-              className="w-full px-2 py-1 md:px-4 md:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs md:text-sm"
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-            >
-              <option value="SelectLocation" disabled>
-                Select Location
-              </option>
-              {["vijayawada", "hyderabad", "bangalore"].map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc.charAt(0).toUpperCase() + loc.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
         <div>
           <label className="block mb-1 md:mb-2 font-semibold text-gray-700 text-xs md:text-sm">
             Select Tech Stack

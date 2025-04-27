@@ -214,79 +214,7 @@ export const SidebarV = ({
 
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
-      case "Python":
-        return [
-          {
-            label: "Dashboard",
-            path: "/dashboard",
-            icon: FaChartBar,
-          },
-          {
-            label: "Live Classes",
-            path: "/manage-live-classes",
-            icon: FaTachometerAlt,
-          },
-          {
-            label: "View Batches",
-            path: "/admin-view-batch",
-            icon: FaTachometerAlt,
-          },
-          {
-            label: "Students List",
-            path: "/admin-students-list",
-            icon: FaUsers,
-          },
-          {
-            label: "Student Attendance",
-            path: "/adminstudentattendance",
-            icon: StudentAttendanceIcon,
-          },
-          { label: "Student Search", path: "/studentsearch", icon: FaSearch },
-          {
-            label: "Manage Jobs List",
-            path: "/jobs-dashboard",
-            icon: FaLayerGroup,
-          },
-
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
-        ];
-
-      case "Java":
-        return [
-          {
-            label: "Dashboard",
-            path: "/dashboard",
-            icon: FaChartBar,
-          },
-          {
-            label: "Live Classes",
-            path: "/manage-live-classes",
-            icon: FaTachometerAlt,
-          },
-          {
-            label: "View Batches",
-            path: "/admin-view-batch",
-            icon: FaTachometerAlt,
-          },
-          {
-            label: "Students List",
-            path: "/admin-students-list",
-            icon: FaUsers,
-          },
-          {
-            label: "Student Attendance",
-            path: "/adminstudentattendance",
-            icon: StudentAttendanceIcon,
-          },
-          { label: "Student Search", path: "/studentsearch", icon: FaSearch },
-          {
-            label: "Manage Jobs List",
-            path: "/jobs-dashboard",
-            icon: FaLayerGroup,
-          },
-
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
-        ];
+     
       case "superAdmin":
         return [
           {
@@ -299,7 +227,6 @@ export const SidebarV = ({
             path: "/manager-dashboard",
             icon: FaTachometerAlt,
           },
-          { label: "Manage BDEs", path: "/bdes", icon: FaBriefcase },
           {
             label: "Manage Mentors",
             path: "/mentors",
@@ -329,34 +256,10 @@ export const SidebarV = ({
             path: "/jobs-dashboard",
             icon: FaLayerGroup,
           },
-          {
-            label: "Testers",
-            path: "/testers",
-            icon: FaUserCheck,
-          },
-          {
-            label: "Tester Progress",
-            path: "/intern-progress",
-            icon: FaChartLine,
-          },
+         
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
-      case "BDE_data":
-        return [
-          { label: "Add Job", path: "/addjob", icon: FaPlusSquare },
-          {
-            label: "Students List",
-            path: "/managestudentslist",
-            icon: FaUsers,
-          },
-          { label: "Student Data", path: "/studentdata", icon: FaSearch },
-          {
-            label: "Manage Jobs List",
-            path: "/jobs-dashboard",
-            icon: FaLayerGroup,
-          },
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
-        ];
+     
       case "Mentors":
         return [
           {
@@ -406,11 +309,7 @@ export const SidebarV = ({
             path: "/studentdata",
             icon: StudentDataIcon,
           },
-          {
-            label: "Manage Jobs List",
-            path: "/jobs-manager",
-            icon: ManageJobLIstIcon,
-          },
+         
           {
             label: "Exam Statistics",
             path: "/exam-statistics",

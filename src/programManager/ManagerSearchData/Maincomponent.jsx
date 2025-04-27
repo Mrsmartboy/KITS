@@ -10,8 +10,6 @@ import { decryptData } from '../../../cryptoUtils';
 
 const tabs = [
   'Student Details',
-  'Applied Jobs',
-  'Eligible Jobs',
   'Attendance Overview',
   'Exams Details'
 ];
@@ -211,8 +209,8 @@ const Maincomponent = () => {
           <div className="sm:min-h-[461px] md:min-h-[461px] lg:min-h-[361px] bg-white border border-[#19216F] border-t-0 rounded-b-lg box-border">
             <div className="md:p-3 lg:p-3 sm:p-1">
               {activeTab === 'Student Details' && <StudentDetailsManager data={studentData}  profile={profile}/>}
-              {activeTab === 'Applied Jobs' && <AppliedJobsManager data={appliedJobs} gender={gender}/>}
-              {activeTab === 'Eligible Jobs' && <EligibleJobsManager data={eligibleJobs} gender={gender}/>}
+              {/* {activeTab === 'Applied Jobs' && <AppliedJobsManager data={appliedJobs} gender={gender}/>}
+              {activeTab === 'Eligible Jobs' && <EligibleJobsManager data={eligibleJobs} gender={gender}/>} */}
               {activeTab === 'Attendance Overview' && <AttendenceOverviewManager data={attendanceOverview} />}
               {activeTab === 'Exams Details' && <ExamsDetailsManager data={examDetails}/>}
             </div>

@@ -179,24 +179,7 @@ const CurriculumManagement = () => {
   };
 
   const subjects = [
-    "Python",
-    "MySQL",
-    "Flask",
-    "Frontend",
-    "SoftSkills",
-    "Aptitude",
-    "Java",
-    "AdvancedJava",
-    "DataScience",
-    "DataAnalytics",
-    "Statistics",
-    "MachineLearning",
-    "DeepLearning",
-    "DSA",
-    "C",
-    "Ckits",
-    "DSAkits",
-    "Pythonkits"
+   "C","Python","DSA-C",
 
 
   ];

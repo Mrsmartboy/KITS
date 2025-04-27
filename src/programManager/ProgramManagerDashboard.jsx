@@ -87,19 +87,7 @@ const ProgramManagerDashboard = () => {
             </div>
           )}
 
-          {/* Leave Requests */}
-          <div
-            className="bg-white p-8 rounded-lg shadow-lg flex items-center space-x-4 cursor-pointer hover:shadow-2xl transform transition-transform hover:scale-105"
-            onClick={() => handleNavigation("/leave-request")}
-          >
-            <FaEnvelopeOpenText className="text-gray-600 text-5xl" />
-            <div>
-              <h3 className="text-2xl font-semibold text-gray-600">
-                Leave Requests
-              </h3>
-              <p className="text-gray-600">View and manage leave requests</p>
-            </div>
-          </div>
+    
         </div>
       </main>
     </div>
