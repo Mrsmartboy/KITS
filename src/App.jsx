@@ -85,6 +85,7 @@ import AdminLiveClasses from "./Admin/AdminLiveClasses.jsx";
 import AdminViewBatch from "./Admin/AdminViewBatch.jsx";
 import AdminStudentAttendanceData from "./Admin/AdminStudentAttendanceData.jsx";
 import AdminStudentsList from "./Admin/AdminStudentsList.jsx";
+import CodePractice from "./CodePlayground/CodePractice.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -138,6 +139,7 @@ export default function App() {
       <div>
         <ExamProvider>
           <Routes>
+       
             <Route element={<Layout setIsAuthenticated={setIsAuthenticated} />}>
               <Route
                 path="/"
@@ -623,6 +625,14 @@ export default function App() {
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <ExamAnalysis />
+                  </ProtectedRoute>
+                }
+              />
+                <Route
+                path="/codepractice"
+                element={
+                  <ProtectedRoute allowedRoles={["student_login_details"]}>
+                    <CodePractice />
                   </ProtectedRoute>
                 }
               />
