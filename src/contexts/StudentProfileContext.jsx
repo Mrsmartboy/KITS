@@ -151,7 +151,6 @@ export const StudentProvider = ({ children }) => {
   }, [studentDetails, fetchProfilePicture]);
 
   // If still loading, you might optionally do a loading screen
-  if (loading) return <div>Loading student details...</div>;
 
   // --------------------------------------------------
   // 6) PROVIDER VALUE
