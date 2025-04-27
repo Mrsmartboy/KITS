@@ -1,0 +1,60 @@
+.email-apply-job{
+    min-height: 80vh;
+}
+
+.email-apply-job-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.email-apply-job-card h3 {
+    margin-bottom: 10px;
+    color: rgb(204, 51, 102); /* Red color for names */
+    font-family: "Lexend", sans-serif;
+    font-weight: 300;
+    font-size: 1.7rem;
+    font-style: normal;
+}
+
+.email-apply-job-card p {
+    color:  #363f8f; /* Blue color for values */
+    font-family: "Arimo", sans-serif;
+    font-weight: 700;
+    margin: 5px 0;
+    font-style: normal;
+}
+
+.email-apply-job-card .email-apply-job-key {
+    color: black;
+    font-weight: 400 !important;
+}
+
+.apply-job-list-btn {
+    background-color: green;
+    cursor: pointer;
+    margin-top: auto; /* Ensures button is at the end of the card */
+    align-self: flex-start; /* Aligns button to the end of the card */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Styles for inactive jobs */
+.apply-job-list-btn.disabled {
+    background-color: #ccc; /* Gray background color for inactive button */
+    color:black;
+    font-weight: 700;
+    cursor: not-allowed; /* Change cursor to indicate button is not clickable */
+}
+
+.apply-job-list-btn.applied {
+    background-color: #ecc440; /* Gray background color for inactive button */
+    color:black;
+    font-weight: 700;
+    cursor: not-allowed; 
+}

@@ -1,0 +1,9 @@
+.request-form-container {
+  background-image: url('https://res.cloudinary.com/db2bpf0xw/image/upload/v1734774546/login-bg_avyo5b.webp');
+  padding: 20px
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -1,0 +1,215 @@
+.studentslist-dashboard {
+  background-color: #e1e7ff !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  padding: 2% 10px;
+}
+
+.success {
+  color: #32398d;
+  margin: auto;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+
+}
+
+.studentslist-search-bar {
+  border: none;
+  border-radius: 2px;
+  color: #000;
+  margin: 1.8% auto;
+  padding: 10px;
+  width: 40%;
+}
+
+.table-container {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  width: 100%;
+  padding-bottom: 9px;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container td,
+.table-container th {
+  background-color: #e1e7ff !important;
+  padding: 8px 15px;
+  color: black;
+  border: 1px solid rgba(52, 64, 154, 0.4); /* Light border for structure */
+  text-align: center;
+}
+
+.table-container th {
+  color: white;
+  background-color: #32398d !important;
+  border-radius: 5px 5px 0 0;
+}
+
+.loading-message,
+.no-results {
+  font-size: 16px;
+  color: #000; /* Black color for messages */
+  text-align: center;
+  margin-top: 20px;
+}
+
+.studentslist-search-bar {
+  width: 40%;
+  margin: 1.8% auto;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  color: black;
+  transition: all 0.3s ease;
+}
+
+.studentslist-search-bar:focus {
+  border-color: #32398d;
+  outline: none;
+}
+
+.download-container {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+}
+
+.download-button {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 15px;
+  color: #ffffff;
+}
+
+.excel {
+  background-color: rgb(204, 51, 102);
+}
+
+.excel:hover {
+  background-color: rgb(184, 41, 92);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+
+@media (max-width: 1200px) {
+  .studentslist-dashboard {
+    padding: 2% 0%;
+  }
+
+ 
+
+  .download-button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .table-container td,
+  .table-container th {
+    padding: 10px 12px;
+  }
+
+  .table-container {
+    overflow-x: auto; /* Add horizontal scrolling for tables */
+    display: block;
+  }
+
+  .table-container table {
+    width: 1100px; /* Set a fixed width for the table */
+  }
+}
+
+/* Responsive Design for Small Devices */
+@media (max-width: 700px) {
+  .studentslist-dashboard {
+    padding: 2% 0%;
+  }
+
+
+  .download-button {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .table-container td,
+  .table-container th {
+    padding: 10px 12px;
+  }
+
+  .table-container {
+    overflow-x: auto; /* Add horizontal scrolling for tables */
+    display: block;
+  }
+
+  .table-container table {
+    width: 900px; /* Set a fixed width for the table */
+  }
+}
+
+/* Mobile-specific Scrolling Behavior (Max-width: 480px) */
+@media (max-width: 480px) {
+  .studentslist-dashboard {
+    padding: 5% 0;
+  }
+
+  .studentslist-search-bar {
+    width: 90%;
+    padding: 8px;
+  }
+
+  .download-button {
+    font-size: 10px;
+    padding: 5px 8px;
+  }
+
+  .table-container {
+    overflow-x: scroll; /* Allow horizontal scrolling */
+    display: block;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  .table-container table {
+    min-width: 1100px; /* Ensure a minimum width for horizontal scrolling */
+  }
+
+  .table-container tr {
+    display: table-row; /* Retain table-row structure for scrolling */
+    border: none;
+  }
+
+  .table-container td {
+    display: table-cell;
+    padding: 10px;
+  }
+
+  .success {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .download-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  
+
+  
+}

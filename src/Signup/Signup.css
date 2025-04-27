@@ -1,0 +1,92 @@
+.signup{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    min-height:50vh;
+    margin-top: 3%;
+}
+.signup-link-button{
+    width: 60%;
+    display: flex;
+    justify-content: center;
+}
+
+.signup .link{
+    margin: 0% 1%;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: rgba(255, 68, 0, 0.769);
+    padding: 10px;
+    border-radius: 2px;
+    background-color: rgba(128, 128, 128, 0.1)
+}
+
+.signup .link.active {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.signup .link.active.company {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+.signup-quote{
+    color: blue;
+    font-size: 1rem;
+    margin-top: 5%;
+    text-align: center;
+    font-family: "Angkor", serif;
+    font-weight: 200;
+    font-style: normal;
+}
+
+.form-student-signup {
+    margin-top: 5% ;
+    text-align: center;
+    width:30vw;
+}
+
+.form-student-signup input{
+    padding:15px;
+    margin-bottom: 10px;
+    width:100%;
+    color: black;
+}
+
+
+.form-student-signup .btn{
+    background-color: #4CAF50;
+    width:100%;
+    padding: 10px;
+    border:none;
+    color: white;
+    cursor: pointer;
+}
+.form-student-signup .btn:hover{
+    background-color: #45a049;
+}
+.form-student-signup img{
+    width: 300px;
+}
+.login-here *{
+    color: black;
+    margin:20px;
+    text-decoration: none;
+}
+@media (max-width:700px) {
+    .signup-link-button{
+        width: 100%;
+    }
+    .signup-quote{
+        margin-top: 10%;
+        font-size: 0.8rem;
+    }
+    .form-student-signup {
+        width: 100%;
+    }
+    .signup .link{
+        font-size: 0.9rem;
+    }
+    .student-signup-container input{
+        width:100%
+    }
+}

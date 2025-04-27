@@ -1,0 +1,13 @@
+
+  .student-login-container {
+    background-image: url('https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849445/login-bg_mn4squ.webp');
+    background-size: cover; 
+   padding: 20px;
+    
+ }
+
+
+
+ @tailwind base;
+ @tailwind components;
+ @tailwind utilities;

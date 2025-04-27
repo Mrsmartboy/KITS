@@ -1,0 +1,152 @@
+.students-jobs-list{
+    min-height: 70vh;
+}
+.students-jobs-list *{
+    color:black;
+    line-height: 2;
+}
+
+.filter-list{
+    display: flex;
+    padding:10px;
+    /* box-shadow: 0px 0.2px 4px rgba(0,0,0,0.5); */
+    width: 60%;
+    justify-content: space-between;
+    align-items: center;
+    margin:2% auto;
+    padding:1% 2%;
+    border-radius: 25px;
+}
+.filter-list select{
+    border:none;
+    outline:none;
+    min-height: 30px; 
+    font-size: 0.97rem;
+}
+
+.menu-item{
+    color: black !important;
+    font-weight:bold !important;
+}
+.filter-list .percentage{
+    border:1px solid rgba(0,0,0,0.2) !important;
+    padding: 16px 10px !important;
+    border-radius: 5px;
+}
+
+.css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input{
+    border: none !important;
+    padding: 15px 10px 10px 10px !important;
+    font-weight: bold !important;
+}
+
+.Mui-selected,.Mui-selected:hover {
+    background-color: #32398d !important;
+    color: white !important;
+}
+
+.resume-download{
+    background-color: #ecb833 !important;
+}
+.btn-excel,.resume-download, .btn-accept-job-students{
+    margin:auto;
+    background-color: #c36;
+    color: white;
+    border: none;
+    padding:5px;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-left: 10px
+}
+
+.btn-accept-job-students{
+    background-color: rgb(15, 144, 15) !important;
+}
+
+.btn-download-single-resume{
+    background-color: #363f8f;
+    margin-left: 0px;
+}
+
+.student-jobs-list-card{
+    margin-bottom: 20px;
+}
+
+/* Hide arrow controls for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+.students-jobs-list table{
+    padding: 5px;
+    width:70%;
+    margin: auto;
+}
+
+.students-jobs-list td,.students-jobs-list th{
+    background-color: rgba(230, 255, 254,0.8) !important;
+    padding:10px; 
+    border-radius: 5px;
+}
+
+.students-jobs-list th{
+    background-color: #c36 !important;
+    border: 1px solid white;
+}
+
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+  }
+  
+  .spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #c36;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+
+@media (max-width:800px){
+    .filter-list{
+        flex-direction: column;
+    }
+    .filter-list .percentage{
+        width: 300px;
+    }
+}
+
+@media (max-width:500px){
+    .btn-excel{
+        display: block;
+        margin:auto;
+        margin-bottom:10px ;
+    }
+    .filter-list{
+        width: 90%;
+    }
+    .filter-list select{
+        font-size: 0.8rem;
+    }
+    .students-jobs-list table{
+        width:100%
+    }
+    .students-jobs-list td,.students-jobs-list th{
+        padding: 5px;
+    }
+}

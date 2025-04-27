@@ -1,0 +1,151 @@
+.student-signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2%;
+}
+
+.student-signup-container form {
+    width: 100%;
+    margin: 20px;
+}
+
+.student-signup-container .input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.student-signup-container .input-group > div {
+    width: 48%; /* Adjust as needed */
+}
+
+.student-signup-container label {
+    font-size: 1rem;
+    margin: 10px 0px;
+    display: block;
+    color: black;
+}
+
+.student-signup-container input {
+    width: 100%;
+    padding: 10px 80px 10px 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: black;
+}
+.student-signup-container .radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.student-signup-container .radio-option {
+    display: flex;
+    align-items: baseline;
+    margin-right: 30px;
+}
+
+.student-signup-container .radio-option input {
+    margin-right: 15px;
+}
+
+.student-signup-container .otp-parent{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.student-signup-container .check{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.student-signup-container .generateotp-btn{
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width:fit-content;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.student-signup-container input, .student-signup-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: black;
+}
+
+.selected-skills{
+    display:flex;
+    padding:10px;
+    flex-wrap: wrap;
+}
+.selected-skills *{
+    margin: 5px;
+}
+
+.student-signup-container option{
+    color: black;
+}
+.add-skill{
+    color: black;
+}
+
+.student-signup-container .btn {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width:45%;
+    margin-top: 2%;
+    float: right;
+    font-size: 0.9rem;
+}
+
+.student-signup-container .btn:disabled {
+    background-color: #ccc; /* Grey color when disabled */
+    cursor: not-allowed;
+  }
+
+.remove-skill{
+    color: black;
+}
+
+.student-signup-container .btn:not([disabled]):hover {
+    background-color: #45a049;
+}
+
+
+@media (max-width: 768px) {
+    .student-signup-container form {
+        width: 80%;
+    }
+    
+    .student-signup-container input {
+        width: 60vw; 
+    }
+    
+    .student-signup-container .input-group {
+        flex-direction: column;
+    }
+    .student-signup-container .input-group > div {
+        width: 90%; /* Adjust as needed */
+    }
+    .student-signup-container .btn {
+        font-size: 1rem;
+        width:55%;
+    }  
+    .student-signup-container .otp-parent{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -1,0 +1,162 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './StudentProfile.css';
+import '../Signup/StudentSignup.css'
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom';
+export default function StudentProfile() {
+  const [studentDetails, setStudentDetails] = useState(null);
+  const student_id = localStorage.getItem("student_id");
+  const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState(null);
+  const [skills, setSkills] = useState(['HTML', 'CSS', 'JavaScript', 'Python', 'Java', 'NodeJS', 'Reactjs', 'Angular', 'Vuejs', 'ML', 'Django', 'Spring Boot', 'C++', 'C#', 'Ruby', 'PHP', 'Swift', 'TypeScript', 'Go', 'Rust', 'Kotlin', 'SQL', 'Shell Scripting', 'VB.NET', 'MATLAB', 'R', 'AWS', 'DevOps']);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [currentSkill, setCurrentSkill] = useState('');
+  const [isOther, setIsOther] = useState(false);
+  const [newSkill, setNewSkill] = useState('');
+  const addSkill = () => {
+    const skillToAdd = isOther ? newSkill : currentSkill;
+    if (skillToAdd && !selectedSkills.includes(skillToAdd)) {
+      setSelectedSkills([...selectedSkills, skillToAdd]);
+      setCurrentSkill('');
+      setIsOther(false);
+      setNewSkill('');
+      if (isOther && !skills.includes(skillToAdd)) {
+        setSkills([...skills, skillToAdd]);
+      }
+    }
+  };
+  const removeSkill = (skill) => {
+    const updatedSkills = selectedSkills.filter(item => item !== skill);
+    setSelectedSkills(updatedSkills);
+  };
+  const handleSkillChange = (e) => {
+    const value = e.target.value;
+    setCurrentSkill(value);
+    setIsOther(value === 'Other');
+  };
+  const navigate = useNavigate()
+  useEffect(() => {
+    const fetchStudentDetails = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/getstudentdetails?student_id=${student_id}`);
+        setStudentDetails(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching student details:', error);
+      }
+    };
+    fetchStudentDetails();
+  }, [student_id]);
+  const updateResume = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    const formData = new FormData();
+    formData.append('resume', file);
+    formData.append('student_id', student_id);
+    try {
+      if (!file) {
+        console.error('No file selected.');
+        return;
+      }
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/updateresume`,
+        { resume: file, student_id },
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Set content type to multipart/form-data
+          }
+        }
+      );
+      if (response.status === 200) {
+        Swal.fire({
+          title: "Resume Updated Successfully",
+          icon: "success"
+        });
+        navigate("/jobslist")
+      }
+    } catch (error) {
+      console.error('Error updating resume:', error);
+    }
+  };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const maxSize = 100 * 1024; // 100 KB
+    if (file) {
+      if (file.size > maxSize) {
+        Swal.fire({
+          icon: 'error',
+          title: 'File Too Large',
+          text: 'The uploaded file must be less than 100 KB.',
+        });
+        e.target.value = ''; // Clear the input
+      } else {
+        setFile(file);
+      }
+    }
+  };
+  return (
+    <div className='studentprofile-container'>
+      {/* Display student details here */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className=''>
+          <p><span className="student-profile-key">Name:</span>{studentDetails.name}</p>
+          <p><span className="student-profile-key">Email:</span>{studentDetails.email}</p>
+          <p><span className="student-profile-key">College Name:</span>{studentDetails.collegeName}</p>
+          <p><span className="student-profile-key">Phone Number:</span>{studentDetails.phone}</p>
+          <p><span className="student-profile-key">City:</span>{studentDetails.city}</p>
+          <div className="input-group">
+            <div>
+              <label>Skills: <span style={{ color: 'red' }}>*</span></label>
+              <select
+                id="skills"
+                name="skills"
+                value={currentSkill}
+                onChange={handleSkillChange}
+              >
+                <option value="">Select a skill</option>
+                {skills.map((skill, index) => (
+                  <option key={index} value={skill}>{skill}</option>
+                ))}
+                <option value="Other">Other</option>
+              </select>
+              {isOther && (
+                <div>
+                  <input
+                  className='other'
+                    type="text"
+                    placeholder="Enter a new skill"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                  />
+                </div>
+              )}
+              <button type="button" className='add-skill' onClick={addSkill}>
+                Add Skill
+              </button>
+
+              <div className='selected-skills'>
+                {selectedSkills.map((skill, index) => (
+                  <p key={index}>
+                    <span style={{ color: 'black' }}>{skill}</span>
+                    <button className='remove-skill' type='button' onClick={() => removeSkill(skill)}>X</button>
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+          <form encType="multipart/form-data" onSubmit={updateResume}>
+            <div className="file-upload-container">
+              <input className='file-upload' type="file" onChange={handleFileChange} />
+              <span style={{ color: 'red' }}>*</span>
+              <p>
+                <button className='btn-update' type="submit">Update profile</button>
+              </p>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,26 @@
+body{
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: 'CustomFont', 'Afacad';
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+@font-face {
+    font-family: 'CustomFont';
+    src: url('custom-font.woff2') format('woff2');
+  }
+
+  *{
+    margin: 0px;
+  }    
+
+  html {
+    overflow-x: hidden;
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

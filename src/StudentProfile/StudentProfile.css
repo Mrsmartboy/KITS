@@ -1,0 +1,259 @@
+/* Main Profile Container */
+.student-profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2%;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 100px;
+}
+
+/* Form Style */
+.student-profile-container form {
+    width: 70%;
+    margin: 10px;
+}
+
+/* Input Groups */
+.student-profile-container .input-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+.student-profile-container .input-group > div {
+    width: 48%; /* Adjust as needed */
+}
+
+.student-profile-container label {
+    font-size: 1rem;
+    margin: 10px 0px;
+    display: block;
+    color: black;
+}
+
+.form-group{
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.student-profile-container input,
+.student-profile-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: black;
+}
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure the wrapper spans the full width */
+}
+
+.password-wrapper input {
+    width: 100%; /* Ensure the input fills the available space */
+    padding-right: 40px; /* Add padding to avoid overlapping with the icon */
+    padding-left: 10px; /* Optional for consistent padding */
+    padding-top: 8px; /* Adjust vertical padding for better appearance */
+    padding-bottom: 8px;
+    font-size: 16px; /* Adjust text size */
+    border: 1px solid #d1d5db; /* Tailwind-style border */
+    border-radius: 6px; /* Rounded corners */
+    outline: none; /* Remove default focus outline */
+    transition: border-color 0.2s ease-in-out; /* Smooth focus effect */
+}
+
+.password-wrapper input:focus {
+    border-color: #3b82f6; /* Focused border color (Tailwind blue) */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Add focus ring */
+}
+
+.password-icon {
+    position: absolute;
+    right: 12px; /* Ensure proper distance from the input edge */
+    top: 35%; /* Center the icon vertically */
+    transform: translateY(-50%); /* Adjust for perfect centering */
+    font-size: 18px; /* Icon size */
+    cursor: pointer; /* Indicate clickable */
+    color: #6b7280; /* Tailwind gray-500 */
+    transition: color 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+.password-icon:hover {
+    color: #374151; /* Darker gray on hover */
+}
+
+
+
+/* Button and Action Styling */
+.student-profile-container .generateotp-btn {
+    padding: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.student-profile-container .btn {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 45%;
+    margin-top: 2%;
+    font-size: 0.9rem;
+    float: right;
+}
+
+.student-profile-container .btn:disabled {
+    background-color: #ccc; /* Grey color when disabled */
+    cursor: not-allowed;
+}
+
+.student-profile-container .btn:not([disabled]):hover {
+    background-color: #45a049;
+}
+
+/* Radio Button Group */
+.student-profile-container .radio-group {
+    display: flex;
+    align-items: center;
+}
+
+.student-profile-container .radio-option {
+    display: flex;
+    align-items: baseline;
+    margin-right: 30px;
+}
+
+.student-profile-container .radio-option input {
+    margin-right: 15px;
+}
+
+/* OTP Section */
+.student-profile-container .otp-parent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.student-profile-container .check {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Skills Section */
+.selected-skills {
+    display: flex;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+.selected-skills * {
+    margin: 5px;
+}
+
+.student-profile-container option {
+    color: black;
+}
+
+.add-skill {
+    padding: 5px 8px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 500;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.remove-skill {
+    color: black;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 576px) {
+    .student-profile-container {
+        width: 100%;
+    }
+
+    .student-profile-container form {
+        width: 80%;
+    }
+
+    .student-profile-container .input-group {
+        flex-direction: column;
+    }
+
+    .radio-group {
+        flex-direction: row;
+    }
+
+    .radio-option.input {
+        margin-right: 0px;
+        width: 5vw;
+    }
+
+    .student-profile-container .input-group > div {
+        width: 90%; /* Adjust as needed */
+    }
+
+    .student-profile-container .btn {
+        font-size: 1rem;
+        width: 55%;
+    }
+
+    .student-profile-container .otp-parent {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .student-profile-container h1 {
+        font-size: 1.4rem;
+    }
+
+    /* Adjust layout for sidebar + content */
+    .student-profile-container .form-container {
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 2%;
+    }
+}
+
+/* Flex Layout for Sidebar and Content */
+@media (min-width: 576px) {
+    .student-profile-container {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    /* Sidebar and Content Layout */
+    .sidebar {
+        width: 250px;
+        background-color: #f8f9fa;
+        padding: 20px;
+        position: sticky;
+        top: 0;
+    }
+
+    .student-profile-container .form-container {
+        flex: 1;
+        margin-left: 2%;
+    }
+}

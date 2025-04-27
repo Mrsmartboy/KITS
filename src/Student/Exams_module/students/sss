@@ -1,0 +1,919 @@
+{
+    "message": "Exams Questions",
+    "exams": [
+        {
+            "_id": "6793ed88e9288c0630c9f805",
+            "batch": "JFS-101",
+            "day_order": "Day-3",
+            "subject": "Java",
+            "topics": "Tokens, Data types",
+            "subtopics": [
+                "Identifiers",
+                "Literals",
+                "Keywords",
+                "Primitive data types - 8",
+                "Explicit and Implicit Type casting"
+            ],
+            "date": "2025-01-25",
+            "start_time": "10:00",
+            "end_time": "11:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-7?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-7)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 7,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-8 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-8)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 8,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 7,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 8,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793eee3e9288c0630c9f80e",
+            "batch": "JFS-101",
+            "day_order": "Day-1",
+            "subject": "Java",
+            "topics": "Programming Language, History",
+            "subtopics": [
+                "procedure oriented vs object \noriented programming languages",
+                "History about versions and industry standard versions"
+            ],
+            "date": "2025-01-28",
+            "start_time": "10:00",
+            "end_time": "11:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-1?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-1)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 1,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-2 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-2)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 2,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 1,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 2,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793ef36e9288c0630c9f80f",
+            "batch": "JFS-101",
+            "day_order": "Day-2",
+            "subject": "Java",
+            "topics": "Features of Java",
+            "subtopics": [
+                "Simple",
+                "secure",
+                "robust",
+                "byte code \nplaftorm independent...etc",
+                "Java Installation"
+            ],
+            "date": "2025-02-01",
+            "start_time": "10:11",
+            "end_time": "11:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-3?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-3)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 3,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-4 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-4)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 4,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 3,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 4,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793ef6ae9288c0630c9f810",
+            "batch": "JFS-101",
+            "day_order": "Day-3",
+            "subject": "Java",
+            "topics": "Tokens, Data types",
+            "subtopics": [
+                "Identifiers",
+                "Literals",
+                "Keywords",
+                "Primitive data types - 8",
+                "Explicit and Implicit Type casting"
+            ],
+            "date": "2025-01-24",
+            "start_time": "11:00",
+            "end_time": "00:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-7?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-7)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 7,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-8 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-8)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 8,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 7,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 8,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793ef8be9288c0630c9f811",
+            "batch": "JFS-101",
+            "day_order": "Day-4",
+            "subject": "Java",
+            "topics": "Variables & Constants\nSimple Java program with console IO\nEclipse IDE",
+            "subtopics": [
+                "Variable declaration",
+                "assign values",
+                "Various typecasting related to primitive types\nSystem.out.println",
+                "Scanner + System.in and don't ignore about limitations of Console IO\nHow to work with eclipse",
+                "various shorcuts in eclipse"
+            ],
+            "date": "2025-01-23",
+            "start_time": "12:00",
+            "end_time": "13:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-5?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-5)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 5,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-6 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-6)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 6,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 5,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 6,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793efa4e9288c0630c9f812",
+            "batch": "JFS-101",
+            "day_order": "Day-6",
+            "subject": "Java",
+            "topics": "Types of Operators : Part -2",
+            "subtopics": [
+                "Relational",
+                "Ternary deeply. Just touch about bitwise operators"
+            ],
+            "date": "2025-02-02",
+            "start_time": "15:00",
+            "end_time": "16:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-11?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-11)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 11,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-12 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-12)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 12,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 11,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 12,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793efbae9288c0630c9f813",
+            "batch": "JFS-101",
+            "day_order": "Day-7",
+            "subject": "Java",
+            "topics": "Conditional statements : Part - 1",
+            "subtopics": [
+                "if",
+                "if-else",
+                "else-if-ladder"
+            ],
+            "date": "2025-01-25",
+            "start_time": "13:00",
+            "end_time": "14:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-13?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-13)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 13,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-14 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-14)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 14,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 13,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 14,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793efd7e9288c0630c9f814",
+            "batch": "JFS-101",
+            "day_order": "Day-8",
+            "subject": "Java",
+            "topics": "Conditional statements : Part - 2",
+            "subtopics": [
+                "nested if-else",
+                "switch case etc."
+            ],
+            "date": "2025-02-02",
+            "start_time": "16:00",
+            "end_time": "17:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-15?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-15)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 15,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-16 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-16)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 16,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 15,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 16,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        },
+        {
+            "_id": "6793eff4e9288c0630c9f815",
+            "batch": "JFS-101",
+            "day_order": "Day-9",
+            "subject": "Java",
+            "topics": "Iterative and Jumping Statements : Part - 1",
+            "subtopics": [
+                "for",
+                "while",
+                "do-while"
+            ],
+            "date": "2025-02-02",
+            "start_time": "16:00",
+            "end_time": "19:00",
+            "exam_questions": [
+                {
+                    "answer": "(b) false",
+                    "description": "What is the default value of a boolean in Java on Day-17?",
+                    "difficulty": "Medium",
+                    "explanation": "In Java, the default value of a boolean is false. (Day-17)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "true",
+                        "Option_2": "false",
+                        "Option_3": "null",
+                        "Option_4": "0"
+                    },
+                    "question_id": 17,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "answer": "(a) It is used for memory management.",
+                    "description": "What does the keyword 'static' indicate in Java in Day-18 context?",
+                    "difficulty": "Hard",
+                    "explanation": "The 'static' keyword in Java allows memory optimization by defining a variable or method shared among all instances of the class. (Day-18)",
+                    "explanation_urls": null,
+                    "options": {
+                        "Option_1": "It is used for memory management.",
+                        "Option_2": "It restricts method access.",
+                        "Option_3": "It is used to create abstract classes.",
+                        "Option_4": "None of these above"
+                    },
+                    "question_id": 18,
+                    "score": 1,
+                    "type": "MCQ"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "1001",
+                        "10007"
+                    ],
+                    "constraints": "1 \u2264 n \u2264 10^6",
+                    "description": "Write a Java function that checks if a given number is a prime number. Return true if it is prime, otherwise return false.",
+                    "difficulty": "Hard",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "25",
+                            "Output": "false"
+                        },
+                        {
+                            "Input": "997",
+                            "Output": "true"
+                        }
+                    ],
+                    "question_id": 17,
+                    "sample_input": "17",
+                    "sample_output": "true",
+                    "score": 5,
+                    "type": "Coding"
+                },
+                {
+                    "additional_test_cases": [
+                        null,
+                        "AI",
+                        "ML"
+                    ],
+                    "constraints": "1 \u2264 string length \u2264 10^5",
+                    "description": "Write a function in Java to reverse a string. The function should take a single string as input and return the reversed string.",
+                    "difficulty": "Medium",
+                    "explanation_urls": null,
+                    "hidden_test_cases": [
+                        {
+                            "Input": "Codegnan",
+                            "Output": "nangedoC"
+                        },
+                        {
+                            "Input": "JavaProgramming",
+                            "Output": "gnimmargorPavaJ"
+                        }
+                    ],
+                    "question_id": 18,
+                    "sample_input": "Hello",
+                    "sample_output": "olleH",
+                    "score": 5,
+                    "type": "Coding"
+                }
+            ]
+        }
+    ]
+}

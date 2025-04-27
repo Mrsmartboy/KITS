@@ -1,0 +1,221 @@
+/* Global Styling */
+body {
+  font-family: 'Afacad', sans-serif;
+  background-color: #f3f4f6;
+  margin: 0;
+  padding: 0;
+}
+
+h2, h3 {
+  color: #1f2937; /* Dark Gray for headings */
+  text-align: center;
+  margin: 20px 0;
+  font-size: 28px;
+}
+
+h4 {
+  margin-bottom: 10px;
+  color: #4f46e5;
+  font-size: 20px;
+}
+
+p {
+  margin: 0;
+  color: #374151;
+  font-size: 16px;
+}
+
+/* Navigation Styling */
+.nav-links {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  background-color: #3b82f6;
+  padding: 15px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #bbdefb;
+  transform: scale(1.1);
+}
+
+/* Container Styling */
+.exams-container,
+.top-performers,
+.exam-details,
+.performance-view {
+  margin: 20px auto;
+  width: 95%;
+  max-width: 1200px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table th,
+.table td {
+  padding: 15px;
+  text-align: left;
+  font-size: 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.table th {
+  background-color: #111827; /* Even darker background for maximum contrast */
+  color: #ffffff; /* White text for headers */
+  font-weight: bold;
+}
+
+.table td {
+  color: #1f2937; /* Dark Gray for table data text */
+}
+
+.table tr:nth-child(odd) {
+  background-color: #f9fafb;
+}
+
+.table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Hover Effects */
+.table tr:hover {
+  background-color: #e3f2fd; /* Light blue background for the entire row */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.table td:hover {
+  background-color: #bbdefb; /* Darker blue for the hovered column field */
+  color: #0059a0; /* Change text color for hover effect */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Button Styling */
+.action-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #0059a0;
+  transform: translateY(-2px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Mini Containers for Performance Details */
+.performance-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.mini-container {
+  flex: 1;
+  min-width: 280px;
+  padding: 20px;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  background-color: #f9fafb;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mini-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mini-container h4 {
+  font-size: 18px;
+}
+
+.mini-container p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .table th, .table td {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .performance-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mini-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  h2, h3 {
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .table th, .table td {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .action-btn {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  .mini-container h4 {
+    font-size: 16px;
+  }
+
+  .mini-container p {
+    font-size: 18px;
+  }
+}
