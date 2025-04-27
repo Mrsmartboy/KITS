@@ -141,8 +141,8 @@ export const SidebarV = ({
       case "student_login_details":
         return [
           { label: "Profile", path: "/student-profile", icon: ProfileIcon },
-          { label: "Jobs List", path: "/jobslist", icon: JobsListIcon },
-          { label: "Course", path: "/courses", icon: CourseIcon },
+          // { label: "Jobs List", path: "/jobslist", icon: JobsListIcon },
+          // { label: "Course", path: "/courses", icon: CourseIcon },
           { label: "Exams", path: "/exam-dashboard", icon: ExamIcon },
 
           {
