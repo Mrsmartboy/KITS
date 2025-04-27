@@ -29,31 +29,11 @@ const BatchScheduler = () => {
   const [loadingAddSchedule, setLoadingAddSchedule] = useState(false);
   const [loadingSaveChanges, setLoadingSaveChanges] = useState(false);
   const { batches, fetchBatches } = useUniqueBatches();
-
+  console.log(batches)
   const location = decryptData(sessionStorage.getItem('location')); // Hardcode to KITS
 
-  const techStackSubjects = {
-    KITS: ["C", "Python", "DS-C"],
-  };
-
-  const mockBatches = {
-    C: ["C"],
-    Python: ["Python"],
-    "DS-C": ["DS-C"],
-  };
-
-  const mockSubjects = {
-    C: ["C"],
-    Python: ["Python"],
-    "DS-C": ["DS-C"],
-  };
-
-  const handleTechStackChange = (value) => {
-    setSelectedTechStack(value);
-    setAvailableSubjects(mockSubjects[value] || []);
-    setSelectedSubject("");
-    setSelectedBatches([]);
-  };
+  const techStacks = ["KITS"]; // Available tech stacks
+  const kitsSubjects = ["C", "Python", "DS-C"]; // Subjects for KITS tech stack
 
   const formatTimeTo24Hour = (time) => {
     if (!time) return "";
@@ -74,6 +54,18 @@ const BatchScheduler = () => {
     return `${formattedHour}:${minute < 10 ? "0" + minute : minute} ${ampm}`;
   };
 
+  const handleTechStackChange = (value) => {
+    setSelectedTechStack(value);
+    setSelectedSubject("");
+    setSelectedBatches([]);
+    if (value === "KITS") {
+      setAvailableSubjects(kitsSubjects);
+      fetchBatchData();
+    } else {
+      setAvailableSubjects([]);
+    }
+  };
+
   const handleEditRow = (row) => {
     setEditingRowId(row.id || null);
     setMentorName(row.MentorName || "");
@@ -81,11 +73,8 @@ const BatchScheduler = () => {
     setStartDate(row.StartDate || "");
     setEndDate(row.EndDate || "");
     
-    const detectedTechStack = Object.keys(mockSubjects).find((key) =>
-      mockSubjects[key].includes(row.subject)
-    );
-    setSelectedTechStack(detectedTechStack || "");
-    setAvailableSubjects(mockSubjects[detectedTechStack] || []);
+    setSelectedTechStack("KITS");
+    setAvailableSubjects(kitsSubjects);
     setSelectedSubject(row.subject || "");
     
     const availableRowBatches = Array.isArray(row.batchNo)
@@ -292,7 +281,9 @@ const BatchScheduler = () => {
   };
 
   const filteredBatches = selectedSubject
-    ? batches.filter((batch) => mockBatches[selectedSubject]?.includes(batch.Course))
+    ? batches.filter((batch) => batch.Course === selectedTechStack)
+    : selectedTechStack
+    ? batches.filter((batch) => batch.Course === selectedTechStack)
     : [];
 
   useEffect(() => {
@@ -319,7 +310,7 @@ const BatchScheduler = () => {
           <div className="flex items-end gap-4">
             <Dropdown
               label="Tech Stack"
-              options={techStackSubjects.KITS || []}
+              options={techStacks}
               value={selectedTechStack}
               onChange={handleTechStackChange}
             />

@@ -161,11 +161,6 @@ export const SidebarV = ({
             icon: CodePlayGroundIcon,
           },
           {
-            label: "Leave Request",
-            path: "/leave-request-page",
-            icon: LeaveRequestIcon,
-          },
-          {
             label: "codepractice",
             path: "/codepractice",
             icon: LeaveRequestIcon,
