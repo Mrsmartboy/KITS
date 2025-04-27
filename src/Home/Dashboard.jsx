@@ -4,6 +4,9 @@ import "./Dashboard.css";
 
 export default function Dashboard() {
   const { dashboardData, loading, error } = useDashboard();
+  console.log("dashboard data " + JSON.stringify(dashboardData));
+
+  
   const [companySearchQuery, setCompanySearchQuery] = useState("");
   const [collegeSearchQuery, setCollegeSearchQuery] = useState("");
   const [companyPage, setCompanyPage] = useState(1);

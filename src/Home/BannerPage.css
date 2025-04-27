@@ -805,6 +805,7 @@
 
 
 @media screen and (min-width: 1800px) {
+    
     .coverpage-container {
         display: flex;
     justify-content: center;

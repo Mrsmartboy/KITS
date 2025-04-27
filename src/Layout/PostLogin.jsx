@@ -25,11 +25,20 @@ const PostLogin = ({
             <FaBars size={20} />
           </button>
         )}
+        <div className="flex items-center ">
         <img
           src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/codegnan-logo_qxnxrq.webp"
           alt="Codegnan Logo"
-          className="w-[150px] sm:w-[160px] md:w-[170px] lg:w-[180px] object-contain cursor-pointer"
+          className="cursor-pointer ml-2 md:ml-10 w-24 md:w-32" // slightly bigger
+          onClick={() => navigate("/")}
         />
+        <img
+          src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658094/logo_s2toqb.png"
+          alt="KITS Badge"
+          className="cursor-pointer  md:ml-10 w-24 md:w-32" // slightly bigger
+        />
+
+      </div>
       </div>
 
       {/* Right: User Info */}

@@ -36,7 +36,7 @@ export default function CompanyDashboard({ companiesData }) {
         type="text"
         value={searchQuery}
         onChange={handleSearchChange}
-        placeholder="Search companies..."
+        placeholder="mpanies..."
         className='company-search-bar'
       />
       {/* Display table */}

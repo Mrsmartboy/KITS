@@ -22,7 +22,7 @@ const techStacks = {
 
   // ],
   // bangalore: ["Java Full Stack (JFS)"],
-  KITS:['C',"Python","DSA-C"]
+  KITS:['C',"Python","DS-C"]
 };
 
 const BatchForm = () => {

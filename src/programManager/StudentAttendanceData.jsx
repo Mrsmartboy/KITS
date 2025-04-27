@@ -33,7 +33,7 @@ function isSunday(isoDate) {
 }
 
 const techStackSubjects = {
-  KITS: ["C", "Python", "DSA-C"],
+  KITS: ["C", "Python", "DS-C"],
 };
 
 const StudentAttendanceData = () => {

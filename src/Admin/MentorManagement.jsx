@@ -26,7 +26,7 @@ const MentorManagement = () => {
   const designations = [
     "C",
     "Python",
-    "DSA-C"
+    "DS-C"
   ];
 
   const fetchData = async () => {
