@@ -730,9 +730,7 @@ export default function App() {
               <Route
                 path="/upload"
                 element={
-                  <ProtectedRoute allowedRoles={["Testers","super","superAdmin"]}>
                     <UploadQuestions />
-                  </ProtectedRoute>
                 }
               />
               {/* <Route
