@@ -21,22 +21,12 @@ const MentorManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  const emailRegex = /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@codegnan\.com$/;
-  const locations = ['vijayawada', 'hyderabad', 'bangalore'];
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com)$/;
+  const locations = ["KITS"];
   const designations = [
+    "C",
     "Python",
-    "Flask",
-    "Java",
-    "AdvancedJava",
-    "MySQL",
-    "DataAnalytics",
-    "Frontend",
-    "SoftSkills",
-    "Aptitude",
-    "Statistics",
-    "MachineLearning",
-    "DeepLearning",
-    "DSA"
+    "DSA-C"
   ];
 
   const fetchData = async () => {
