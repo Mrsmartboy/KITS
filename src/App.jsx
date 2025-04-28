@@ -93,6 +93,7 @@ import SubTopicQuestions from "./CodePlayground/SubTopicQuestions.jsx";
 import CodePracticePlayGround from "./CodePlayground/CodePracticePlayGround.jsx";
 import CPOnlineCompiler from "./CodePlayground/OnlineCompiler.jsx";
 import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
+import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -146,7 +147,7 @@ export default function App() {
       <div>
         <ExamProvider>
           <Routes>
-
+          <Route path="/newfigma" element={<NewOnlineCompiler />} />
             <Route element={<Layout setIsAuthenticated={setIsAuthenticated} />}>
               <Route
                 path="/"
