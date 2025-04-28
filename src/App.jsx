@@ -636,7 +636,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/codepractice"
+                path="/code-playground"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <CodePractice />
@@ -644,7 +644,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/codepractice/:subjectname"
+                path="/code-playground/:subjectname"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <SubjectTopicsWithSubTopics />
@@ -652,7 +652,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/codepractice/:subjectname/:topicname"
+                path="/code-playground/:subjectname/:topicname"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <SubTopics />
@@ -667,9 +667,9 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/codepractice/solve/:questionId" element={<CPOnlineCompiler />} />
+              <Route path="/code-playground/solve/:questionId" element={<CPOnlineCompiler />} />
               <Route
-                path="/codepractice/:subjectname/:topicname/:subtopic"
+                path="/code-playground/:subjectname/:topicname/:subtopic"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                   {<SubTopicQuestions />}

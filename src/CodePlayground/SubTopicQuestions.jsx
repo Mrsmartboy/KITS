@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const SubTopicQuestions = () => {
   const { subjectname, topicname, subtopic } = useParams();
@@ -13,14 +13,14 @@ const SubTopicQuestions = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       if (!state?.tag) {
-        setError('No tag provided for questions.');
+        setError("No tag provided for questions.");
         return;
       }
 
       setLoading(true);
       try {
         const response = await axios.get(
-           `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
           {
             params: {
               subject: subjectname,
@@ -35,8 +35,8 @@ const SubTopicQuestions = () => {
           setError(`No questions found for tag ${state.tag}`);
         }
       } catch (error) {
-        console.error('Questions API call failed:', error);
-        setError('Failed to fetch questions');
+        console.error("Questions API call failed:", error);
+        setError("Failed to fetch questions");
         setQuestions([]);
       } finally {
         setLoading(false);
@@ -49,10 +49,14 @@ const SubTopicQuestions = () => {
   // Mock user progress (since API doesn't provide this)
   const getMockProgress = (question) => {
     const totalTestCases = question.Hidden_Test_Cases?.length || 4;
-    const passedTestCases = Math.min(totalTestCases, Math.floor(Math.random() * (totalTestCases + 1)));
+    const passedTestCases = Math.min(
+      totalTestCases,
+      Math.floor(Math.random() * (totalTestCases + 1))
+    );
     const totalScore = question.Score * totalTestCases;
     const latestScore = passedTestCases * question.Score;
-    const status = passedTestCases === totalTestCases ? 'SOLVED' : 'IN PROGRESS';
+    const status =
+      passedTestCases === totalTestCases ? "SOLVED" : "IN PROGRESS";
 
     return {
       testCasesPassed: `${passedTestCases}/${totalTestCases}`,
@@ -67,10 +71,10 @@ const SubTopicQuestions = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
       <div className="w-full max-w-5xl flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
-          {decodeURIComponent(subtopic).replace(/-/g, ' ')} Questions
+          {decodeURIComponent(subtopic).replace(/-/g, " ")} Questions
         </h1>
         <button
-          onClick={() => navigate(`/codepractice/${subjectname}/${topicname}`)}
+          onClick={() => navigate(`/code-playground/${subjectname}`)}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
         >
           Back to Subtopics
@@ -92,27 +96,40 @@ const SubTopicQuestions = () => {
             </thead>
             <tbody>
               {questions.map((question, index) => {
-                const { testCasesPassed, testCasesPercent, score, scorePercent, status } =
-                  getMockProgress(question);
+                const {
+                  testCasesPassed,
+                  testCasesPercent,
+                  score,
+                  scorePercent,
+                  status,
+                } = getMockProgress(question);
                 return (
                   <tr
                     key={question.questionId}
                     className={`border-b cursor-pointer hover:bg-gray-50 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     }`}
-                    onClick={() =>
-                      navigate(`/codepractice/solve/${question.questionId}`, {
+                    onClick={() => {
+                      navigate(`/code-playground/solve/${question.questionId}`, {
                         state: {
+                          subjectname,
+                          topicname,
+                          subtopic,
                           question,
                           index,
                           questions: questions,
-                          codeMap: { [index]: '' }, // Initialize empty code
+                          codeMap: { [index]: "" }, // Initialize empty code
                         },
-                      })
-                    }
+                      });
+                      console.log("Questions:", question);
+                    }}
                   >
-                    <td className="py-4 px-4 text-gray-800">{question.Question}</td>
-                    <td className="py-4 px-4 text-gray-600">{question.Difficulty}</td>
+                    <td className="py-4 px-4 text-gray-800">
+                      {question.Question}
+                    </td>
+                    <td className="py-4 px-4 text-gray-600">
+                      {question.Difficulty}
+                    </td>
                     <td className="py-4 px-4">
                       <div className="text-gray-600">{testCasesPassed}</div>
                       <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
@@ -133,12 +150,16 @@ const SubTopicQuestions = () => {
                           style={{ width: `${scorePercent}%` }}
                         ></div>
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">Latest Score: {score}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Latest Score: {score}
+                      </div>
                     </td>
                     <td className="py-4 px-4 flex items-center">
                       <span
                         className={`text-sm font-medium ${
-                          status === 'SOLVED' ? 'text-green-600' : 'text-yellow-600'
+                          status === "SOLVED"
+                            ? "text-green-600"
+                            : "text-yellow-600"
                         }`}
                       >
                         {status}
@@ -165,7 +186,8 @@ const SubTopicQuestions = () => {
           </table>
         </div>
       ) : (
-        !loading && !error && <p className="text-gray-600">No questions available.</p>
+        !loading &&
+        !error && <p className="text-gray-600">No questions available.</p>
       )}
     </div>
   );
