@@ -160,7 +160,7 @@ export const SidebarV = ({
             icon: CodePlayGroundIcon,
           },
           {
-            label: "Learderboard",
+            label: "Leaderboard",
             path: "/leaderboard",
             icon: FaChartBar,
           },
