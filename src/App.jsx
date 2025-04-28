@@ -94,6 +94,7 @@ import CodePracticePlayGround from "./CodePlayground/CodePracticePlayGround.jsx"
 import CPOnlineCompiler from "./CodePlayground/OnlineCompiler.jsx";
 import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
 import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
+import LeaderBoard from "./Student/LeaderBoard.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -147,7 +148,7 @@ export default function App() {
       <div>
         <ExamProvider>
           <Routes>
-          <Route path="/newfigma" element={<NewOnlineCompiler />} />
+            <Route path="/newfigma" element={<NewOnlineCompiler />} />
             <Route element={<Layout setIsAuthenticated={setIsAuthenticated} />}>
               <Route
                 path="/"
@@ -223,7 +224,6 @@ export default function App() {
                   )
                 }
               />
-
 
               <Route
                 path="/forgotPassword"
@@ -310,7 +310,9 @@ export default function App() {
               <Route
                 path="/studentsearch"
                 element={
-                  <ProtectedRoute allowedRoles={["super", "superAdmin", "Python", "Java"]}>
+                  <ProtectedRoute
+                    allowedRoles={["super", "superAdmin", "Python", "Java"]}
+                  >
                     <Maincomponent />
                   </ProtectedRoute>
                 }
@@ -356,7 +358,9 @@ export default function App() {
               <Route
                 path="/testers"
                 element={
-                  <ProtectedRoute allowedRoles={["superAdmin", "super", "Python", "Java"]}>
+                  <ProtectedRoute
+                    allowedRoles={["superAdmin", "super", "Python", "Java"]}
+                  >
                     <TesterManagement />
                   </ProtectedRoute>
                 }
@@ -365,8 +369,6 @@ export default function App() {
               <Route
                 path="/intern-progress"
                 element={
-
-
                   <ProtectedRoute allowedRoles={["superAdmin", "super"]}>
                     <InternProgressSummary />
                   </ProtectedRoute>
@@ -446,13 +448,7 @@ export default function App() {
               <Route
                 path="/adminstudentattendance"
                 element={
-                  <ProtectedRoute
-                    allowedRoles={[
-
-                      "Python",
-                      "Java",
-                    ]}
-                  >
+                  <ProtectedRoute allowedRoles={["Python", "Java"]}>
                     <AdminStudentAttendanceData />
                   </ProtectedRoute>
                 }
@@ -489,7 +485,13 @@ export default function App() {
                 path="/admin-dashboard"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["superAdmin", "admin", "super", "Python", "Java"]}
+                    allowedRoles={[
+                      "superAdmin",
+                      "admin",
+                      "super",
+                      "Python",
+                      "Java",
+                    ]}
                   >
                     <Reports />
                   </ProtectedRoute>
@@ -500,7 +502,13 @@ export default function App() {
                 path="/dashboard"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["superAdmin", "admin", "super", "Python", "Java"]}
+                    allowedRoles={[
+                      "superAdmin",
+                      "admin",
+                      "super",
+                      "Python",
+                      "Java",
+                    ]}
                   >
                     <AdminReportsDashboard />
                   </ProtectedRoute>
@@ -511,7 +519,13 @@ export default function App() {
                 path="/manage-live-classes"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["superAdmin", "admin", "super", "Python", "Java"]}
+                    allowedRoles={[
+                      "superAdmin",
+                      "admin",
+                      "super",
+                      "Python",
+                      "Java",
+                    ]}
                   >
                     <AdminLiveClasses />
                   </ProtectedRoute>
@@ -538,7 +552,7 @@ export default function App() {
                       "super",
                       "superAdmin",
                       "Python",
-                      "Java"
+                      "Java",
                     ]}
                   >
                     <BDEDashboard />
@@ -660,7 +674,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-                <Route
+              <Route
                 path="/cparea"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
@@ -668,17 +682,20 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/code-playground/solve/:questionId" element={<CPOnlineCompiler />} />
+              <Route
+                path="/code-playground/solve/:questionId"
+                element={<CPOnlineCompiler />}
+              />
               <Route
                 path="/code-playground/:subjectname/:topicname/:subtopic"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
-                  {<SubTopicQuestions />}
+                    {<SubTopicQuestions />}
                   </ProtectedRoute>
                 }
               />
 
-
+              <Route path="/leaderboard" element={<LeaderBoard />} />
 
               <Route
                 path="/compiler"
@@ -770,17 +787,10 @@ export default function App() {
                 }
               />
 
-              <Route
-                path="/upload"
-                element={
-                  <UploadQuestions />
-                }
-              />
+              <Route path="/upload" element={<UploadQuestions />} />
               <Route
                 path="/uploadcpq"
-                element={
-                  <UploadCodePracticeQuestions />
-                }
+                element={<UploadCodePracticeQuestions />}
               />
               {/* <Route
                 path="/test-upload"
@@ -862,7 +872,13 @@ export default function App() {
                 path="/batch-schedule"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["Manager", "super", "superAdmin", "Python", "Java"]}
+                    allowedRoles={[
+                      "Manager",
+                      "super",
+                      "superAdmin",
+                      "Python",
+                      "Java",
+                    ]}
                   >
                     <BatchSchedulePage />
                   </ProtectedRoute>
@@ -979,9 +995,7 @@ export default function App() {
               <Route
                 path="/admin-view-batch"
                 element={
-                  <ProtectedRoute
-                    allowedRoles={["Python", "Java"]}
-                  >
+                  <ProtectedRoute allowedRoles={["Python", "Java"]}>
                     <AdminViewBatch />
                   </ProtectedRoute>
                 }
@@ -1047,13 +1061,7 @@ export default function App() {
               <Route
                 path="/admin-students-list"
                 element={
-                  <ProtectedRoute
-                    allowedRoles={[
-
-                      "Python",
-                      "Java",
-                    ]}
-                  >
+                  <ProtectedRoute allowedRoles={["Python", "Java"]}>
                     <AdminStudentsList />
                   </ProtectedRoute>
                 }
