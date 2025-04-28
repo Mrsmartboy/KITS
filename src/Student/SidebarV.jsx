@@ -240,11 +240,6 @@ export const SidebarV = ({
           },
           { label: "Student Search", path: "/studentsearch", icon: FaSearch },
           { label: "Curriculum", path: "/curriculum", icon: FaBookOpen },
-          {
-            label: "Manage Jobs List",
-            path: "/jobs-dashboard",
-            icon: FaLayerGroup,
-          },
          
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
