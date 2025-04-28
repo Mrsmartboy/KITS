@@ -256,12 +256,6 @@ function CPOnlineCompiler() {
       setHiddenSummary(hidSum);
       setSampleResults(results);
 
-      if (hidSum.failed === 0) {
-        toast.success("All test cases passed!");
-      } else {
-        toast.warn(`Some test cases failed. Passed: ${hidSum.passed}/${hidSum.passed + hidSum.failed}`);
-      }
-
       if (isSubmit) {
         setModalLoading(true);
         setShowModal(true);
