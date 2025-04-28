@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { decryptData } from "../../cryptoUtils";
 import axios from "axios";
 import TestCaseTabs from "../Student/Exams_module/students/ExamModule/TestCaseTabs";
+import { div } from "@tensorflow/tfjs";
 
 function CPOnlineCompiler() {
   const location = useLocation();
@@ -235,7 +236,8 @@ function CPOnlineCompiler() {
         { passed: 0, failed: 0 }
       );
 
-      const sampleResults = results.filter((r) => r.type === "sample");
+      const sampleResults = results;
+      console.log(sampleResults);
       setSampleTestCaseResults(sampleResults);
 
       const hiddenResults = results.filter(
@@ -432,7 +434,15 @@ function CPOnlineCompiler() {
             onChange={handleCodeChange}
           />
         </div>
-        <TestCaseTabs testCases={sampleTestCaseResults} />
+        <div>
+          {sampleTestCaseResults.length == 0 ? (
+            <div className="border border-gray-600 rounded bg-[#1E1E1E] mb-4 p-4">
+              Run Code to display Result
+            </div>
+          ) : (
+            <TestCaseTabs testCases={sampleTestCaseResults} />
+          )}
+        </div>
       </div>
     </div>
   );
