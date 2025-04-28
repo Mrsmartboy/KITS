@@ -203,10 +203,10 @@ const SubjectTopicsWithSubTopics = () => {
       onClick={() => onSubTopicClick(subtopic)}
     >
       {/* Title + Button in a row */}
-      <div className="flex flex-col justify-between gap-2 w-full">
+      <div className="flex flex-col justify-between gap-2 w-full h-full">
 
         {/* Title on left */}
-        <h3 className="text-base sm:text-lg font-semibold leading-tight line-clamp-2">
+        <h3 className="text-base sm:text-lg font-semibold leading-tight line-clamp-2 text-center">
           {subtopic.title}
         </h3>
 
