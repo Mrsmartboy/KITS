@@ -425,33 +425,33 @@ export default function ProgramManagerSignup() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 min-h-[89vh] mt-0">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-xl">
+    <div className="flex flex-col justify-center items-center p-4 sm:p-6 min-h-[89vh] mt-0 bg-gray-100">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-3xl">
         {useExcel && (
           <div className="flex justify-center gap-4 mb-4 text-center items-center">
             <button
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base"
               onClick={handleDownloadTemplate}
             >
               <FaDownload /> Download Template
             </button>
           </div>
         )}
-        <h1 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+        <h1 className="text-xl sm:text-2xl font-semibold text-center text-gray-800 mb-6">
           Student Enrollment
         </h1>
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
           <button
-            className={`px-6 py-2 border rounded-md transition duration-300 text-lg font-medium flex items-center gap-2 ${
-              !useExcel ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+            className={`px-4 py-2 border rounded-md transition duration-300 text-sm sm:text-lg font-medium flex items-center gap-2 w-full sm:w-auto ${
+              !useExcel ? "bg-[#19216f] text-white" : "bg-gray-200 text-gray-800"
             }`}
             onClick={() => setUseExcel(false)}
           >
             <FaUser /> Manual Entry
           </button>
           <button
-            className={`px-6 py-2 border rounded-md transition duration-300 text-lg font-medium flex items-center gap-2 ${
-              useExcel ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"
+            className={`px-4 py-2 border rounded-md transition duration-300 text-sm sm:text-lg font-medium flex items-center gap-2 w-full sm:w-auto ${
+              useExcel ? "bg-[#19216f] text-white" : "bg-gray-200 text-gray-800"
             }`}
             onClick={() => setUseExcel(true)}
           >
@@ -460,202 +460,220 @@ export default function ProgramManagerSignup() {
         </div>
         <form onSubmit={handleSubmit}>
           {!useExcel ? (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Student ID */}
-                <div>
-                  <label
-                    htmlFor="studentId"
-                    className="block text-black font-semibold mb-2"
-                  >
-                    Student ID
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <FaUsers className="text-black mr-2" />
-                    <input
-                      id="studentId"
-                      name="studentId"
-                      type="text"
-                      placeholder="Enter Student ID"
-                      value={formData.studentId}
-                      onChange={handleChange}
-                      className="flex-1 px-2 py-1 text-gray-800 outline-none font-medium"
-                      required
-                    />
-                  </div>
-                </div>
-                {/* Batch */}
-                <div>
-                  <label
-                    htmlFor="batchNo"
-                    className="block text-black font-semibold mb-2"
-                  >
-                    Batch
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-1">
-                    <FaCalendarAlt className="text-black mr-2" />
-                    <select
-                      id="batchNo"
-                      name="batchNo"
-                      value={formData.batchNo}
-                      onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, batchNo: e.target.value }))
-                      }
-                      className="w-full px-3 py-2 text-gray-800 font-medium"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Batch
-                      </option>
-                      {batches.map((batch) => (
-                        <option key={batch.id} value={batch.Batch}>
-                          {batch.Batch}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-black font-semibold mb-2"
-                  >
-                    Email
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <FaEnvelope className="text-black mr-2" />
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter Email"
-                      value={formData.email.toLowerCase()}
-                      onChange={handleChange}
-                      className="flex-1 px-2 py-1 text-gray-800 outline-none font-medium"
-                      required
-                    />
-                  </div>
-                </div>
-                {/* Subjects */}
-                <div className="md:col-span-2">
-                  <label
-                    htmlFor="subjects"
-                    className="block text-black font-semibold mb-2"
-                  >
-                    Subjects
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <Select
-                      id="subjects"
-                      isMulti
-                      options={subjects}
-                      value={selectedSubjects}
-                      onChange={handleSubjectsChange}
-                      placeholder="Select Subjects"
-                      className="flex-1"
-                      classNamePrefix="select"
-                    />
-                  </div>
-                </div>
-                {/* Student Whatsapp Number */}
-                <div className="md:col-span-2">
-                  <label className="block text-black font-semibold mb-2">
-                    Student Whatsapp Number
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <FaWhatsapp className="text-green-600 mr-2 text-2xl" />
-                    <Select
-                      options={countryCodes}
-                      value={studentCountryCode}
-                      onChange={setStudentCountryCode}
-                      placeholder="Select Code"
-                      className="mr-2 w-1/5"
-                    />
-                    <input
-                      name="studentPhNumber"
-                      type="text"
-                      placeholder="Enter Student Phone Number"
-                      value={formData.studentPhNumber}
-                      onChange={handleChange}
-                      onBlur={handleStudentPhoneBlur}
-                      className="flex-1 px-2 py-1 text-gray-800 outline-none font-medium"
-                      required
-                    />
-                  </div>
-                  {studentPhoneError && (
-                    <p className="text-red-500 text-sm mt-1">{studentPhoneError}</p>
-                  )}
-                </div>
-                {/* Parent Phone Number */}
-                <div className="md:col-span-2">
-                  <label className="block text-black font-semibold mb-2">
-                    Parent Phone Number
-                  </label>
-                  <div className="flex items-center border border-gray-300 rounded-md p-2">
-                    <FaWhatsapp className="text-green-600 mr-2 text-2xl" />
-                    <Select
-                      options={countryCodes}
-                      value={parentCountryCode}
-                      onChange={setParentCountryCode}
-                      placeholder="Select Code"
-                      className="mr-2 w-1/5"
-                    />
-                    <input
-                      name="parentNumber"
-                      type="text"
-                      placeholder="Enter Parent Phone Number"
-                      value={formData.parentNumber}
-                      onChange={handleChange}
-                      onBlur={handleParentPhoneBlur}
-                      className="flex-1 px-2 py-1 text-gray-800 outline-none font-medium"
-                      required
-                    />
-                  </div>
-                  {parentPhoneError && (
-                    <p className="text-red-500 text-sm mt-1">{parentPhoneError}</p>
-                  )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Student ID */}
+              <div>
+                <label
+                  htmlFor="studentId"
+                  className="block text-sm sm:text-base text-black font-semibold mb-2"
+                >
+                  Student ID
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                  <FaUsers className="text-black mr-2" />
+                  <input
+                    id="studentId"
+                    name="studentId"
+                    type="text"
+                    placeholder="Enter Student ID"
+                    value={formData.studentId}
+                    onChange={handleChange}
+                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
+                    required
+                  />
                 </div>
               </div>
-              <button
-                type="submit"
-                className={`w-full py-3 text-white font-semibold rounded-md mt-4 ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
-            </>
+              {/* Batch */}
+              <div>
+                <label
+                  htmlFor="batchNo"
+                  className="block text-sm sm:text-base text-black font-semibold mb-2"
+                >
+                  Batch
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-1 focus-within:ring-2 focus-within:ring-blue-500">
+                  <FaCalendarAlt className="text-black mr-2" />
+                  <select
+                    id="batchNo"
+                    name="batchNo"
+                    value={formData.batchNo}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, batchNo: e.target.value }))
+                    }
+                    className="w-full px-3 py-2 text-gray-800 font-medium text-sm sm:text-base"
+                    required
+                  >
+                    <option value="" disabled>
+                      Select Batch
+                    </option>
+                    {batches.map((batch) => (
+                      <option key={batch.id} value={batch.Batch}>
+                        {batch.Batch}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm sm:text-base text-black font-semibold mb-2"
+                >
+                  Email
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                  <FaEnvelope className="text-black mr-2" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter Email"
+                    value={formData.email.toLowerCase()}
+                    onChange={handleChange}
+                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
+                    required
+                  />
+                </div>
+              </div>
+              {/* Subjects */}
+              <div>
+                <label
+                  htmlFor="subjects"
+                  className="block text-sm sm:text-base text-black font-semibold mb-2"
+                >
+                  Subjects
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2">
+                  <Select
+                    id="subjects"
+                    isMulti
+                    options={subjects}
+                    value={selectedSubjects}
+                    onChange={handleSubjectsChange}
+                    placeholder="Select Subjects"
+                    className="flex-1 text-sm sm:text-base"
+                    classNamePrefix="select"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        border: "none",
+                        boxShadow: "none",
+                        fontSize: "14px",
+                        "@media (min-width: 640px)": {
+                          fontSize: "16px",
+                        },
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        zIndex: 9999,
+                      }),
+                    }}
+                  />
+                </div>
+              </div>
+              {/* Student Whatsapp Number */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm sm:text-base text-black font-semibold mb-2">
+                  Student Whatsapp Number
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                  <FaWhatsapp className="text-green-600 mr-2 text-xl sm:text-2xl" />
+                  <Select
+                    options={countryCodes}
+                    value={studentCountryCode}
+                    onChange={setStudentCountryCode}
+                    placeholder="Select Code"
+                    className="mr-2 w-1/3 sm:w-1/5 text-sm sm:text-base"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        border: "none",
+                        boxShadow: "none",
+                      }),
+                    }}
+                  />
+                  <input
+                    name="studentPhNumber"
+                    type="text"
+                    placeholder="Enter Student Phone Number"
+                    value={formData.studentPhNumber}
+                    onChange={handleChange}
+                    onBlur={handleStudentPhoneBlur}
+                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
+                    required
+                  />
+                </div>
+                {studentPhoneError && (
+                  <p className="text-red-500 text-xs sm:text-sm mt-1">{studentPhoneError}</p>
+                )}
+              </div>
+              {/* Parent Phone Number */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm sm:text-base text-black font-semibold mb-2">
+                  Parent Phone Number
+                </label>
+                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
+                  <FaWhatsapp className="text-green-600 mr-2 text-xl sm:text-2xl" />
+                  <Select
+                    options={countryCodes}
+                    value={parentCountryCode}
+                    onChange={setParentCountryCode}
+                    placeholder="Select Code"
+                    className="mr-2 w-1/3 sm:w-1/5 text-sm sm:text-base"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        border: "none",
+                        boxShadow: "none",
+                      }),
+                    }}
+                  />
+                  <input
+                    name="parentNumber"
+                    type="text"
+                    placeholder="Enter Parent Phone Number"
+                    value={formData.parentNumber}
+                    onChange={handleChange}
+                    onBlur={handleParentPhoneBlur}
+                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
+                    required
+                  />
+                </div>
+                {parentPhoneError && (
+                  <p className="text-red-500 text-xs sm:text-sm mt-1">{parentPhoneError}</p>
+                )}
+              </div>
+            </div>
           ) : (
             <div className="mb-4">
               <label
                 htmlFor="excelUpload"
-                className="block text-black font-semibold mb-2"
+                className="block text-sm sm:text-base text-black font-semibold mb-2"
               >
                 Upload Excel
               </label>
-              <div className="flex items-center border border-gray-300 rounded-md p-2">
+              <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
                 <FaUpload className="text-black mr-2" />
                 <input
                   id="excelUpload"
                   type="file"
                   accept=".xlsx, .xls"
                   onChange={handleFileUpload}
-                  className="flex-1 px-2 py-1 text-gray-800 outline-none"
+                  className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base"
                 />
               </div>
-              <button
-                type="submit"
-                className={`w-full py-3 text-white font-semibold rounded-md mt-4 ${
-                  loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-                disabled={loading}
-              >
-                {loading ? "Submitting..." : "Submit"}
-              </button>
             </div>
           )}
+          <button
+            type="submit"
+            className={`w-full py-3 text-white font-semibold rounded-md mt-4 text-sm sm:text-base ${
+              loading ? "bg-gray-500 cursor-not-allowed" : "bg-[#19216f] hover:bg-[#232d86]"
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
         </form>
       </div>
     </div>
