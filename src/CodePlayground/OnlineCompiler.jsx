@@ -52,6 +52,7 @@ function CPOnlineCompiler() {
   const [testCaseResultsMap, setTestCaseResultsMap] = useState({});
   const [hiddenCaseResultsMap, setHiddenCaseResultsMap] = useState({});
   const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
+  const [sampleTestCaseResults, setSampleTestCaseResults] = useState([]);
 
   const languageExtensions = {
     Python: python(),
@@ -108,12 +109,12 @@ function CPOnlineCompiler() {
   };
 
   const cleanedSampleInput =
-    typeof question?.Sample_Input === "string"
-      ? question.Sample_Input.replace(/\r/g, "")
-          .split("\n")
-          .map((line) => line.trim())
-          .join("\n")
-      : String(question?.Sample_Input ?? "");
+  typeof question?.Sample_Input === "string"
+    ? question.Sample_Input.replace(/\r/g, "")
+        .split("\n")
+        .map((line) => line.trim())
+        .join("\n")
+    : String(question?.Sample_Input ?? "");
 
   const cleanedSampleOutput =
     typeof question?.Sample_Output === "string"
@@ -233,6 +234,9 @@ function CPOnlineCompiler() {
         { passed: 0, failed: 0 }
       );
 
+      const sampleResults = results.filter((r) => r.type === "sample");
+      setSampleTestCaseResults(sampleResults);
+
       const hiddenResults = results.filter(
         (r) => r.type === "hidden" || r.type === "sample"
       );
@@ -278,6 +282,7 @@ function CPOnlineCompiler() {
       console.error("Error in handleRun:", error);
       setTestCases([]);
       setHiddenTestCaseResults([]);
+      setSampleTestCaseResults([]);
       toast.error(error.response?.data?.message || "Failed to run code.");
     } finally {
       setLoading(false);
@@ -423,6 +428,7 @@ function CPOnlineCompiler() {
           )}
         </div>
         <div className="flex flex-col gap-4">
+          {/* Normal Test Cases (Custom Input) */}
           <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
             {customInputEnabled ? (
               <>
@@ -442,6 +448,33 @@ function CPOnlineCompiler() {
               <p className="text-sm text-gray-300">
                 Normal test summary is only shown if custom input is enabled.
               </p>
+            )}
+          </div>
+          {/* Sample Test Cases */}
+          <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
+            <p className="font-semibold mb-2 text-white">Sample Test Case Results:</p>
+            {sampleTestCaseResults.length === 0 ? (
+              <p className="text-sm text-gray-300">No sample test case results yet. Run the code to see results.</p>
+            ) : (
+              sampleTestCaseResults.map((testCase, index) => (
+                <div key={index} className="mb-4 p-2 border-b border-gray-600 last:border-b-0">
+                  <p className="text-sm text-gray-300">
+                    <span className="font-medium">Input:</span>
+                    <pre className="whitespace-pre-wrap break-words">{testCase.input}</pre>
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    <span className="font-medium">Expected Output:</span>
+                    <pre className="whitespace-pre-wrap break-words">{testCase.expected_output}</pre>
+                  </p>
+                  <p className="text-sm text-gray-300">
+                    <span className="font-medium">Actual Output:</span>
+                    <pre className="whitespace-pre-wrap break-words">{testCase.actual_output}</pre>
+                  </p>
+                  <p className={`text-sm ${testCase.status === "Passed" ? "text-green-500" : "text-red-500"}`}>
+                    <span className="font-medium">Status:</span> {testCase.status}
+                  </p>
+                </div>
+              ))
             )}
           </div>
         </div>

@@ -20,7 +20,7 @@ const SubTopicQuestions = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          'http://192.168.0.4:5000/api/v1/get-cpquestions',
+           `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
           {
             params: {
               subject: subjectname,
