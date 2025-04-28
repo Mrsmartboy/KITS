@@ -34,6 +34,7 @@ const SubTopicQuestions = () => {
           ),
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/cp-progress`, {
             params: { subject: subjectname, tags: state.tag, studentId },
+            validateStatus: (s) => s < 400 || s === 404, // 404 ⇒ resolve, not reject
           }),
         ]);
 
@@ -65,7 +66,7 @@ const SubTopicQuestions = () => {
         }
       } catch (err) {
         console.error("Questions API call failed:", err);
-        setError("Failed to fetch questions.");
+        // setError("Failed to fetch questions.");
       } finally {
         setLoading(false);
       }
@@ -154,16 +155,22 @@ const SubTopicQuestions = () => {
                     className={`border-b cursor-pointer hover:bg-gray-50 ${
                       i % 2 === 0 ? "bg-white" : "bg-gray-50"
                     }`}
-                    onClick={() =>
+                    onClick={() => {
+                      /* pull any submission details we cached in progressMap */
+                      const prog = progressMap[q.questionId] ?? {};
+                      const { sourceCode = null, results = null } = prog;
+
                       navigate(`/code-playground/solve/${q.questionId}`, {
                         state: {
                           subjectname,
                           topicname,
                           subtopic,
                           question: q,
+                          prog_sourceCode: sourceCode, // <-- new
+                          prog_results: results, // <-- new
                         },
-                      })
-                    }
+                      });
+                    }}
                   >
                     <td className="py-4 px-4 text-gray-800">{q.Question}</td>
                     <td className="py-4 px-4 text-gray-600">{q.Difficulty}</td>
