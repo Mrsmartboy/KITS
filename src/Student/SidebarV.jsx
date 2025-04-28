@@ -157,7 +157,7 @@ export const SidebarV = ({
           {
             label: "Code Playground",
             path: "/code-playground",
-            icon: LeaveRequestIcon,
+            icon: CodePlayGroundIcon,
           },
           {
             label: "Learderboard",

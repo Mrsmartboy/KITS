@@ -91,17 +91,22 @@ const SubTopicQuestions = () => {
     };
   };
 
+  const formatStatus = (status) =>
+    status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+
   const gridCols = { gridTemplateColumns: "5% 35% 10% 15% 15% 15%" };
+  const rawTitle = decodeURIComponent(subtopic).replace(/-/g, " ");
+  const displayTitle = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 font-[Inter]">
-      <div className="w-full max-w-5xl flex justify-between items-center mb-8">
+      <div className="w-full flex justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
-          {decodeURIComponent(subtopic).replace(/-/g, " ")} Questions
+          {displayTitle} Questions
         </h1>
         <button
           onClick={() => navigate(`/code-playground/${subjectname}`)}
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+          className="bg-[#2333cb] text-white py-2 px-4 rounded-lg hover:bg-[#181e5a]"
         >
           Back to Subtopics
         </button>
@@ -157,7 +162,7 @@ const SubTopicQuestions = () => {
                   <div className="py-4 px-6">{q.Question}</div>
                   <div className="py-4 px-6">{q.Difficulty}</div>
                   <div className="py-4 px-6">
-                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div
                         className="h-3 rounded-full bg-[#2333CB]"
                         style={{ width: `${(testPassed / testTotal) * 100}%` }}
@@ -168,7 +173,7 @@ const SubTopicQuestions = () => {
                     </div>
                   </div>
                   <div className="py-4 px-6">
-                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div
                         className="h-3 rounded-full bg-[#2333CB]"
                         style={{ width: `${(scorePassed / scoreTotal) * 100}%` }}
@@ -178,7 +183,7 @@ const SubTopicQuestions = () => {
                       {scorePassed}/{scoreTotal}
                     </div>
                   </div>
-                  <div className="py-4 px-6">{status}</div>
+                  <div className="py-4 px-6">{formatStatus(status)}</div>
                 </div>
               );
             })}
@@ -212,7 +217,7 @@ const SubTopicQuestions = () => {
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-medium text-[16px]">#{idx + 1}</span>
                     <span className="text-[14px] font-semibold text-[#19216F]">
-                      {status}
+                      {formatStatus(status)}
                     </span>
                   </div>
                   <div className="mb-3 text-[16px]">{q.Question}</div>
@@ -225,23 +230,27 @@ const SubTopicQuestions = () => {
                     <div className="text-[13px] font-semibold mb-2">
                       Test Cases Passed
                     </div>
-                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div
                         className="h-3 rounded-full bg-[#2333CB]"
                         style={{ width: `${(testPassed / testTotal) * 100}%` }}
                       />
                     </div>
-                    <div className="mt-1 text-[11px]">{testPassed}/{testTotal}</div>
+                    <div className="mt-1 text-[11px]">
+                      {testPassed}/{testTotal}
+                    </div>
                   </div>
                   <div>
                     <div className="text-[13px] font-semibold mb-2">Score</div>
-                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div
-                        className="h-3 rounded-full bg-[#2333CB]}"
+                        className="h-3 rounded-full bg-[#2333CB]"
                         style={{ width: `${(scorePassed / scoreTotal) * 100}%` }}
                       />
                     </div>
-                    <div className="mt-1 text-[11px]">{scorePassed}/{scoreTotal}</div>
+                    <div className="mt-1 text-[11px]">
+                      {scorePassed}/{scoreTotal}
+                    </div>
                   </div>
                 </div>
               );
@@ -249,7 +258,8 @@ const SubTopicQuestions = () => {
           </div>
         </>
       ) : (
-        !loading && !error && <p className="text-gray-600">No questions available.</p>
+        !loading &&
+        !error && <p className="text-gray-600">No questions available.</p>
       )}
     </div>
   );
