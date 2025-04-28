@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { decryptData } from "../../cryptoUtils";
 import axios from "axios";
 import TestCaseTabsNew from "./TestCaseTabs";
+import { Position } from "@react-pdf-viewer/core";
 
 const languageExtensions = {
   Python: "python",
@@ -256,6 +257,12 @@ function CPOnlineCompiler() {
       setHiddenSummary(hidSum);
       setSampleResults(results);
 
+      if (hidSum.failed === 0) {
+        toast.success("All test cases passed!", {position:"bottom-left"});
+      } else {
+        toast.warn(`Some test cases failed. Passed: ${hidSum.passed}/${hidSum.passed + hidSum.failed}`, {position:"bottom-left"});
+      }
+      
       if (isSubmit) {
         setModalLoading(true);
         setShowModal(true);
@@ -300,7 +307,7 @@ function CPOnlineCompiler() {
               onClick={handleBack}
             >
               <FaArrowLeft className="text-white w-4 h-4" />
-              <div className="text-white text-base font-medium">Code Practice</div>
+              <div className="text-white text-base font-medium">Code Playground</div>
             </div>
 
             {/* Question Box */}

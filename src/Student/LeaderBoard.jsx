@@ -43,7 +43,7 @@ const LeaderBoard = () => {
         if (data.success) {
           setTopThree(data.topThree || []);
           setOthers(data.others || []);
-          toast.success(`Loaded ${params.mode} leaderboard`);
+          // toast.success(`Loaded ${params.mode} leaderboard`);
         } else {
           toast.error(data.message || "Unknown error");
         }
