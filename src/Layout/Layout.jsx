@@ -47,7 +47,7 @@ const Layout = ({ setIsAuthenticated }) => {
   // Define routes where the sidebar should be hidden
   const hideSidebarPaths = [
     "/conduct-exam",
-    "/codepractice/solve/",
+    "/code-playground/solve/",
   ];
 
   // Check if the current pathname starts with any hideSidebarPaths

@@ -155,8 +155,8 @@ export const SidebarV = ({
             icon: MockInterviewIcon,
           },
           {
-            label: "codepractice",
-            path: "/codepractice",
+            label: "Code Playground",
+            path: "/code-playground",
             icon: LeaveRequestIcon,
           }
           
