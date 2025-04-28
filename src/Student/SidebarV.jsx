@@ -158,9 +158,13 @@ export const SidebarV = ({
             label: "Code Playground",
             path: "/code-playground",
             icon: LeaveRequestIcon,
-          }
-          
-          ,
+          },
+          {
+            label: "Learderboard",
+            path: "/leaderboard",
+            icon: FaChartBar,
+          },
+
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
       case "super":
@@ -203,7 +207,7 @@ export const SidebarV = ({
 
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
-     
+
       case "superAdmin":
         return [
           {
@@ -240,10 +244,10 @@ export const SidebarV = ({
           },
           { label: "Student Search", path: "/studentsearch", icon: FaSearch },
           { label: "Curriculum", path: "/curriculum", icon: FaBookOpen },
-         
+
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
-     
+
       case "Mentors":
         return [
           {
@@ -263,7 +267,6 @@ export const SidebarV = ({
             path: "/studentdata",
             icon: MentorStudentDataIcon,
           },
-
 
           {
             label: "Students Performance",
@@ -289,7 +292,7 @@ export const SidebarV = ({
             path: "/studentdata",
             icon: StudentDataIcon,
           },
-         
+
           {
             label: "Exam Statistics",
             path: "/exam-statistics",
