@@ -1,3 +1,4 @@
+/* CPOnlineCompiler.jsx */
 import React, { useState, useEffect, useCallback } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { EditorView } from "@codemirror/view";
@@ -11,142 +12,113 @@ import { toast } from "react-toastify";
 import { decryptData } from "../../cryptoUtils";
 import axios from "axios";
 import TestCaseTabs from "../Student/Exams_module/students/ExamModule/TestCaseTabs";
-import { div } from "@tensorflow/tfjs";
+
+const languageExtensions = {
+  Python: python(),
+  Java: java(),
+  C: cpp(),
+  "C++": cpp(),
+  JavaScript: javascript(),
+};
 
 function CPOnlineCompiler() {
-  const location = useLocation();
+  /* ─────────── routing state ─────────── */
+  const { state: loc = {} } = useLocation();
   const navigate = useNavigate();
-  const locationState = location.state || {};
+
   const {
-    question: initialQuestion = {},
-    index: initialIndex = 0,
-    questions: initialQuestionsList = [],
-    codeMap: initialCodeMap = {},
+    question: initQuestion = {},
+    index: initIndex = 0,
+    questions: initList = [],
+    codeMap: initCodeMap = {},
     subjectname,
     topicname,
     subtopic,
     tag,
-  } = locationState;
-  const questionId = initialQuestion?.questionId;
-  const subject = initialQuestion?.Subject?.toLowerCase() || "python";
-  const tags = tag || initialQuestion?.Tags?.toLowerCase() || "day-1:1";
-  const questionType = initialQuestion?.Question_Type || "code_test";
+    prog_sourceCode, // ← passed from list page
+    prog_results, // ← passed from list page
+  } = loc;
+
+  /* ─────────── derived identifiers ─────────── */
+  const questionId = initQuestion?.questionId;
+  const subject = initQuestion?.Subject?.toLowerCase() || "python";
+  const tags = tag || initQuestion?.Tags?.toLowerCase() || "day-1:1";
+  const questionType = initQuestion?.Question_Type || "code_test";
   const testerId =
     decryptData(sessionStorage.getItem("student_login_details") || "") || "";
 
-  const [question, setQuestion] = useState(initialQuestion);
-  const [codeMap, setCodeMap] = useState(initialCodeMap);
-  const [code, setCode] = useState(initialCodeMap[initialIndex] || "");
+  /* ─────────── state ─────────── */
+  const [question, setQuestion] = useState(initQuestion);
+  const [codeMap, setCodeMap] = useState(initCodeMap);
+
+  /* ❶ initial editor content:   codeMap > prog_sourceCode > "" */
+  const [code, setCode] = useState(
+    initCodeMap[initIndex] ?? prog_sourceCode ?? ""
+  );
+
   const [language, setLanguage] = useState("Python");
-  const [customInputEnabled, setCustomInputEnabled] = useState(false);
-  const [customInput, setCustomInput] = useState("");
+  const [customInputEnabled, setCustom] = useState(false);
+  const [customInput, setCustInput] = useState("");
+
   const [loading, setLoading] = useState(false);
+  const [isLoadingQuestion, setIsLoadingQuest] = useState(false);
+
   const [testCases, setTestCases] = useState([]);
   const [testCaseSummary, setTestCaseSummary] = useState({
     passed: 0,
     failed: 0,
   });
-  const [hiddenTestCaseResults, setHiddenTestCaseResults] = useState([]);
-  const [hiddenTestCaseSummary, setHiddenTestCaseSummary] = useState({
+  const [hiddenTestCaseResults, setHiddenResults] = useState([]);
+  const [hiddenTestCaseSummary, setHiddenSummary] = useState({
     passed: 0,
     failed: 0,
   });
-  const [testCaseResultsMap, setTestCaseResultsMap] = useState({});
-  const [hiddenCaseResultsMap, setHiddenCaseResultsMap] = useState({});
-  const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
-  const [sampleTestCaseResults, setSampleTestCaseResults] = useState([]);
+  const [testCaseResultsMap, setResultsMap] = useState({});
+  const [hiddenCaseResultsMap, setHiddenResultsMap] = useState({});
+  const [sampleTestCaseResults, setSampleResults] = useState(
+    prog_results || []
+  );
 
-  const languageExtensions = {
-    Python: python(),
-    Java: java(),
-    C: cpp(),
-    "C++": cpp(),
-    JavaScript: javascript(),
-  };
-
+  /* ─────────── when location.state changes ─────────── */
   useEffect(() => {
-    console.log("location.state updated:", locationState);
     const {
-      question: newQuestion = {},
-      index: newIndex = 0,
-      questions: newQuestionsList = [],
-      codeMap: newCodeMap = {},
-    } = locationState;
+      question: newQ = {},
+      index: newIdx = 0,
+      codeMap: newMap = {},
+    } = loc;
 
-    if (
-      !newQuestionsList ||
-      !Array.isArray(newQuestionsList) ||
-      newQuestionsList.length === 0
-    ) {
-      console.warn("Questions list is empty or invalid:", newQuestionsList);
-      // toast.error("No questions available to display.");
+    if (!Array.isArray(loc.questions) || loc.questions.length === 0) {
+      console.warn("Questions list is empty or invalid:", loc.questions);
       return;
     }
 
-    setQuestion(newQuestion);
-    setCodeMap(newCodeMap);
-    setCode(newCodeMap[newIndex] || "");
-  }, [locationState]);
+    setQuestion(newQ);
+    setCodeMap(newMap);
+    setCode(newMap[newIdx] ?? loc.prog_sourceCode ?? ""); // ← keep prog_sourceCode
+  }, [loc]);
 
-  const processedHiddenTestCases = (hiddenTestCases) => {
-    return hiddenTestCases
-      ? hiddenTestCases.map((tc) => ({
-          ...tc,
-          Input:
-            typeof tc.Input === "string"
-              ? tc.Input.replace(/\r/g, "")
-                  .split("\n")
-                  .map((line) => line.trim())
-                  .join("\n")
-              : String(tc.Input ?? ""),
-          Output:
-            typeof tc.Output === "string"
-              ? tc.Output.replace(/\r/g, "")
-                  .split("\n")
-                  .map((line) => line.trimEnd())
-                  .join("\n")
-              : String(tc.Output ?? ""),
-        }))
-      : [];
-  };
+  /* ─────────── keep editor in sync with map/index ─────────── */
+  useEffect(() => {
+    setCode(codeMap[initIndex] ?? prog_sourceCode ?? "");
+  }, [initIndex, codeMap, prog_sourceCode]);
 
-  const cleanedSampleInput =
-    typeof question?.Sample_Input === "string"
-      ? question.Sample_Input.replace(/\r/g, "")
-          .split("\n")
-          .map((line) => line.trim())
-          .join("\n")
-      : String(question?.Sample_Input ?? "");
-
-  const cleanedSampleOutput =
-    typeof question?.Sample_Output === "string"
-      ? question.Sample_Output.replace(/\r/g, "")
-          .split("\n")
-          .map((line) => line.trimEnd())
-          .join("\n")
-      : String(question?.Sample_Output ?? "");
-
+  /* ─────────── fetch question only if needed ─────────── */
   const fetchQuestionData = useCallback(async () => {
     if (!questionId || question.Question) return;
-    setIsLoadingQuestion(true);
+    setIsLoadingQuest(true);
     try {
       const url = `${
         import.meta.env.VITE_BACKEND_URL
       }/api/v1/question-crud?subject=${subject}&questionId=${questionId}&questionType=${questionType}`;
-      const response = await axios.get(url);
-      const data = response.data;
-      if (data?.codeQuestions?.length > 0) {
-        const fetchedQuestion = data.codeQuestions[0];
-        console.log("Fetched question data:", fetchedQuestion);
-        setQuestion(fetchedQuestion);
-      } else {
-        toast.error("Question not found in database.");
-      }
-    } catch (error) {
-      console.error("Error fetching question data:", error);
+
+      const { data } = await axios.get(url);
+      if (data?.codeQuestions?.length) setQuestion(data.codeQuestions[0]);
+      else toast.error("Question not found in database.");
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to load question data.");
     } finally {
-      setIsLoadingQuestion(false);
+      setIsLoadingQuest(false);
     }
   }, [questionId, subject, questionType]);
 
@@ -154,48 +126,50 @@ function CPOnlineCompiler() {
     fetchQuestionData();
   }, [fetchQuestionData]);
 
-  useEffect(() => {
-    setCode(codeMap[initialIndex] || "");
-  }, [initialIndex, codeMap]);
+  /* ─────────── processed inputs / outputs ─────────── */
+  const clean = (txt, trimEnd = false) =>
+    typeof txt === "string"
+      ? txt
+          .replace(/\r/g, "")
+          .split("\n")
+          .map((l) => (trimEnd ? l.trimEnd() : l.trim()))
+          .join("\n")
+      : String(txt ?? "");
 
-  useEffect(() => {
-    const savedNormal = testCaseResultsMap[initialIndex];
-    if (savedNormal) {
-      setTestCases(savedNormal.results);
-      setTestCaseSummary(savedNormal.summary);
-    } else {
-      setTestCases([]);
-      setTestCaseSummary({ passed: 0, failed: 0 });
-    }
-    const savedHidden = hiddenCaseResultsMap[initialIndex];
-    if (savedHidden) {
-      setHiddenTestCaseResults(savedHidden.results);
-      setHiddenTestCaseSummary(savedHidden.summary);
-    } else {
-      setHiddenTestCaseResults([]);
-      setHiddenTestCaseSummary({ passed: 0, failed: 0 });
-    }
-  }, [initialIndex, testCaseResultsMap, hiddenCaseResultsMap]);
+  const cleanedSampleInput = clean(question?.Sample_Input);
+  const cleanedSampleOutput = clean(question?.Sample_Output, true);
 
+  const processHidden = (arr = []) =>
+    arr.map((tc) => ({
+      ...tc,
+      Input: clean(tc.Input),
+      Output: clean(tc.Output, true),
+    }));
+
+  /* ─────────── editor change ─────────── */
   const handleCodeChange = (val) => {
     setCode(val);
-    setCodeMap((prev) => ({ ...prev, [initialIndex]: val }));
+    setCodeMap((prev) => ({ ...prev, [initIndex]: val }));
   };
 
+  /* ─────────── run / submit ─────────── */
   const handleRun = async () => {
     if (!questionId) {
       toast.error("No question ID found!");
       return;
     }
+
     setLoading(true);
-    const hiddenTestCasesWithSample = [
-      ...processedHiddenTestCases(question.Hidden_Test_Cases),
+
+    const hiddenWithSample = [
+      ...processHidden(question.Hidden_Test_Cases),
       {
         Input: cleanedSampleInput,
         Output: cleanedSampleOutput,
         type: "sample",
       },
     ];
+
     const bodyData = {
       student_id: testerId,
       question_id: questionId,
@@ -206,120 +180,111 @@ function CPOnlineCompiler() {
       description: question.Question,
       constraints: question.Constraints,
       difficulty: question.Difficulty,
-      hidden_test_cases: hiddenTestCasesWithSample,
+      hidden_test_cases: hiddenWithSample,
       sample_input: question.Sample_Input,
       sample_output: question.Sample_Output,
       Score: question.Score,
       type: question.Question_Type,
     };
+
     try {
-      const response = await axios.post(
+      const { data } = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/test-cpsubmissions`,
         bodyData
       );
-      const { results } = response.data;
+      const { results } = data;
 
-      const normalResults = customInputEnabled
+      /* ---- normal (custom input) ---- */
+      const normalRes = customInputEnabled
         ? results.filter((r) => r.type === "normal")
         : [];
-      const computedNormalResults = normalResults.map((res) => {
-        const passed =
-          res.expected_output?.trim() === res.actual_output?.trim();
-        return { ...res, status: passed ? "Passed" : "Failed" };
-      });
-      const normalSummary = computedNormalResults.reduce(
-        (acc, cur) => {
-          if (cur.status === "Passed") acc.passed++;
-          else acc.failed++;
-          return acc;
+      const normComp = normalRes.map((r) => ({
+        ...r,
+        status:
+          r.expected_output?.trim() === r.actual_output?.trim()
+            ? "Passed"
+            : "Failed",
+      }));
+      const normSum = normComp.reduce(
+        (a, r) => {
+          r.status === "Passed" ? a.passed++ : a.failed++;
+          return a;
         },
         { passed: 0, failed: 0 }
       );
 
-      const sampleResults = results;
-      console.log(sampleResults);
-      setSampleTestCaseResults(sampleResults);
-
-      const hiddenResults = results.filter(
+      /* ---- hidden + sample ---- */
+      const hiddenRes = results.filter(
         (r) => r.type === "hidden" || r.type === "sample"
       );
-      const computedHiddenResults = hiddenResults.map((res) => {
-        const passed =
-          res.expected_output?.trim() === res.actual_output?.trim();
-        return { ...res, status: passed ? "Passed" : "Failed" };
-      });
-      const hiddenSummary = computedHiddenResults.reduce(
-        (acc, cur) => {
-          if (cur.status === "Passed") acc.passed++;
-          else acc.failed++;
-          return acc;
+      const hidComp = hiddenRes.map((r) => ({
+        ...r,
+        status:
+          r.expected_output?.trim() === r.actual_output?.trim()
+            ? "Passed"
+            : "Failed",
+      }));
+      const hidSum = hidComp.reduce(
+        (a, r) => {
+          r.status === "Passed" ? a.passed++ : a.failed++;
+          return a;
         },
         { passed: 0, failed: 0 }
       );
 
-      setTestCaseResultsMap((prev) => ({
+      /* ---- update state ---- */
+      setResultsMap((prev) => ({
         ...prev,
-        [initialIndex]: {
-          results: computedNormalResults,
-          summary: normalSummary,
-        },
+        [initIndex]: { results: normComp, summary: normSum },
       }));
-      setHiddenCaseResultsMap((prev) => ({
+      setHiddenResultsMap((prev) => ({
         ...prev,
-        [initialIndex]: {
-          results: computedHiddenResults,
-          summary: hiddenSummary,
-        },
+        [initIndex]: { results: hidComp, summary: hidSum },
       }));
-      setTestCaseSummary(normalSummary);
-      setTestCases(computedNormalResults);
-      setHiddenTestCaseResults(computedHiddenResults);
-      setHiddenTestCaseSummary(hiddenSummary);
+      setTestCases(normComp);
+      setTestCaseSummary(normSum);
+      setHiddenResults(hidComp);
+      setHiddenSummary(hidSum);
+      setSampleResults(results);
 
-      if (hiddenSummary.passed === computedHiddenResults.length) {
-        toast.success("All test cases passed! Question solved successfully.");
-      } else if (hiddenSummary.failed > 0) {
-        toast.warn("Some test cases failed. Please check your code.");
-      }
-    } catch (error) {
-      console.error("Error in handleRun:", error);
+      if (hidSum.failed === 0) toast.success("All test cases passed!");
+      else toast.warn("Some test cases failed.");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to run code.");
       setTestCases([]);
-      setHiddenTestCaseResults([]);
-      setSampleTestCaseResults([]);
-      toast.error(error.response?.data?.message || "Failed to run code.");
+      setHiddenResults([]);
+      setSampleResults([]);
     } finally {
       setLoading(false);
     }
   };
 
+  /* ─────────── back nav ─────────── */
   const handleBack = () => {
-    if (subjectname && topicname && subtopic && tags) {
+    if (subjectname && topicname && subtopic) {
       navigate(`/code-playground/${subjectname}/${topicname}/${subtopic}`, {
         state: { tag: tags },
       });
-    } else {
-      console.warn(
-        "Navigation details missing, navigating to default coding page"
-      );
-      toast.warn(
-        "Unable to determine navigation details, returning to coding page."
-      );
-      navigate("/code-playground");
-    }
+    } else navigate("/code-playground");
   };
 
+  /* ─────────── render ─────────── */
   return (
     <div className="flex flex-col md:flex-row w-full h-screen bg-gray-900 text-white mt-2 p-4 m-4">
+      {/* ----- left: question ----- */}
       <div className="md:w-1/2 w-full p-4 md:border-r border-gray-700 overflow-y-auto">
         {isLoadingQuestion ? (
           <p className="text-gray-300">Loading question data...</p>
         ) : (
           <>
             <h1 className="text-2xl font-bold mb-4">
-              Question {question.Question_No || initialIndex + 1}
+              Question {question.Question_No || initIndex + 1}
             </h1>
+
             {question?.Question ? (
               <div className="space-y-3">
+                {/* question body */}
                 <div>
                   <h2 className="text-lg font-semibold">Question:</h2>
                   <p className="text-gray-300">{question.Question}</p>
@@ -336,11 +301,11 @@ function CPOnlineCompiler() {
                     {question.Difficulty || "Not specified"}
                   </p>
                 </div>
+                {/* sample I/O */}
                 <div>
                   <h3 className="text-md font-semibold">Sample Input:</h3>
                   <div className="bg-gray-800 p-2 rounded text-gray-300">
-                    {question.Sample_Input !== undefined &&
-                    String(question.Sample_Input).trim() ? (
+                    {cleanedSampleInput.trim() ? (
                       <pre className="whitespace-pre-wrap break-words">
                         Input:{"\n"}
                         {cleanedSampleInput}
@@ -355,8 +320,7 @@ function CPOnlineCompiler() {
                 <div>
                   <h3 className="text-md font-semibold">Sample Output:</h3>
                   <div className="bg-gray-800 p-2 rounded text-gray-300">
-                    {question.Sample_Output !== undefined &&
-                    String(question.Sample_Output).trim() ? (
+                    {cleanedSampleOutput.trim() ? (
                       <pre className="whitespace-pre-wrap break-words">
                         Output:{"\n"}
                         {cleanedSampleOutput}
@@ -370,15 +334,15 @@ function CPOnlineCompiler() {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-400">
-                No question data available. Ensure you have the correct question
-                object.
-              </p>
+              <p className="text-gray-400">No question data available.</p>
             )}
           </>
         )}
       </div>
+
+      {/* ----- right: editor ----- */}
       <div className="md:w-1/2 w-full p-4 flex flex-col overflow-y-auto">
+        {/* controls */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4">
           <div className="mb-2 md:mb-0">
             <label className="block font-semibold mb-1">Select Language:</label>
@@ -387,11 +351,11 @@ function CPOnlineCompiler() {
               onChange={(e) => setLanguage(e.target.value)}
               className="bg-gray-700 text-white border border-gray-500 rounded px-2 py-1"
             >
-              <option value="Python">Python</option>
-              <option value="Java">Java</option>
-              <option value="C">C</option>
-              <option value="C++">C++</option>
-              <option value="JavaScript">JavaScript</option>
+              {Object.keys(languageExtensions).map((l) => (
+                <option key={l} value={l}>
+                  {l}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex space-x-2">
@@ -414,6 +378,8 @@ function CPOnlineCompiler() {
             </button>
           </div>
         </div>
+
+        {/* editor */}
         <div className="border border-gray-600 rounded mb-4 flex-grow bg-[#1E1E1E] min-h-[400px] max-h-[500px] overflow-auto">
           <CodeMirror
             value={code}
@@ -423,8 +389,10 @@ function CPOnlineCompiler() {
             onChange={handleCodeChange}
           />
         </div>
+
+        {/* results */}
         <div>
-          {sampleTestCaseResults.length == 0 ? (
+          {sampleTestCaseResults.length === 0 ? (
             <div className="border border-gray-600 rounded bg-[#1E1E1E] mb-4 p-4">
               Run Code to display Result
             </div>
