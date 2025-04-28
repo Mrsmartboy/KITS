@@ -7,7 +7,7 @@ const CourseCard = ({ course }) => {
   return (
     <div
       className="box-border flex flex-col justify-end items-center p-4 sm:p-5 gap-4 sm:gap-5 w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] bg-[#F9F9F9] border border-[#D5D7DA] shadow-sm rounded-xl cursor-pointer hover:shadow-md transition-shadow"
-      onClick={() => navigate(`/codepractice/${course.language}`)}
+      onClick={() => navigate(`/code-playground/${course.language}`)}
     >
       <div className="flex flex-col items-start gap-3 sm:gap-4 w-full flex-1">
         <div className="flex flex-col items-start gap-2 sm:gap-3 w-full">

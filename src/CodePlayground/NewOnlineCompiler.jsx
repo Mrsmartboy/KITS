@@ -57,16 +57,11 @@ const NewOnlineCompiler = () => {
 
                             {/* Action Buttons */}
                             <div className="flex flex-wrap gap-3">
-                                <button className="flex items-center gap-2 px-3 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] rounded-md">
-                                    <FaBug className="text-white w-5 h-5" />
-                                    <span className="text-white">Debug</span>
-                                </button>
+                               
                                 <button className="px-7 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] text-white rounded-md font-medium">
                                     Run
                                 </button>
-                                <button className="px-4 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] text-white rounded-md font-medium">
-                                    Download
-                                </button>
+                              
                                 <button className="px-4 py-2 border-2 border-[#BABABA] bg-[#129E00] text-white rounded-md font-medium">
                                     Submit
                                 </button>
