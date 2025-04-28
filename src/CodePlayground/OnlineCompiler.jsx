@@ -79,7 +79,7 @@ function CPOnlineCompiler() {
       newQuestionsList.length === 0
     ) {
       console.warn("Questions list is empty or invalid:", newQuestionsList);
-      toast.error("No questions available to display.");
+      // toast.error("No questions available to display.");
       return;
     }
 
@@ -411,17 +411,6 @@ function CPOnlineCompiler() {
               }`}
             >
               {loading ? "Running..." : "Run"}
-            </button>
-            <button
-              // onClick={handleRun}
-              disabled={loading || !questionId}
-              className={`px-4 py-2 text-white rounded ${
-                loading || !questionId
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-500"
-              }`}
-            >
-              {loading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>
