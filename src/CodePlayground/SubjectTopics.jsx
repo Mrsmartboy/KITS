@@ -87,13 +87,13 @@ const SubjectTopicsWithSubTopics = () => {
     const encodedSubTopic = encodeURIComponent(
       subtopic.title.toLowerCase().replace(/\s+/g, '-')
     );
-    navigate(`/codepractice/${subject}/${encodedTopic}/${encodedSubTopic}`, {
+    navigate(`/code-playground/${subject}/${encodedTopic}/${encodedSubTopic}`, {
       state: { tag: subtopic.tag, subjectname: subject, topicname: encodedTopic, subtopic: encodedSubTopic },
     });
   }, [navigate]);
 
   const handleBackToTopics = () => {
-    navigate(`/codepractice/${subjectname}`);
+    navigate(`/code-playground/${subjectname}`);
   };
 
   // Filter curriculum by selected subject

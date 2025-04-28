@@ -14,7 +14,7 @@ const SubTopicCard = ({ subTopic, subjectname, topicname }) => {
     <div
       className="bg-white rounded-lg p-4 m-2 w-80 shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer"
       onClick={() =>
-        navigate(`/codepractice/${subjectname}/${topicname}/${encodedSubTopic}`, {
+        navigate(`/code-playground/${subjectname}/${topicname}/${encodedSubTopic}`, {
           state: { tag: subTopic.tag },
         })
       }
@@ -94,7 +94,7 @@ const SubTopics = () => {
           {decodeURIComponent(topicname).replace(/-/g, ' ')} Subtopics
         </h1>
         <button
-          onClick={() => navigate(`/codepractice/${subjectname}`)}
+          onClick={() => navigate(`/code-playground/${subjectname}`)}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
         >
           Back to Topics

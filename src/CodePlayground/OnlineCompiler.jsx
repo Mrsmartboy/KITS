@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { decryptData } from "../../cryptoUtils";
 import axios from "axios";
 import TestCaseTabs from "../Student/Exams_module/students/ExamModule/TestCaseTabs";
+import { div } from "@tensorflow/tfjs";
 
 function CPOnlineCompiler() {
   const location = useLocation();
@@ -30,7 +31,8 @@ function CPOnlineCompiler() {
   const subject = initialQuestion?.Subject?.toLowerCase() || "python";
   const tags = tag || initialQuestion?.Tags?.toLowerCase() || "day-1:1";
   const questionType = initialQuestion?.Question_Type || "code_test";
-  const testerId = decryptData(sessionStorage.getItem("student_login_details") || "") || "";
+  const testerId =
+    decryptData(sessionStorage.getItem("student_login_details") || "") || "";
 
   const [question, setQuestion] = useState(initialQuestion);
   const [codeMap, setCodeMap] = useState(initialCodeMap);
@@ -77,7 +79,7 @@ function CPOnlineCompiler() {
       newQuestionsList.length === 0
     ) {
       console.warn("Questions list is empty or invalid:", newQuestionsList);
-      toast.error("No questions available to display.");
+      // toast.error("No questions available to display.");
       return;
     }
 
@@ -109,12 +111,12 @@ function CPOnlineCompiler() {
   };
 
   const cleanedSampleInput =
-  typeof question?.Sample_Input === "string"
-    ? question.Sample_Input.replace(/\r/g, "")
-        .split("\n")
-        .map((line) => line.trim())
-        .join("\n")
-    : String(question?.Sample_Input ?? "");
+    typeof question?.Sample_Input === "string"
+      ? question.Sample_Input.replace(/\r/g, "")
+          .split("\n")
+          .map((line) => line.trim())
+          .join("\n")
+      : String(question?.Sample_Input ?? "");
 
   const cleanedSampleOutput =
     typeof question?.Sample_Output === "string"
@@ -234,7 +236,8 @@ function CPOnlineCompiler() {
         { passed: 0, failed: 0 }
       );
 
-      const sampleResults = results.filter((r) => r.type === "sample");
+      const sampleResults = results;
+      console.log(sampleResults);
       setSampleTestCaseResults(sampleResults);
 
       const hiddenResults = results.filter(
@@ -291,13 +294,17 @@ function CPOnlineCompiler() {
 
   const handleBack = () => {
     if (subjectname && topicname && subtopic && tags) {
-      navigate(`/codepractice/${subjectname}/${topicname}/${subtopic}`, {
+      navigate(`/code-playground/${subjectname}/${topicname}/${subtopic}`, {
         state: { tag: tags },
       });
     } else {
-      console.warn("Navigation details missing, navigating to default coding page");
-      toast.warn("Unable to determine navigation details, returning to coding page.");
-      navigate("/codepractice");
+      console.warn(
+        "Navigation details missing, navigating to default coding page"
+      );
+      toast.warn(
+        "Unable to determine navigation details, returning to coding page."
+      );
+      navigate("/code-playground");
     }
   };
 
@@ -319,11 +326,15 @@ function CPOnlineCompiler() {
                 </div>
                 <div>
                   <h3 className="text-md font-semibold">Constraints:</h3>
-                  <p className="text-gray-300">{question.Constraints || "No constraints provided."}</p>
+                  <p className="text-gray-300">
+                    {question.Constraints || "No constraints provided."}
+                  </p>
                 </div>
                 <div>
                   <h3 className="text-md font-semibold">Difficulty:</h3>
-                  <p className="text-gray-300">{question.Difficulty || "Not specified"}</p>
+                  <p className="text-gray-300">
+                    {question.Difficulty || "Not specified"}
+                  </p>
                 </div>
                 <div>
                   <h3 className="text-md font-semibold">Sample Input:</h3>
@@ -335,7 +346,9 @@ function CPOnlineCompiler() {
                         {cleanedSampleInput}
                       </pre>
                     ) : (
-                      <p className="text-gray-300">No sample input available.</p>
+                      <p className="text-gray-300">
+                        No sample input available.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -349,14 +362,17 @@ function CPOnlineCompiler() {
                         {cleanedSampleOutput}
                       </pre>
                     ) : (
-                      <p className="text-gray-300">No sample output available.</p>
+                      <p className="text-gray-300">
+                        No sample output available.
+                      </p>
                     )}
                   </div>
                 </div>
               </div>
             ) : (
               <p className="text-gray-400">
-                No question data available. Ensure you have the correct question object.
+                No question data available. Ensure you have the correct question
+                object.
               </p>
             )}
           </>
@@ -391,7 +407,7 @@ function CPOnlineCompiler() {
               className={`px-4 py-2 text-white rounded ${
                 loading || !questionId
                   ? "bg-gray-500 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-500"
+                  : "bg-blue-600 hover:bg-blue-500"
               }`}
             >
               {loading ? "Running..." : "Run"}
@@ -407,76 +423,14 @@ function CPOnlineCompiler() {
             onChange={handleCodeChange}
           />
         </div>
-        <div className="mb-4">
-          <label className="flex items-center space-x-2 font-semibold">
-            <input
-              type="checkbox"
-              className="accent-blue-500"
-              checked={customInputEnabled}
-              onChange={() => setCustomInputEnabled((prev) => !prev)}
-            />
-            <span>Enable Custom Input</span>
-          </label>
-          {customInputEnabled && (
-            <textarea
-              rows={2}
-              className="w-full mt-2 p-2 border border-gray-600 bg-[#1E1E1E] rounded text-white"
-              placeholder="Enter custom input"
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-            />
+        <div>
+          {sampleTestCaseResults.length == 0 ? (
+            <div className="border border-gray-600 rounded bg-[#1E1E1E] mb-4 p-4">
+              Run Code to display Result
+            </div>
+          ) : (
+            <TestCaseTabs testCases={sampleTestCaseResults} />
           )}
-        </div>
-        <div className="flex flex-col gap-4">
-          {/* Normal Test Cases (Custom Input) */}
-          <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
-            {customInputEnabled ? (
-              <>
-                <p className="font-semibold mb-2 text-white">
-                  Normal Test Summary: {testCaseSummary.passed} Passed /{" "}
-                  {testCaseSummary.failed} Failed
-                </p>
-                {testCases.length === 0 ? (
-                  <p className="text-sm text-gray-300">
-                    No normal test results yet.
-                  </p>
-                ) : (
-                  <TestCaseTabs testCases={testCases} />
-                )}
-              </>
-            ) : (
-              <p className="text-sm text-gray-300">
-                Normal test summary is only shown if custom input is enabled.
-              </p>
-            )}
-          </div>
-          {/* Sample Test Cases */}
-          <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
-            <p className="font-semibold mb-2 text-white">Sample Test Case Results:</p>
-            {sampleTestCaseResults.length === 0 ? (
-              <p className="text-sm text-gray-300">No sample test case results yet. Run the code to see results.</p>
-            ) : (
-              sampleTestCaseResults.map((testCase, index) => (
-                <div key={index} className="mb-4 p-2 border-b border-gray-600 last:border-b-0">
-                  <p className="text-sm text-gray-300">
-                    <span className="font-medium">Input:</span>
-                    <pre className="whitespace-pre-wrap break-words">{testCase.input}</pre>
-                  </p>
-                  <p className="text-sm text-gray-300">
-                    <span className="font-medium">Expected Output:</span>
-                    <pre className="whitespace-pre-wrap break-words">{testCase.expected_output}</pre>
-                  </p>
-                  <p className="text-sm text-gray-300">
-                    <span className="font-medium">Actual Output:</span>
-                    <pre className="whitespace-pre-wrap break-words">{testCase.actual_output}</pre>
-                  </p>
-                  <p className={`text-sm ${testCase.status === "Passed" ? "text-green-500" : "text-red-500"}`}>
-                    <span className="font-medium">Status:</span> {testCase.status}
-                  </p>
-                </div>
-              ))
-            )}
-          </div>
         </div>
       </div>
     </div>

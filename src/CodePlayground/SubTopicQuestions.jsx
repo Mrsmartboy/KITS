@@ -1,84 +1,137 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { decryptData } from "../../cryptoUtils";
 
 const SubTopicQuestions = () => {
   const { subjectname, topicname, subtopic } = useParams();
   const { state } = useLocation();
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const [questions, setQuestions] = useState([]);
+  const [progressMap, setProgress] = useState({}); // <-- new
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const studentId = decryptData(sessionStorage.getItem("id"));
+
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchQuestionsAndProgress = async () => {
       if (!state?.tag) {
-        setError('No tag provided for questions.');
+        setError("No tag provided for questions.");
         return;
       }
 
       setLoading(true);
       try {
-        const response = await axios.get(
-           `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
-          {
-            params: {
-              subject: subjectname,
-              tags: state.tag,
-            },
-          }
+        /* ── Both APIs concurrently ─────────────────────────────── */
+        const [cpResponse, studentCpResponse] = await Promise.all([
+          axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
+            {
+              params: { subject: subjectname, tags: state.tag },
+            }
+          ),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/cp-progress`, {
+            params: { subject: subjectname, tags: state.tag, studentId },
+          }),
+        ]);
+
+        /* ── Questions list (same as before) ────────────────────── */
+        const cpQuestions = cpResponse.data.success
+          ? cpResponse.data.codeQuestions || []
+          : [];
+
+        /* ── Progress normalisation ─────────────────────────────── */
+        const raw = studentCpResponse.data.success
+          ? studentCpResponse.data.data
+          : null;
+        const progressArr = raw
+          ? Array.isArray(raw)
+            ? raw
+            : [raw] // handle single-object or array
+          : [];
+        const map = Object.fromEntries(
+          progressArr.map((p) => [p.questionId, p])
         );
-        if (response.data.success) {
-          setQuestions(response.data.codeQuestions || []);
-        } else {
-          setQuestions([]);
+        setProgress(map);
+
+        /* ── If you still want to include unsolved questions
+              that aren’t in cp-progress, keep cpQuestions as is ── */
+        setQuestions(cpQuestions);
+
+        if (cpQuestions.length === 0) {
           setError(`No questions found for tag ${state.tag}`);
         }
-      } catch (error) {
-        console.error('Questions API call failed:', error);
-        setError('Failed to fetch questions');
-        setQuestions([]);
+      } catch (err) {
+        console.error("Questions API call failed:", err);
+        setError("Failed to fetch questions.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchQuestions();
-  }, [subjectname, state]);
+    fetchQuestionsAndProgress();
+  }, [subjectname, state, studentId]);
 
-  // Mock user progress (since API doesn't provide this)
-  const getMockProgress = (question) => {
-    const totalTestCases = question.Hidden_Test_Cases?.length || 4;
-    const passedTestCases = Math.min(totalTestCases, Math.floor(Math.random() * (totalTestCases + 1)));
-    const totalScore = question.Score * totalTestCases;
-    const latestScore = passedTestCases * question.Score;
-    const status = passedTestCases === totalTestCases ? 'SOLVED' : 'IN PROGRESS';
+  /* ───────────────── Helpers ────────────────────────── */
+
+  /** How many test-cases does this question contain?
+   *  (1 sample + N hidden) */
+  const getTotalTestCases = (q) =>
+    1 + (Array.isArray(q.Hidden_Test_Cases) ? q.Hidden_Test_Cases.length : 0);
+
+  /** Build a progress object for a single question */
+  const getProgress = (question) => {
+    const totalCases = getTotalTestCases(question);
+    const maxScore = question.Score; // “Score” is the full-question max
+
+    /* ========== NO SUBMISSION YET ========== */
+    const prog = progressMap[question.questionId];
+    if (!prog) {
+      return {
+        passedStr: `0/${totalCases}`,
+        passedPct: 0,
+        scoreStr: `0/${maxScore}`,
+        scorePct: 0,
+        status: "NOT ATTEMPTED",
+      };
+    }
+
+    /* ========== WE HAVE A SUBMISSION ========== */
+    const passedCount = prog.results.filter(
+      (r) => r.status === "Passed"
+    ).length;
+    const awarded = prog.awarded_score ?? 0;
 
     return {
-      testCasesPassed: `${passedTestCases}/${totalTestCases}`,
-      testCasesPercent: (passedTestCases / totalTestCases) * 100,
-      score: `${latestScore}/${totalScore}`,
-      scorePercent: (latestScore / totalScore) * 100,
-      status,
+      passedStr: `${passedCount}/${totalCases}`,
+      passedPct: (passedCount / totalCases) * 100,
+      scoreStr: `${awarded}/${maxScore}`,
+      scorePct: (awarded / maxScore) * 100,
+      status: passedCount === totalCases ? "SOLVED" : "IN PROGRESS",
     };
   };
 
+  /* ─────────────────────── UI ─────────────────────────────────── */
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
       <div className="w-full max-w-5xl flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
-          {decodeURIComponent(subtopic).replace(/-/g, ' ')} Questions
+          {decodeURIComponent(subtopic).replace(/-/g, " ")} Questions
         </h1>
         <button
-          onClick={() => navigate(`/codepractice/${subjectname}/${topicname}`)}
+          onClick={() => navigate(`/code-playground/${subjectname}`)}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
         >
           Back to Subtopics
         </button>
       </div>
+
       {loading && <p className="text-gray-600">Loading questions...</p>}
       {error && <p className="text-red-600">{error}</p>}
-      {questions.length > 0 ? (
+
+      {questions.length > 0 && !loading ? (
         <div className="w-full max-w-5xl overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -91,54 +144,61 @@ const SubTopicQuestions = () => {
               </tr>
             </thead>
             <tbody>
-              {questions.map((question, index) => {
-                const { testCasesPassed, testCasesPercent, score, scorePercent, status } =
-                  getMockProgress(question);
+              {questions.map((q, i) => {
+                const { passedStr, passedPct, scoreStr, scorePct, status } =
+                  getProgress(q);
+
                 return (
                   <tr
-                    key={question.questionId}
+                    key={q.questionId}
                     className={`border-b cursor-pointer hover:bg-gray-50 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                      i % 2 === 0 ? "bg-white" : "bg-gray-50"
                     }`}
                     onClick={() =>
-                      navigate(`/codepractice/solve/${question.questionId}`, {
+                      navigate(`/code-playground/solve/${q.questionId}`, {
                         state: {
-                          question,
-                          index,
-                          questions: questions,
-                          codeMap: { [index]: '' }, // Initialize empty code
+                          subjectname,
+                          topicname,
+                          subtopic,
+                          question: q,
                         },
                       })
                     }
                   >
-                    <td className="py-4 px-4 text-gray-800">{question.Question}</td>
-                    <td className="py-4 px-4 text-gray-600">{question.Difficulty}</td>
+                    <td className="py-4 px-4 text-gray-800">{q.Question}</td>
+                    <td className="py-4 px-4 text-gray-600">{q.Difficulty}</td>
+
+                    {/* Test-cases cell */}
                     <td className="py-4 px-4">
-                      <div className="text-gray-600">{testCasesPassed}</div>
+                      <div className="text-gray-600">{passedStr}</div>
                       <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${testCasesPercent}%` }}
-                        ></div>
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        Latest Attempt: {testCasesPassed}
+                          style={{ width: `${passedPct}%` }}
+                        />
                       </div>
                     </td>
+
+                    {/* Score cell */}
                     <td className="py-4 px-4">
-                      <div className="text-gray-600">{score}</div>
+                      <div className="text-gray-600">{scoreStr}</div>
                       <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
                         <div
                           className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${scorePercent}%` }}
-                        ></div>
+                          style={{ width: `${scorePct}%` }}
+                        />
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">Latest Score: {score}</div>
                     </td>
+
+                    {/* Status cell */}
                     <td className="py-4 px-4 flex items-center">
                       <span
                         className={`text-sm font-medium ${
-                          status === 'SOLVED' ? 'text-green-600' : 'text-yellow-600'
+                          status === "SOLVED"
+                            ? "text-green-600"
+                            : status === "IN PROGRESS"
+                            ? "text-yellow-600"
+                            : "text-gray-500"
                         }`}
                       >
                         {status}
@@ -148,14 +208,13 @@ const SubTopicQuestions = () => {
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M9 5l7 7-7 7"
-                        ></path>
+                        />
                       </svg>
                     </td>
                   </tr>
@@ -165,7 +224,8 @@ const SubTopicQuestions = () => {
           </table>
         </div>
       ) : (
-        !loading && !error && <p className="text-gray-600">No questions available.</p>
+        !loading &&
+        !error && <p className="text-gray-600">No questions available.</p>
       )}
     </div>
   );
