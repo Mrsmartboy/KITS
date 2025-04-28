@@ -9,7 +9,7 @@ const SubTopicQuestions = () => {
   const navigate = useNavigate();
 
   const [questions, setQuestions] = useState([]);
-  const [progressMap, setProgress] = useState({}); // <-- new
+  const [progressMap, setProgress] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -21,10 +21,8 @@ const SubTopicQuestions = () => {
         setError("No tag provided for questions.");
         return;
       }
-
       setLoading(true);
       try {
-        /* ── Both APIs concurrently ─────────────────────────────── */
         const [cpResponse, studentCpResponse] = await Promise.all([
           axios.get(
             `${import.meta.env.VITE_BACKEND_URL}/api/v1/get-cpquestions`,
@@ -34,89 +32,69 @@ const SubTopicQuestions = () => {
           ),
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/cp-progress`, {
             params: { subject: subjectname, tags: state.tag, studentId },
-            validateStatus: (s) => s < 400 || s === 404, // 404 ⇒ resolve, not reject
+            validateStatus: (s) => s < 400 || s === 404,
           }),
         ]);
 
-        /* ── Questions list (same as before) ────────────────────── */
         const cpQuestions = cpResponse.data.success
           ? cpResponse.data.codeQuestions || []
           : [];
-
-        /* ── Progress normalisation ─────────────────────────────── */
         const raw = studentCpResponse.data.success
           ? studentCpResponse.data.data
           : null;
         const progressArr = raw
           ? Array.isArray(raw)
             ? raw
-            : [raw] // handle single-object or array
+            : [raw]
           : [];
         const map = Object.fromEntries(
           progressArr.map((p) => [p.questionId, p])
         );
         setProgress(map);
-
-        /* ── If you still want to include unsolved questions
-              that aren’t in cp-progress, keep cpQuestions as is ── */
         setQuestions(cpQuestions);
-
         if (cpQuestions.length === 0) {
           setError(`No questions found for tag ${state.tag}`);
         }
       } catch (err) {
         console.error("Questions API call failed:", err);
-        // setError("Failed to fetch questions.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchQuestionsAndProgress();
   }, [subjectname, state, studentId]);
 
-  /* ───────────────── Helpers ────────────────────────── */
-
-  /** How many test-cases does this question contain?
-   *  (1 sample + N hidden) */
   const getTotalTestCases = (q) =>
     1 + (Array.isArray(q.Hidden_Test_Cases) ? q.Hidden_Test_Cases.length : 0);
 
-  /** Build a progress object for a single question */
   const getProgress = (question) => {
     const totalCases = getTotalTestCases(question);
-    const maxScore = question.Score; // “Score” is the full-question max
-
-    /* ========== NO SUBMISSION YET ========== */
+    const maxScore = question.Score;
     const prog = progressMap[question.questionId];
     if (!prog) {
       return {
-        passedStr: `0/${totalCases}`,
-        passedPct: 0,
-        scoreStr: `0/${maxScore}`,
-        scorePct: 0,
+        testPassed: 0,
+        testTotal: totalCases,
+        scorePassed: 0,
+        scoreTotal: maxScore,
         status: "NOT ATTEMPTED",
       };
     }
-
-    /* ========== WE HAVE A SUBMISSION ========== */
-    const passedCount = prog.results.filter(
-      (r) => r.status === "Passed"
-    ).length;
+    const passedCount = prog.results.filter((r) => r.status === "Passed").length;
     const awarded = prog.awarded_score ?? 0;
-
     return {
-      passedStr: `${passedCount}/${totalCases}`,
-      passedPct: (passedCount / totalCases) * 100,
-      scoreStr: `${awarded}/${maxScore}`,
-      scorePct: (awarded / maxScore) * 100,
+      testPassed: passedCount,
+      testTotal: totalCases,
+      scorePassed: awarded,
+      scoreTotal: maxScore,
       status: passedCount === totalCases ? "SOLVED" : "IN PROGRESS",
     };
   };
 
-  /* ─────────────────────── UI ─────────────────────────────────── */
+  const gridCols = { gridTemplateColumns: "5% 35% 10% 15% 15% 15%" };
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-4 font-[Inter]">
       <div className="w-full max-w-5xl flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
           {decodeURIComponent(subtopic).replace(/-/g, " ")} Questions
@@ -133,106 +111,145 @@ const SubTopicQuestions = () => {
       {error && <p className="text-red-600">{error}</p>}
 
       {questions.length > 0 && !loading ? (
-        <div className="w-full max-w-5xl overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-200 text-gray-700 text-sm uppercase tracking-wider">
-                <th className="py-3 px-4 text-left">Question</th>
-                <th className="py-3 px-4 text-left">Difficulty</th>
-                <th className="py-3 px-4 text-left">Test Cases Passed</th>
-                <th className="py-3 px-4 text-left">Score</th>
-                <th className="py-3 px-4 text-left">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {questions.map((q, i) => {
-                const { passedStr, passedPct, scoreStr, scorePct, status } =
-                  getProgress(q);
+        <>
+          {/* Table on md+ */}
+          <div
+            className="hidden md:block w-full bg-white rounded-sm"
+            style={{ boxShadow: "0px 5px 21px rgba(0,73,198,0.2)" }}
+          >
+            <div
+              className="grid text-white font-semibold text-[15px] leading-[19px] rounded-t-md bg-[#19216F]"
+              style={gridCols}
+            >
+              <div className="py-4 px-6">S/No</div>
+              <div className="py-4 px-6">Question</div>
+              <div className="py-4 px-6">Difficulty</div>
+              <div className="py-4 px-6">Test Cases</div>
+              <div className="py-4 px-6">Score</div>
+              <div className="py-4 px-6">Status</div>
+            </div>
+            {questions.map((q, idx) => {
+              const { testPassed, testTotal, scorePassed, scoreTotal, status } =
+                getProgress(q);
+              return (
+                <div
+                  key={q.questionId}
+                  className={`grid text-[15px] leading-[19px] ${
+                    idx % 2 === 0 ? "bg-[#EEEFFF]" : "bg-white"
+                  } cursor-pointer hover:bg-opacity-90`}
+                  style={gridCols}
+                  onClick={() => {
+                    const prog = progressMap[q.questionId] ?? {};
+                    const { sourceCode = null, results = null } = prog;
+                    navigate(`/code-playground/solve/${q.questionId}`, {
+                      state: {
+                        subjectname,
+                        topicname,
+                        subtopic,
+                        question: q,
+                        prog_sourceCode: sourceCode,
+                        prog_results: results,
+                      },
+                    });
+                  }}
+                >
+                  <div className="py-4 px-6 font-medium">{idx + 1}</div>
+                  <div className="py-4 px-6">{q.Question}</div>
+                  <div className="py-4 px-6">{q.Difficulty}</div>
+                  <div className="py-4 px-6">
+                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                      <div
+                        className="h-3 rounded-full bg-[#2333CB]"
+                        style={{ width: `${(testPassed / testTotal) * 100}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 font-semibold text-[12px] leading-[15px] text-[#19216F]">
+                      {testPassed}/{testTotal}
+                    </div>
+                  </div>
+                  <div className="py-4 px-6">
+                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                      <div
+                        className="h-3 rounded-full bg-[#2333CB]"
+                        style={{ width: `${(scorePassed / scoreTotal) * 100}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 font-semibold text-[10px] leading-[12px] text-[#19216F]">
+                      {scorePassed}/{scoreTotal}
+                    </div>
+                  </div>
+                  <div className="py-4 px-6">{status}</div>
+                </div>
+              );
+            })}
+          </div>
 
-                return (
-                  <tr
-                    key={q.questionId}
-                    className={`border-b cursor-pointer hover:bg-gray-50 ${
-                      i % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    }`}
-                    onClick={() => {
-                      /* pull any submission details we cached in progressMap */
-                      const prog = progressMap[q.questionId] ?? {};
-                      const { sourceCode = null, results = null } = prog;
-
-                      navigate(`/code-playground/solve/${q.questionId}`, {
-                        state: {
-                          subjectname,
-                          topicname,
-                          subtopic,
-                          question: q,
-                          prog_sourceCode: sourceCode, // <-- new
-                          prog_results: results, // <-- new
-                        },
-                      });
-                    }}
-                  >
-                    <td className="py-4 px-4 text-gray-800">{q.Question}</td>
-                    <td className="py-4 px-4 text-gray-600">{q.Difficulty}</td>
-
-                    {/* Test-cases cell */}
-                    <td className="py-4 px-4">
-                      <div className="text-gray-600">{passedStr}</div>
-                      <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${passedPct}%` }}
-                        />
-                      </div>
-                    </td>
-
-                    {/* Score cell */}
-                    <td className="py-4 px-4">
-                      <div className="text-gray-600">{scoreStr}</div>
-                      <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
-                        <div
-                          className="bg-blue-500 h-2 rounded-full"
-                          style={{ width: `${scorePct}%` }}
-                        />
-                      </div>
-                    </td>
-
-                    {/* Status cell */}
-                    <td className="py-4 px-4 flex items-center">
-                      <span
-                        className={`text-sm font-medium ${
-                          status === "SOLVED"
-                            ? "text-green-600"
-                            : status === "IN PROGRESS"
-                            ? "text-yellow-600"
-                            : "text-gray-500"
-                        }`}
-                      >
-                        {status}
-                      </span>
-                      <svg
-                        className="w-5 h-5 text-blue-500 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+          {/* Cards on <md */}
+          <div className="md:hidden flex flex-col space-y-6">
+            {questions.map((q, idx) => {
+              const { testPassed, testTotal, scorePassed, scoreTotal, status } =
+                getProgress(q);
+              return (
+                <div
+                  key={q.questionId}
+                  className="bg-white rounded-sm p-6 cursor-pointer hover:bg-opacity-90"
+                  style={{ boxShadow: "0px 5px 21px rgba(0,73,198,0.2)" }}
+                  onClick={() => {
+                    const prog = progressMap[q.questionId] ?? {};
+                    const { sourceCode = null, results = null } = prog;
+                    navigate(`/code-playground/solve/${q.questionId}`, {
+                      state: {
+                        subjectname,
+                        topicname,
+                        subtopic,
+                        question: q,
+                        prog_sourceCode: sourceCode,
+                        prog_results: results,
+                      },
+                    });
+                  }}
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium text-[16px]">#{idx + 1}</span>
+                    <span className="text-[14px] font-semibold text-[#19216F]">
+                      {status}
+                    </span>
+                  </div>
+                  <div className="mb-3 text-[16px]">{q.Question}</div>
+                  <div className="flex flex-wrap gap-2 mb-4 items-center">
+                    <span className="bg-[#EEEFFF] px-3 py-1 rounded text-[12px]">
+                      {q.Difficulty}
+                    </span>
+                  </div>
+                  <div className="mb-4">
+                    <div className="text-[13px] font-semibold mb-2">
+                      Test Cases Passed
+                    </div>
+                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                      <div
+                        className="h-3 rounded-full bg-[#2333CB]"
+                        style={{ width: `${(testPassed / testTotal) * 100}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 text-[11px]">{testPassed}/{testTotal}</div>
+                  </div>
+                  <div>
+                    <div className="text-[13px] font-semibold mb-2">Score</div>
+                    <div className="w-full bg-white rounded-full h-3 overflow-hidden">
+                      <div
+                        className="h-3 rounded-full bg-[#2333CB]}"
+                        style={{ width: `${(scorePassed / scoreTotal) * 100}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 text-[11px]">{scorePassed}/{scoreTotal}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       ) : (
-        !loading &&
-        !error && <p className="text-gray-600">No questions available.</p>
+        !loading && !error && <p className="text-gray-600">No questions available.</p>
       )}
     </div>
   );

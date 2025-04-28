@@ -95,6 +95,7 @@ import CPOnlineCompiler from "./CodePlayground/OnlineCompiler.jsx";
 import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
 import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 import LeaderBoard from "./Student/LeaderBoard.jsx";
+import NewSubTopicsFigma from "./CodePlayground/NewSubTopicsFigma.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -671,6 +672,14 @@ export default function App() {
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <SubTopics />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/figmatester"
+                element={
+                  <ProtectedRoute allowedRoles={["student_login_details"]}>
+                    <NewSubTopicsFigma />
                   </ProtectedRoute>
                 }
               />
