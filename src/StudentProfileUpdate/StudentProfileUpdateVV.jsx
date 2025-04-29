@@ -12,7 +12,7 @@ import { useEdit } from "../contexts/EditContext";
 import StudentProfileV from "../StudentProfile/StudentProfileV";
 import AtsResult from "../Ats/AtsResult";
 import { decryptData } from '../../cryptoUtils.jsx';
-import { AiOutlineEye } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai"; 
 
 
 import { FaUserCircle, FaEdit, FaUserAlt, FaGraduationCap, FaFileUpload, FaFileAlt, FaUserEdit, FaCamera } from "react-icons/fa";
