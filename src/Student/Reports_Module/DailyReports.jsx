@@ -305,7 +305,7 @@ const DailyReports = () => {
   };
 
   return (
-    <div className="bg-gray-100 p-6 py-10 font-[inter]">
+    <div className="p-6 py-10 font-[inter]">
       <main className="flex flex-col items-center">
         {loading ? (
           <div className="flex items-center justify-center mt-10">

@@ -76,7 +76,7 @@ export default function MentorStudentData() {
   const totalPages = Math.ceil(totalStudents / studentsPerPage);
 
   return (
-    <div className="bg-blue-100 min-h-screen flex flex-col mx-auto p-6 mt-0">
+    <div className="min-h-screen flex flex-col mx-auto p-6 mt-0">
       <h2 className="text-blue-800 text-2xl font-bold text-center mb-4">
         Students List ({totalStudents})
       </h2>

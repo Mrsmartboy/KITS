@@ -96,6 +96,7 @@ import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
 import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 import LeaderBoard from "./Student/LeaderBoard.jsx";
 import NewSubTopicsFigma from "./CodePlayground/NewSubTopicsFigma.jsx";
+import NewAttendanceSystem from "./Mentor/NewAttendanceSystem.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -382,6 +383,14 @@ export default function App() {
                   <ProtectedRoute allowedRoles={["Mentors"]}>
                     <AttendanceSystem />
                   </ProtectedRoute>
+                }
+              />
+                <Route
+                path="/newattendance"
+                element={
+                  
+                    <NewAttendanceSystem />
+                  
                 }
               />
               <Route

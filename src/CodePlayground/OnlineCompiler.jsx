@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { FaArrowLeft, FaChevronDown } from "react-icons/fa";
+import { FaArrowLeft, FaChevronDown, FaSun, FaMoon } from "react-icons/fa";
 import Editor from "@monaco-editor/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,6 +17,8 @@ const languageExtensions = {
 };
 
 function CPOnlineCompiler() {
+  const [theme, setTheme] = useState("dark"); // Default theme is dark
+
   /* ─────────── routing state ─────────── */
   const { state: loc = {} } = useLocation();
   const navigate = useNavigate();
@@ -90,6 +92,11 @@ function CPOnlineCompiler() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  /* ─────────── toggle theme ─────────── */
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   /* ─────────── when location.state changes ─────────── */
   useEffect(() => {
@@ -258,11 +265,16 @@ function CPOnlineCompiler() {
       setSampleResults(results);
 
       if (hidSum.failed === 0) {
-        toast.success("All test cases passed!", {position:"bottom-left"});
+        toast.success("All test cases passed!", { position: "bottom-left" });
       } else {
-        toast.warn(`Some test cases failed. Passed: ${hidSum.passed}/${hidSum.passed + hidSum.failed}`, {position:"bottom-left"});
+        toast.warn(
+          `Some test cases failed. Passed: ${hidSum.passed}/${
+            hidSum.passed + hidSum.failed
+          }`,
+          { position: "bottom-left" }
+        );
       }
-      
+
       if (isSubmit) {
         setModalLoading(true);
         setShowModal(true);
@@ -294,30 +306,72 @@ function CPOnlineCompiler() {
   };
 
   /* ─────────── render ─────────── */
+  const isDarkTheme = theme === "dark";
+
   return (
-    <div className="h-screen flex flex-col font-[Inter] bg-[#1E1E1E] overflow-hidden">
+    <div
+      className={`h-screen flex flex-col font-[Inter] ${
+        isDarkTheme ? "bg-[#1E1E1E] text-white" : "bg-white text-gray-900"
+      } overflow-hidden`}
+    >
+      {/* Theme Toggle Button */}
+      <div className="p-4 flex justify-end">
+        <button
+          onClick={toggleTheme}
+          className={`px-3 py-2 rounded-lg font-medium text-sm ${
+            isDarkTheme
+              ? "bg-gray-700 text-white hover:bg-gray-600"
+              : "bg-gray-200 text-gray-900 hover:bg-gray-300"
+          }`}
+        >
+          {isDarkTheme ? (
+            <>
+              <FaSun className="inline mr-2" /> Light Theme
+            </>
+          ) : (
+            <>
+              <FaMoon className="inline mr-2" /> Dark Theme
+            </>
+          )}
+        </button>
+      </div>
+
       {/* Main Compiler Container */}
-      <div className="flex-1 m-4 md:m-6 p-4 md:p-6 border-2 border-gray-700 rounded-lg flex flex-col overflow-hidden">
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[45%_52%] gap-6 overflow-hidden">
+      <div className={`flex-1 m-4 md:m-6 p-4 md:p-6 border-2 ${
+        isDarkTheme ? "border-gray-700 bg-gray-800" : "border-gray-300 bg-gray-100"
+      } rounded-lg flex flex-col overflow-hidden`}>
+        <div className={`flex-1 grid grid-cols-1 lg:grid-cols-[45%_52%] gap-6 overflow-hidden ${
+          isDarkTheme ? "bg-gray-800" : "bg-gray-100"
+        }`}>
           {/* Left Side - Question Panel */}
-          <div className="flex flex-col gap-6 bg-gray-800 p-4 rounded-md overflow-hidden">
-            {/* Code Practice Button */}
+          <div className={`flex flex-col gap-6 ${
+            isDarkTheme ? "bg-gray-800" : "bg-white"
+          } p-4 rounded-md overflow-hidden`}>
             <div
-              className="flex items-center gap-2 px-4 py-2 border-2 border-[#6E6E6E] bg-[#1E1E1E] rounded-lg w-fit cursor-pointer"
+              className={`flex items-center gap-2 px-4 py-2 border-2 ${
+                isDarkTheme
+                  ? "border-[#6E6E6E] bg-[#1E1E1E]"
+                  : "border-gray-300 bg-gray-50"
+              } rounded-lg w-fit cursor-pointer`}
               onClick={handleBack}
             >
-              <FaArrowLeft className="text-white w-4 h-4" />
-              <div className="text-white text-base font-medium">Code Playground</div>
+              <FaArrowLeft className="text-inherit w-4 h-4" />
+              <div className="text-inherit text-base font-medium">
+                Code Playground
+              </div>
             </div>
 
-            {/* Question Box */}
-            <div className="flex-1 bg-[#1E1E1E] border border-[rgba(216,216,216,0.8)] rounded-lg overflow-auto">
+            <div className={`flex-1 ${
+              isDarkTheme
+                ? "bg-[#1E1E1E] border-[rgba(216,216,216,0.8)]"
+                : "bg-white border-gray-200"
+            } border rounded-lg overflow-auto`}>
               {isLoadingQuestion ? (
-                <div className="p-6 text-white text-base font-medium">
+                <div className="p-6 text-inherit text-base font-medium">
                   Loading question data...
                 </div>
               ) : (
-                <div className="flex flex-col gap-4 p-6 text-white text-base font-medium leading-5">
+                <div className="flex flex-col gap-4 p-6 text-inherit text-base font-medium leading-5">
                   <div>Question {question.Question_No || initIndex + 1}</div>
                   <div>
                     <div>Question:</div>
@@ -332,17 +386,29 @@ function CPOnlineCompiler() {
                     <div>{question.Difficulty || "Not specified"}</div>
                   </div>
                   <div>Sample Input:</div>
-                  <div className="bg-[#525252] rounded-lg min-h-[70px] p-4 flex items-center overflow-x-auto">
+                  <div
+                    className={`bg-${
+                      isDarkTheme ? "#525252" : "#E5E7EB"
+                    } rounded-lg min-h-[70px] p-4 flex items-center overflow-x-auto`}
+                  >
                     {cleanedSampleInput.trim() ? (
-                      <pre className="whitespace-pre-wrap break-words">{cleanedSampleInput}</pre>
+                      <pre className="whitespace-pre-wrap break-words text-inherit">
+                        {cleanedSampleInput}
+                      </pre>
                     ) : (
                       "No sample input available."
                     )}
                   </div>
                   <div>Sample Output:</div>
-                  <div className="bg-[#525252] rounded-lg min-h-[52px] p-4 flex items-center overflow-x-auto">
+                  <div
+                    className={`bg-${
+                      isDarkTheme ? "#525252" : "#E5E7EB"
+                    } rounded-lg min-h-[52px] p-4 flex items-center overflow-x-auto`}
+                  >
                     {cleanedSampleOutput.trim() ? (
-                      <pre className="whitespace-pre-wrap break-words">{cleanedSampleOutput}</pre>
+                      <pre className="whitespace-pre-wrap break-words text-inherit">
+                        {cleanedSampleOutput}
+                      </pre>
                     ) : (
                       "No sample output available."
                     )}
@@ -353,28 +419,40 @@ function CPOnlineCompiler() {
           </div>
 
           {/* Right Side - Editor Panel */}
-          <div className="flex flex-col gap-6 bg-gray-800 p-4 rounded-md overflow-hidden">
-            {/* Top Bar */}
+          <div className={`flex flex-col gap-6 ${
+            isDarkTheme ? "bg-gray-800" : "bg-white"
+          } p-4 rounded-md overflow-hidden`}>
             <div className="flex flex-wrap items-center justify-between gap-4 min-w-0">
-              {/* Language Selector */}
               <div className="relative" ref={dropdownRef}>
                 <div
-                  className="flex items-center gap-3 px-3 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] rounded-md flex-shrink-0 cursor-pointer"
+                  className={`flex items-center gap-3 px-3 py-2 border-2 ${
+                    isDarkTheme
+                      ? "border-[#BABABA] bg-[#1E1E1E]"
+                      : "border-gray-300 bg-gray-50"
+                  } rounded-md flex-shrink-0 cursor-pointer`}
                   onClick={toggleDropdown}
                 >
-                  <div className="text-white text-base font-medium">{language}</div>
+                  <div className="text-inherit text-base font-medium">
+                    {language}
+                  </div>
                   <FaChevronDown
-                    className={`text-white w-5 h-5 transition-transform ${
+                    className={`text-inherit w-5 h-5 transition-transform ${
                       isDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
                 </div>
                 {isDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-full bg-[#1E1E1E] border border-[#BABABA] rounded-md shadow-lg z-10">
+                  <div className={`absolute top-full left-0 mt-2 w-full ${
+                    isDarkTheme
+                      ? "bg-[#1E1E1E] border-[#BABABA]"
+                      : "bg-white border-gray-300"
+                  } border rounded-md shadow-lg z-10`}>
                     {Object.keys(languageExtensions).map((lang) => (
                       <div
                         key={lang}
-                        className="px-3 py-2 text-white text-base font-medium hover:bg-[#2A2A2A] cursor-pointer"
+                        className={`px-3 py-2 text-inherit text-base font-medium hover:${
+                          isDarkTheme ? "bg-[#2A2A2A]" : "bg-gray-100"
+                        } cursor-pointer`}
                         onClick={() => {
                           setLanguage(lang);
                           setIsDropdownOpen(false);
@@ -387,15 +465,20 @@ function CPOnlineCompiler() {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 flex-shrink-0">
                 <button
                   onClick={() => handleRun()}
                   disabled={loading || !questionId}
-                  className={`px-7 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] text-white rounded-md font-medium ${
+                  className={`px-7 py-2 border-2 ${
+                    isDarkTheme
+                      ? "border-[#BABABA] bg-[#1E1E1E]"
+                      : "border-gray-300 bg-gray-50"
+                  } text-inherit rounded-md font-medium ${
                     loading || !questionId
                       ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-[#2A2A2A]"
+                      : isDarkTheme
+                      ? "hover:bg-[#2A2A2A]"
+                      : "hover:bg-gray-200"
                   }`}
                 >
                   {loading ? "Running..." : "Run"}
@@ -403,10 +486,16 @@ function CPOnlineCompiler() {
                 <button
                   onClick={() => handleRun(true)}
                   disabled={loading || !questionId}
-                  className={`px-4 py-2 border-2 border-[#BABABA] bg-[#129E00] text-white rounded-md font-medium ${
+                  className={`px-4 py-2 border-2 ${
+                    isDarkTheme
+                      ? "border-[#BABABA] bg-[#129E00]"
+                      : "border-gray-300 bg-green-600"
+                  } text-white rounded-md font-medium ${
                     loading || !questionId
                       ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-[#0F7A00]"
+                      : isDarkTheme
+                      ? "hover:bg-[#0F7A00]"
+                      : "hover:bg-green-700"
                   }`}
                 >
                   Submit
@@ -414,19 +503,25 @@ function CPOnlineCompiler() {
               </div>
             </div>
 
-            {/* Editor + Output Section */}
             <div className="flex flex-col flex-1 gap-6 overflow-hidden">
-              {/* Code Editor */}
-              <div className="flex flex-col flex-1 bg-[#1E1E1E] border border-[rgba(216,216,216,0.8)] rounded-lg overflow-hidden">
-                <div className="bg-[#525252] rounded-t-lg flex items-center h-9 px-4">
-                  <div className="text-white text-base font-medium">{initIndex + 1}</div>
+              <div className={`flex flex-col flex-1 ${
+                isDarkTheme
+                  ? "bg-[#1E1E1E] border-[rgba(216,216,216,0.8)]"
+                  : "bg-white border-gray-200"
+              } border rounded-lg overflow-hidden`}>
+                <div className={`bg-${
+                  isDarkTheme ? "#525252" : "#E5E7EB"
+                } rounded-t-lg flex items-center h-9 px-4`}>
+                  <div className="text-inherit text-base font-medium">
+                    {initIndex + 1}
+                  </div>
                 </div>
                 <div className="flex-1 h-full">
                   <Editor
                     height="100%"
                     language={languageExtensions[language]}
                     value={code}
-                    theme="vs-dark"
+                    theme={isDarkTheme ? "vs-dark" : "vs-light"}
                     onChange={handleCodeChange}
                     options={{
                       minimap: { enabled: false },
@@ -438,15 +533,25 @@ function CPOnlineCompiler() {
                 </div>
               </div>
 
-              {/* Output Section */}
-              <div className="flex flex-col flex-1 bg-[#1E1E1E] border border-[rgba(216,216,216,0.8)] rounded-lg p-4 gap-4 overflow-hidden">
+              <div className={`flex flex-col flex-1 ${
+                isDarkTheme
+                  ? "bg-[#1E1E1E] border-[rgba(216,216,216,0.8)]"
+                  : "bg-white border-gray-200"
+              } border rounded-lg p-4 gap-4 overflow-hidden`}>
                 {sampleTestCaseResults.length === 0 ? (
-                  <div className="flex-1 bg-[#1E1E1E] border border-[#3A3A3A] rounded-lg p-4 text-white overflow-auto">
+                  <div className={`flex-1 ${
+                    isDarkTheme
+                      ? "bg-[#1E1E1E] border-[#3A3A3A]"
+                      : "bg-gray-100 border-gray-300"
+                  } border rounded-lg p-4 text-inherit overflow-auto`}>
                     Run Code to display Result
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col overflow-hidden">
-                    <TestCaseTabsNew testCases={sampleTestCaseResults} />
+                    <TestCaseTabsNew
+                      testCases={sampleTestCaseResults}
+                      theme={theme}
+                    />
                   </div>
                 )}
               </div>
@@ -458,28 +563,38 @@ function CPOnlineCompiler() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#1E1E1E] border border-[#3A3A3A] rounded-lg p-6 w-96">
+          <div className={`bg-${
+            isDarkTheme ? "#1E1E1E" : "white"
+          } border ${
+            isDarkTheme ? "border-[#3A3A3A]" : "border-gray-300"
+          } rounded-lg p-6 w-96`}>
             {modalLoading ? (
               <div className="flex flex-col items-center gap-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#129E00]"></div>
-                <p className="text-white text-lg">Processing Submission...</p>
+                <p className="text-inherit text-lg">Processing Submission...</p>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-4">
-                <h2 className="text-xl font-semibold text-white">
+                <h2 className="text-xl font-semibold text-inherit">
                   Submission Result
                 </h2>
-                <p className="text-white text-center">
+                <p className="text-inherit text-center">
                   {hiddenTestCaseSummary.failed === 0
                     ? "All test cases passed! 🎉"
                     : hiddenTestCaseSummary.failed > 0
-                    ? `${hiddenTestCaseSummary.passed}/${hiddenTestCaseSummary.passed + hiddenTestCaseSummary.failed} cases passed.`
+                    ? `${hiddenTestCaseSummary.passed}/${
+                        hiddenTestCaseSummary.passed + hiddenTestCaseSummary.failed
+                      } cases passed.`
                     : "Test cases not passed."}
                 </p>
                 {hiddenTestCaseSummary.failed > 0 && (
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 bg-[#129E00] text-white rounded-md hover:bg-[#0F7A00]"
+                    className={`px-4 py-2 ${
+                      isDarkTheme
+                        ? "bg-[#129E00] hover:bg-[#0F7A00]"
+                        : "bg-green-600 hover:bg-green-700"
+                    } text-white rounded-md`}
                   >
                     Close
                   </button>

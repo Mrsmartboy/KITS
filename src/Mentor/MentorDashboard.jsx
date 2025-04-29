@@ -17,7 +17,11 @@ const MentorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 mt-0">
+    <div
+    className="min-h-screen mt-0 bg-repeat"
+    style={{ backgroundImage: "url('/bgimage.png')", backgroundColor: "#EDF2FF" }}
+  >
+  
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">Mentor Dashboard</h1>
