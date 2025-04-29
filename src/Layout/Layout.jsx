@@ -56,7 +56,7 @@ const Layout = ({ setIsAuthenticated }) => {
   );
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen ">
       <div className="flex flex-grow overflow-hidden">
         {isLoggedIn && (
           <div hidden={shouldHideSidebar}>
@@ -72,7 +72,16 @@ const Layout = ({ setIsAuthenticated }) => {
           </div>
         )}
 
-        <div className="flex-grow overflow-auto bg-gray-100">
+<div
+  className="flex-grow overflow-auto"
+  style={{
+    backgroundImage: "url('/bgimage.png')",
+    backgroundRepeat: "repeat",
+    backgroundColor: "#EDF2FF"
+  }}
+>
+
+
           <div hidden={shouldHideSidebar}>
             {isLoggedIn ? (
               <PostLogin

@@ -112,7 +112,7 @@ const Maincomponent = () => {
   );
 
   return (
-    <div className="font-[poppins] flex flex-col  max-w-full  bg-gray-100 max-h-[70vh] mt-0 px-4 py-5">
+    <div className="font-[poppins] flex flex-col  max-w-full max-h-[70vh] mt-0 px-4 py-5">
       <h1 className="font-semibold uppercase text-[#19216F] text-center text-xl sm:text-2xl md:text-3xl lg:text-[22px] py-3">
         Student Data
       </h1>

@@ -1,44 +1,38 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2/dist/sweetalert2.min.js";
+import { useForm } from "react-hook-form";
 import axios from "axios";
-import { useStudentsData } from "../../contexts/StudentsListContext";
-import { useUniqueBatches } from "../../contexts/UniqueBatchesContext";
-import { read, utils } from "xlsx";
+import Swal from "sweetalert2/dist/sweetalert2.min.js";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import Select from "react-select";
-import { decryptData } from "../../../cryptoUtils.jsx";
-
-import {
-  FaUpload,
-  FaFileExcel,
-  FaUser,
-  FaEnvelope,
-  FaUsers,
-  FaCalendarAlt,
-  FaWhatsapp,
-  FaDownload,
-} from "react-icons/fa";
+import { decryptData } from "../../../cryptoUtils";
+import userIcon from "/user.png";
+import folderIcon from "/folder-add.png";
+import frame from "/frame.png";
+import { FaUpload, FaFileExcel, FaDownload } from "react-icons/fa";
+import { useStudentsData } from "../../contexts/StudentsListContext";
+import { useUniqueBatches } from "../../contexts/UniqueBatchesContext";
 
 const subjects = [
   { value: "C", label: "C" },
   { value: "DS-C", label: "DS-C" },
-  { value: "Python", label: "Python" }
+  { value: "Python", label: "Python" },
 ];
 
-export default function ProgramManagerSignup() {
+const ProgramManagerSignup = () => {
+  const [mode, setMode] = useState("manual"); // "manual" or "excel"
   const { fetchStudentsData } = useStudentsData();
   const { batches, fetchBatches } = useUniqueBatches();
-  const emailRegex = /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const [formData, setFormData] = useState({
-    studentId: "",
-    batchNo: "",
-    email: "",
-    studentPhNumber: "",
-    parentNumber: "",
-    subjects: []
-  });
-
+  const location = decryptData(sessionStorage.getItem("location"));
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+  } = useForm();
+  const [excelData, setExcelData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [studentCountryCode, setStudentCountryCode] = useState(null);
   const [parentCountryCode, setParentCountryCode] = useState(null);
   const [countryCodes, setCountryCodes] = useState([]);
@@ -46,6 +40,10 @@ export default function ProgramManagerSignup() {
   const [parentPhoneError, setParentPhoneError] = useState("");
   const [selectedSubjects, setSelectedSubjects] = useState([]);
 
+  const emailRegex = /^(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const phoneRegex = /^[9876]\d{9}$/;
+
+  // Fetch Country Codes
   useEffect(() => {
     axios
       .get("https://restcountries.com/v3.1/all")
@@ -56,7 +54,6 @@ export default function ProgramManagerSignup() {
             label: `${country.idd.root}${country.idd.suffixes?.[0] || ""}`,
           }))
           .filter((country) => country.value !== "undefined");
-
         setCountryCodes(countryList);
         setStudentCountryCode(countryList.find((c) => c.value === "+91"));
         setParentCountryCode(countryList.find((c) => c.value === "+91"));
@@ -64,29 +61,31 @@ export default function ProgramManagerSignup() {
       .catch((error) => console.error("Error fetching country codes:", error));
   }, []);
 
-  const [excelData, setExcelData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [useExcel, setUseExcel] = useState(false);
-  const location = decryptData(sessionStorage.getItem("location"));
-  const phoneRegex = /^[9876]\d{9}$/;
+  // Fetch Batches
+  useEffect(() => {
+    fetchBatches(location);
+  }, [fetchBatches, location]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  // Handle Tab Switch
+  const onTabClick = (newMode) => {
+    console.log("Switched to:", newMode);
+    setMode(newMode);
+    setExcelData([]);
+    reset();
+    setSelectedSubjects([]);
   };
 
+  // Handle Subjects Change
   const handleSubjectsChange = (selectedOptions) => {
     setSelectedSubjects(selectedOptions);
-    setFormData((prev) => ({
-      ...prev,
-      subjects: selectedOptions.map(option => option.value)
-    }));
+    setValue("subjects", selectedOptions.map((option) => option.value));
   };
 
-  const handleStudentPhoneBlur = () => {
-    const studentPhone = formData.studentPhNumber;
+  // Handle Student Phone Validation
+  const handleStudentPhoneBlur = (value) => {
+    const studentPhone = value;
     const fullStudentPhone = studentCountryCode?.value + studentPhone;
-    const parentPhone = formData.parentNumber;
+    const parentPhone = document.getElementsByName("mobile2")[0]?.value;
     const fullParentPhone = parentCountryCode?.value + parentPhone;
 
     if (studentPhone && !phoneRegex.test(studentPhone)) {
@@ -100,10 +99,11 @@ export default function ProgramManagerSignup() {
     }
   };
 
-  const handleParentPhoneBlur = () => {
-    const parentPhone = formData.parentNumber;
+  // Handle Parent Phone Validation
+  const handleParentPhoneBlur = (value) => {
+    const parentPhone = value;
     const fullParentPhone = parentCountryCode?.value + parentPhone;
-    const studentPhone = formData.studentPhNumber;
+    const studentPhone = document.getElementsByName("mobile1")[0]?.value;
     const fullStudentPhone = studentCountryCode?.value + studentPhone;
 
     if (parentPhone && !phoneRegex.test(parentPhone)) {
@@ -117,10 +117,7 @@ export default function ProgramManagerSignup() {
     }
   };
 
-  useEffect(() => {
-    fetchBatches(location);
-  }, [fetchBatches, location]);
-
+  // Handle Excel File Upload
   const handleFileUpload = (e) => {
     setExcelData([]);
     const file = e.target.files[0];
@@ -134,10 +131,10 @@ export default function ProgramManagerSignup() {
 
       if (["xlsx", "xls"].includes(fileExtension)) {
         const data = new Uint8Array(content);
-        const workbook = read(data, { type: "array" });
+        const workbook = XLSX.read(data, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const rows = utils.sheet_to_json(sheet, { header: 1 });
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         if (rows.length > 1) {
           const headers = rows[0].map((header) => header.toLowerCase().trim());
@@ -148,7 +145,7 @@ export default function ProgramManagerSignup() {
               row[headers.indexOf("parentnumber")]?.toString().trim() || "";
             const batchNo =
               row[headers.indexOf("batchno")]?.toString().toUpperCase() || "";
-            const subjectsStr = 
+            const subjectsStr =
               row[headers.indexOf("subjects")]?.toString().trim() || "";
 
             return {
@@ -168,7 +165,7 @@ export default function ProgramManagerSignup() {
                 : parentPh,
               location:
                 row[headers.indexOf("location")]?.toString().toLowerCase() || "",
-              subjects: subjectsStr ? subjectsStr.split(",").map(s => s.trim()) : []
+              subjects: subjectsStr ? subjectsStr.split(",").map((s) => s.trim()) : [],
             };
           });
 
@@ -230,9 +227,9 @@ export default function ProgramManagerSignup() {
             return;
           }
 
-          const validSubjectValues = subjects.map(s => s.value);
+          const validSubjectValues = subjects.map((s) => s.value);
           const invalidSubjects = formattedData.filter(
-            (entry) => entry.subjects.some(s => !validSubjectValues.includes(s))
+            (entry) => entry.subjects.some((s) => !validSubjectValues.includes(s))
           );
           if (invalidSubjects.length > 0) {
             Swal.fire({
@@ -266,6 +263,7 @@ export default function ProgramManagerSignup() {
     reader.readAsArrayBuffer(file);
   };
 
+  // Handle Template Download
   const handleDownloadTemplate = () => {
     const templateData = [
       {
@@ -275,7 +273,7 @@ export default function ProgramManagerSignup() {
         studentPhNumber: "+918688031605",
         parentNumber: "+918688031603",
         location,
-        subjects: "C,Python"
+        subjects: "C,Python",
       },
     ];
 
@@ -287,11 +285,10 @@ export default function ProgramManagerSignup() {
     saveAs(blob, "Student_Enrollment_Template.xlsx");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const studentPhone = studentCountryCode?.value + formData.studentPhNumber;
-    const parentPhone = parentCountryCode?.value + formData.parentNumber;
+  // Handle Form Submission
+  const onSubmit = async (data) => {
+    const studentPhone = studentCountryCode?.value + data.mobile1;
+    const parentPhone = parentCountryCode?.value + data.mobile2;
 
     if (studentPhoneError || parentPhoneError) {
       Swal.fire({
@@ -308,8 +305,8 @@ export default function ProgramManagerSignup() {
       const endpoint = `${import.meta.env.VITE_BACKEND_URL}/api/v1/addstudent`;
       let response;
 
-      if (!useExcel) {
-        if (!emailRegex.test(formData.email)) {
+      if (mode === "manual") {
+        if (!emailRegex.test(data.email)) {
           Swal.fire({
             icon: "error",
             title: "Invalid Email!",
@@ -319,10 +316,7 @@ export default function ProgramManagerSignup() {
           return;
         }
 
-        if (
-          !phoneRegex.test(formData.studentPhNumber) ||
-          !phoneRegex.test(formData.parentNumber)
-        ) {
+        if (!phoneRegex.test(data.mobile1) || !phoneRegex.test(data.mobile2)) {
           Swal.fire({
             icon: "error",
             title: "Invalid Phone Number",
@@ -332,7 +326,7 @@ export default function ProgramManagerSignup() {
           return;
         }
 
-        if (formData.subjects.length === 0) {
+        if (!data.subjects || data.subjects.length === 0) {
           Swal.fire({
             icon: "error",
             title: "No Subjects Selected!",
@@ -343,12 +337,13 @@ export default function ProgramManagerSignup() {
         }
 
         response = await axios.post(endpoint, {
-          ...formData,
-          studentId: formData.studentId.toUpperCase(),
-          batchNo: formData.batchNo.toUpperCase(),
+          studentId: data.studentId.toUpperCase(),
+          batchNo: data.batch.toUpperCase(),
+          email: data.email.toLowerCase(),
           studentPhNumber: studentPhone,
           parentNumber: parentPhone,
           location,
+          subjects: data.subjects,
           profileStatus: false,
         });
       } else {
@@ -361,29 +356,20 @@ export default function ProgramManagerSignup() {
 
       if (response.status === 200) {
         Swal.fire({
-          title: useExcel
+          title: mode === "excel"
             ? "Students Enrolled Successfully"
             : "Student Enrolled Successfully",
           icon: "success",
         });
 
         setExcelData([]);
-        setUseExcel(false);
+        reset();
         setSelectedSubjects([]);
-
+        setMode("manual");
         const excelUploadElement = document.getElementById("excelUpload");
         if (excelUploadElement) {
           excelUploadElement.value = "";
         }
-
-        setFormData({
-          studentId: "",
-          batchNo: "",
-          email: "",
-          studentPhNumber: "",
-          parentNumber: "",
-          subjects: []
-        });
 
         await fetchStudentsData();
       }
@@ -411,271 +397,274 @@ export default function ProgramManagerSignup() {
       }
     } finally {
       setLoading(false);
-      setFormData({
-        studentId: "",
-        batchNo: "",
-        email: "",
-        studentPhNumber: "",
-        parentNumber: "",
-        subjects: []
-      });
-      setExcelData([]);
-      setSelectedSubjects([]);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center p-4 sm:p-6 min-h-[89vh] mt-0 bg-gray-100">
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-3xl">
-        {useExcel && (
-          <div className="flex justify-center gap-4 mb-4 text-center items-center">
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm sm:text-base"
-              onClick={handleDownloadTemplate}
-            >
-              <FaDownload /> Download Template
-            </button>
-          </div>
-        )}
-        <h1 className="text-xl sm:text-2xl font-semibold text-center text-gray-800 mb-6">
+    <div className="grid lg:grid-cols-2 ml-3 items-center min-h-[80vh]">
+      <div className="w-[95%] mx-auto bg-white rounded-2xl shadow-lg p-8 ml-5 mr-2">
+        {/* Header */}
+        <h2 className="text-2xl font-semibold mb-6 text-center">
           Student Enrollment
-        </h1>
-        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+        </h2>
+
+        {/* Tabs */}
+        <div className="flex flex-col gap-2 md:flex-row justify-center md:space-x-4 mb-8">
           <button
-            className={`px-4 py-2 border rounded-md transition duration-300 text-sm sm:text-lg font-medium flex items-center gap-2 w-full sm:w-auto ${
-              !useExcel ? "bg-[#19216f] text-white" : "bg-gray-200 text-gray-800"
+            type="button"
+            onClick={() => onTabClick("manual")}
+            className={`flex items-center px-5 py-2 rounded-md transition ${
+              mode === "manual"
+                ? "bg-[#00007F] text-white"
+                : "bg-[#8D8D8D] text-white"
             }`}
-            onClick={() => setUseExcel(false)}
           >
-            <FaUser /> Manual Entry
+            <img src={userIcon} alt="" className="w-5 h-5 mr-2" />
+            Manual Entry
           </button>
           <button
-            className={`px-4 py-2 border rounded-md transition duration-300 text-sm sm:text-lg font-medium flex items-center gap-2 w-full sm:w-auto ${
-              useExcel ? "bg-[#19216f] text-white" : "bg-gray-200 text-gray-800"
+            type="button"
+            onClick={() => onTabClick("excel")}
+            className={`flex items-center px-5 py-2 rounded-md transition ${
+              mode === "excel"
+                ? "bg-[#00007F] text-white"
+                : "bg-[#8D8D8D] text-white"
             }`}
-            onClick={() => setUseExcel(true)}
           >
-            <FaFileExcel /> Excel Upload
+            <img src={folderIcon} alt="" className="w-5 h-5 mr-2" />
+            Excel Upload
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
-          {!useExcel ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        {/* Form */}
+        {mode === "manual" && (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Student ID */}
               <div>
-                <label
-                  htmlFor="studentId"
-                  className="block text-sm sm:text-base text-black font-semibold mb-2"
-                >
-                  Student ID
+                <label className="block text-sm font-semibold text-[#00007F]">
+                  Student ID <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
-                  <FaUsers className="text-black mr-2" />
-                  <input
-                    id="studentId"
-                    name="studentId"
-                    type="text"
-                    placeholder="Enter Student ID"
-                    value={formData.studentId}
-                    onChange={handleChange}
-                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
-                    required
-                  />
-                </div>
+                <input
+                  {...register("studentId", { required: true })}
+                  type="text"
+                  placeholder="Enter Student ID"
+                  className="mt-1 block w-full border border-[#00007F] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00007F]"
+                />
+                {errors.studentId && (
+                  <p className="text-red-500 text-xs mt-1">Required</p>
+                )}
               </div>
+
               {/* Batch */}
               <div>
-                <label
-                  htmlFor="batchNo"
-                  className="block text-sm sm:text-base text-black font-semibold mb-2"
-                >
-                  Batch
+                <label className="block text-sm font-semibold text-[#00007F]">
+                  Batch <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-1 focus-within:ring-2 focus-within:ring-blue-500">
-                  <FaCalendarAlt className="text-black mr-2" />
-                  <select
-                    id="batchNo"
-                    name="batchNo"
-                    value={formData.batchNo}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, batchNo: e.target.value }))
-                    }
-                    className="w-full px-3 py-2 text-gray-800 font-medium text-sm sm:text-base"
-                    required
-                  >
-                    <option value="" disabled>
-                      Select Batch
+                <select
+                  {...register("batch", { required: true })}
+                  className="mt-1 block w-full border border-[#00007F] rounded-md px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#00007F]"
+                >
+                  <option value="">Select Batch</option>
+                  {batches.map((batch) => (
+                    <option key={batch.id} value={batch.Batch}>
+                      {batch.Batch}
                     </option>
-                    {batches.map((batch) => (
-                      <option key={batch.id} value={batch.Batch}>
-                        {batch.Batch}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  ))}
+                </select>
+                {errors.batch && (
+                  <p className="text-red-500 text-xs mt-1">Required</p>
+                )}
               </div>
+
               {/* Email */}
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm sm:text-base text-black font-semibold mb-2"
-                >
-                  Email
+                <label className="block text-sm font-semibold text-[#00007F]">
+                  Email <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
-                  <FaEnvelope className="text-black mr-2" />
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter Email"
-                    value={formData.email.toLowerCase()}
-                    onChange={handleChange}
-                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
-                    required
-                  />
-                </div>
+                <input
+                  {...register("email", {
+                    required: true,
+                    pattern: emailRegex,
+                  })}
+                  type="email"
+                  placeholder="Enter Email"
+                  className="mt-1 block w-full border border-[#00007F] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00007F]"
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.type === "pattern"
+                      ? "Invalid email"
+                      : "Required"}
+                  </p>
+                )}
               </div>
+
               {/* Subjects */}
               <div>
-                <label
-                  htmlFor="subjects"
-                  className="block text-sm sm:text-base text-black font-semibold mb-2"
-                >
-                  Subjects
+                <label className="block text-sm font-semibold text-[#00007F]">
+                  Subjects <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2">
-                  <Select
-                    id="subjects"
-                    isMulti
-                    options={subjects}
-                    value={selectedSubjects}
-                    onChange={handleSubjectsChange}
-                    placeholder="Select Subjects"
-                    className="flex-1 text-sm sm:text-base"
-                    classNamePrefix="select"
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        border: "none",
-                        boxShadow: "none",
-                        fontSize: "14px",
-                        "@media (min-width: 640px)": {
-                          fontSize: "16px",
-                        },
-                      }),
-                      menu: (base) => ({
-                        ...base,
-                        zIndex: 9999,
-                      }),
-                    }}
-                  />
-                </div>
+                <Select
+                  isMulti
+                  options={subjects}
+                  value={selectedSubjects}
+                  onChange={handleSubjectsChange}
+                  placeholder="Select Subjects"
+                  className="mt-1"
+                  classNamePrefix="select"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      border: "1px solid #00007F",
+                      borderRadius: "0.375rem",
+                      padding: "0.25rem",
+                      "&:hover": { borderColor: "#00007F" },
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      zIndex: 9999,
+                    }),
+                  }}
+                />
+                {errors.subjects && (
+                  <p className="text-red-500 text-xs mt-1">At least one subject is required</p>
+                )}
               </div>
-              {/* Student Whatsapp Number */}
-              <div className="sm:col-span-2">
-                <label className="block text-sm sm:text-base text-black font-semibold mb-2">
-                  Student Whatsapp Number
+
+              {/* Mobile #1 (Student) */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  <span className="text-[#00007F] font-medium"> Mobile</span>{" "}
+                  (Student) <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
-                  <FaWhatsapp className="text-green-600 mr-2 text-xl sm:text-2xl" />
+                <div className="flex mt-1">
                   <Select
                     options={countryCodes}
                     value={studentCountryCode}
                     onChange={setStudentCountryCode}
-                    placeholder="Select Code"
-                    className="mr-2 w-1/3 sm:w-1/5 text-sm sm:text-base"
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        border: "none",
-                        boxShadow: "none",
-                      }),
-                    }}
+                    placeholder="Code"
+                    className="w-1/4 mr-2"
                   />
                   <input
-                    name="studentPhNumber"
-                    type="text"
-                    placeholder="Enter Student Phone Number"
-                    value={formData.studentPhNumber}
-                    onChange={handleChange}
-                    onBlur={handleStudentPhoneBlur}
-                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
-                    required
+                    {...register("mobile1", {
+                      required: true,
+                      pattern: phoneRegex,
+                    })}
+                    type="tel"
+                    placeholder="Enter 10-digit number"
+                    className="flex-1 border border-[#00007F] rounded-md pl-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00007F]"
+                    onBlur={(e) => handleStudentPhoneBlur(e.target.value)}
                   />
                 </div>
+                {errors.mobile1 && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.mobile1.type === "pattern"
+                      ? "Must be 10 digits starting with 9, 8, 7, or 6"
+                      : "Required"}
+                  </p>
+                )}
                 {studentPhoneError && (
-                  <p className="text-red-500 text-xs sm:text-sm mt-1">{studentPhoneError}</p>
+                  <p className="text-red-500 text-xs mt-1">{studentPhoneError}</p>
                 )}
               </div>
-              {/* Parent Phone Number */}
-              <div className="sm:col-span-2">
-                <label className="block text-sm sm:text-base text-black font-semibold mb-2">
-                  Parent Phone Number
+
+              {/* Mobile #2 (Parent) */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  <span className="text-[#00007F] font-medium"> Mobile</span>{" "}
+                  (Parent) <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
-                  <FaWhatsapp className="text-green-600 mr-2 text-xl sm:text-2xl" />
+                <div className="flex mt-1">
                   <Select
                     options={countryCodes}
                     value={parentCountryCode}
                     onChange={setParentCountryCode}
-                    placeholder="Select Code"
-                    className="mr-2 w-1/3 sm:w-1/5 text-sm sm:text-base"
-                    styles={{
-                      control: (base) => ({
-                        ...base,
-                        border: "none",
-                        boxShadow: "none",
-                      }),
-                    }}
+                    placeholder="Code"
+                    className="w-1/4 mr-2"
                   />
                   <input
-                    name="parentNumber"
-                    type="text"
-                    placeholder="Enter Parent Phone Number"
-                    value={formData.parentNumber}
-                    onChange={handleChange}
-                    onBlur={handleParentPhoneBlur}
-                    className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base font-medium"
-                    required
+                    {...register("mobile2", {
+                      required: true,
+                      pattern: phoneRegex,
+                    })}
+                    type="tel"
+                    placeholder="Enter 10-digit number"
+                    className="flex-1 border border-[#00007F] rounded-md pl-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00007F]"
+                    onBlur={(e) => handleParentPhoneBlur(e.target.value)}
                   />
                 </div>
+                {errors.mobile2 && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.mobile2.type === "pattern"
+                      ? "Must be 10 digits starting with 9, 8, 7, or 6"
+                      : "Required"}
+                  </p>
+                )}
                 {parentPhoneError && (
-                  <p className="text-red-500 text-xs sm:text-sm mt-1">{parentPhoneError}</p>
+                  <p className="text-red-500 text-xs mt-1">{parentPhoneError}</p>
                 )}
               </div>
             </div>
-          ) : (
-            <div className="mb-4">
-              <label
-                htmlFor="excelUpload"
-                className="block text-sm sm:text-base text-black font-semibold mb-2"
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className={`mt-8 w-full rounded-lg py-3 font-medium text-white ${
+                loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-800"
+              } transition`}
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Submit >"}
+            </button>
+          </form>
+        )}
+
+        {mode === "excel" && (
+          <div className="py-8">
+            <div className="flex justify-center mb-6">
+              <button
+                onClick={handleDownloadTemplate}
+                className="flex items-center px-5 py-2 bg-[#00007F] text-white rounded-md hover:bg-blue-900 transition"
               >
-                Upload Excel
+                <FaDownload className="mr-2" />
+                Download Template
+              </button>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-[#00007F] mb-2">
+                Upload Excel <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center border border-gray-300 rounded-md p-2 focus-within:ring-2 focus-within:ring-blue-500">
-                <FaUpload className="text-black mr-2" />
+              <div className="flex items-center border border-[#00007F] rounded-md p-2">
+                <FaUpload className="text-[#00007F] mr-2" />
                 <input
                   id="excelUpload"
                   type="file"
                   accept=".xlsx, .xls"
                   onChange={handleFileUpload}
-                  className="flex-1 px-2 py-1 text-gray-800 outline-none text-sm sm:text-base"
+                  className="flex-1 px-2 py-1 text-gray-800 outline-none"
                 />
               </div>
             </div>
-          )}
-          <button
-            type="submit"
-            className={`w-full py-3 text-white font-semibold rounded-md mt-4 text-sm sm:text-base ${
-              loading ? "bg-gray-500 cursor-not-allowed" : "bg-[#19216f] hover:bg-[#232d86]"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
-        </form>
+            <button
+              onClick={handleSubmit(onSubmit)}
+              className={`w-full rounded-lg py-3 font-medium text-white ${
+                loading || !excelData.length
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-blue-900 hover:bg-blue-800"
+              } transition`}
+              disabled={loading || !excelData.length}
+            >
+              {loading ? "Submitting..." : "Submit >"}
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="hidden lg:flex lg:flex-col w-full justify-center items-center">
+        <img src={frame} alt="" />
       </div>
     </div>
   );
-}
+};
+
+export default ProgramManagerSignup;

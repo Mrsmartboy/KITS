@@ -8,7 +8,6 @@ import { useStudentsData } from "../contexts/StudentsListContext";
 import { useEdit } from "../contexts/EditContext";
 import { useStudent } from "../contexts/StudentProfileContext";
 import { decryptData } from "../../cryptoUtils.jsx";
-// import { encryptData } from '../../cryptoUtils.jsx'; // Import encryption method
 
 const departmentList = [
   "CSE-AI & ML",
@@ -68,12 +67,12 @@ const StudentProfileV = () => {
     gender: studentDetails?.gender || "",
     collegeUSNNumber: studentDetails?.collegeUSNNumber || "",
     githubLink: studentDetails?.githubLink || "",
-    arrears: studentDetails?.arrears || false, // Defaulting to false
-    arrearsCount: studentDetails?.ArrearsCount,
+    arrears: studentDetails?.arrears || false,
+    arrearsCount: studentDetails?.ArrearsCount || "",
     qualification: studentDetails?.qualification || "",
     department: studentDetails?.department || "",
-    password: "", // Should be empty for security reasons
-    cpassword: "", // Should be empty for security reasons
+    password: "",
+    cpassword: "",
     state: studentDetails?.state || "",
     cityname: studentDetails?.city || "",
     yearOfPassing: studentDetails?.yearOfPassing || "",
@@ -84,11 +83,9 @@ const StudentProfileV = () => {
     twelfthPassoutYear: studentDetails?.TwelfthPassoutYear || "",
     profilePic: studentDetails?.profilePic || null,
     resume: studentDetails?.resume || null,
-    highestGraduationPercentage:
-      studentDetails?.highestGraduationpercentage || "",
+    highestGraduationPercentage: studentDetails?.highestGraduationpercentage || "",
   });
 
-  const [age, setAge] = useState("");
   const [errors, setErrors] = useState({
     name: "",
     age: "",
@@ -116,8 +113,7 @@ const StudentProfileV = () => {
     setShowCPassword(!showCPassword);
   };
 
-  // Skill related states
-  const [skills, setSkills] = useState([
+  const skills = [
     "HTML",
     "CSS",
     "JavaScript",
@@ -146,12 +142,13 @@ const StudentProfileV = () => {
     "R",
     "AWS",
     "DevOps",
-  ]);
+  ];
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [currentSkill, setCurrentSkill] = useState("");
   const [isOther, setIsOther] = useState(false);
   const [newSkill, setNewSkill] = useState("");
   const profileStatus = sessionStorage.getItem("profileStatus") === "true";
+
   const handleArrearsChange = (e) => {
     const value = e.target.value === "yes" ? true : false;
     setFormData((prevState) => ({
@@ -167,11 +164,10 @@ const StudentProfileV = () => {
   const handleArrearsCountChange = (e) => {
     const value = e.target.value;
     if (/^\d*$/.test(value)) {
-      // ✅ Allow only numeric values
       setArrearsCount(value);
       setFormData((prevState) => ({
         ...prevState,
-        arrearsCount: value, // ✅ Ensure formData is updated
+        arrearsCount: value,
       }));
     }
   };
@@ -183,7 +179,7 @@ const StudentProfileV = () => {
     setFormData((prevState) => ({
       ...prevState,
       dob: selectedDate,
-      age: calculatedAge, // ✅ Ensure age is stored in formData
+      age: calculatedAge,
     }));
 
     setErrors((prevErrors) => ({
@@ -193,7 +189,7 @@ const StudentProfileV = () => {
   };
 
   const calculateAge = (dob) => {
-    if (!dob) return ""; // Handle empty dob
+    if (!dob) return "";
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -216,15 +212,21 @@ const StudentProfileV = () => {
   const validateCollegeUSNNumber = (usn) => {
     return /^[a-zA-Z0-9]{1,50}$/.test(usn)
       ? ""
-      : "USN must be  alphanumeric characters.";
+      : "USN must be alphanumeric characters.";
   };
 
   const validateGithubLink = (link) => {
+    if (!link) return ""; // Optional field, no validation if empty
     return /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9._-]+$/.test(link)
       ? ""
       : "Invalid GitHub link. Please ensure it follows the format: https://github.com/username";
   };
+
   const validatePassword = (password) => {
+    if (!password && !profileStatus) {
+      return "Password is required.";
+    }
+    if (!password) return "";
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
     return passwordRegex.test(password)
       ? ""
@@ -232,13 +234,17 @@ const StudentProfileV = () => {
   };
 
   const validateYearOfPassing = (year) => {
+    if (!year) return ""; // Optional field, no validation if empty
     return /^\d{4}$/.test(year) ? "" : "Year of passing must be 4 digits.";
   };
 
   const validatePercentage = (percentage) => {
-    return /^\d{2}$/.test(percentage) ? "" : "Percentage must be 2  digits.";
+    if (!percentage) return ""; // Optional field for highestGraduationPercentage
+    return /^\d{2}$/.test(percentage) ? "" : "Percentage must be 2 digits.";
   };
+
   const validateInput = (value) => {
+    if (!value && ["qualification"].includes(value)) return ""; // Optional field for qualification
     return /^[a-zA-Z0-9\s]*$/.test(value)
       ? ""
       : "Input must not contain special characters.";
@@ -251,7 +257,6 @@ const StudentProfileV = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Update form data
     setFormData({
       ...formData,
       [name]: value,
@@ -259,12 +264,9 @@ const StudentProfileV = () => {
 
     let errorMessage = "";
 
-    // Skip password validation if profileStatus is true
     if (profileStatus && (name === "password" || name === "cpassword")) {
-      // If profileStatus is true, no need to validate passwords
       errorMessage = "";
     } else {
-      // Proceed with normal validation
       switch (name) {
         case "gender":
           errorMessage = value ? "" : "Please select a gender.";
@@ -282,15 +284,13 @@ const StudentProfileV = () => {
           errorMessage = validatePassword(value);
           break;
         case "cpassword":
-          // Ensure cpassword matches password
           errorMessage = validatePassword(value);
           if (value !== formData.password) {
             errorMessage = "Password and Confirm Password do not match.";
           }
           break;
-        case "yearOfPassing": // Graduation passout year validation
-        case "tenthPassoutYear": // 10th passout year validation
-        case "twelfthPassoutYear": // 12th passout year validation
+        case "tenthPassoutYear":
+        case "twelfthPassoutYear":
           errorMessage = validatePassoutYear(value);
           break;
         case "tenthStandard":
@@ -301,6 +301,9 @@ const StudentProfileV = () => {
           break;
         case "highestGraduationPercentage":
           errorMessage = validatePercentage(value);
+          break;
+        case "yearOfPassing":
+          errorMessage = validateYearOfPassing(value);
           break;
         case "cityname":
         case "state":
@@ -313,7 +316,6 @@ const StudentProfileV = () => {
       }
     }
 
-    // Update errors state
     setErrors({
       ...errors,
       [name]: errorMessage,
@@ -325,18 +327,17 @@ const StudentProfileV = () => {
     const file = e.target.files[0];
 
     let validTypes = [];
-    let maxSize = 10 * 1024; // 10 KB
+    let maxSize = 10 * 1024;
 
     if (fieldName === "resume") {
       validTypes = ["application/pdf"];
-      maxSize = 100 * 1024; // 100 KB for resume
+      maxSize = 100 * 1024;
     } else if (fieldName === "profilePic") {
       validTypes = ["image/jpeg", "image/png", "image/gif"];
-      maxSize = 10 * 1024; // 10 KB for profile pic
+      maxSize = 10 * 1024;
     }
 
     if (file) {
-      // Check for valid file type
       if (!validTypes.includes(file.type)) {
         Swal.fire({
           icon: "error",
@@ -350,7 +351,6 @@ const StudentProfileV = () => {
         return;
       }
 
-      // Check for size strictly less than 10 KB (for profile pic)
       if (file.size >= maxSize && fieldName === "profilePic") {
         Swal.fire({
           icon: "error",
@@ -361,7 +361,6 @@ const StudentProfileV = () => {
         return;
       }
 
-      // Check for size strictly less than 100 KB (for resume)
       if (file.size >= maxSize && fieldName === "resume") {
         Swal.fire({
           icon: "error",
@@ -372,7 +371,6 @@ const StudentProfileV = () => {
         return;
       }
 
-      // If all validations pass, update form data
       setFormData((prevFormData) => ({
         ...prevFormData,
         [fieldName]: file,
@@ -412,26 +410,25 @@ const StudentProfileV = () => {
       setDepartments([...departments, updatedDepartment]);
       setFormData({ ...formData, department: updatedDepartment });
       setNewDepartment("");
-      setIsDepartmentAdded(true); // Mark department as added
+      setIsDepartmentAdded(true);
     }
   };
+
   const handleDepartmentChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, department: value });
     setIsOther(value === "Others");
   };
+
   const handleSubmit = async (e) => {
-    console.log("Submitting form...");
     e.preventDefault();
     setEdit(true);
 
-    // Validate fields only if profileStatus is false
     const newErrors = {
       name: validateName(formData.name),
       gender: formData.gender ? "" : "Please select a gender.",
       collegeUSNNumber: validateCollegeUSNNumber(formData.collegeUSNNumber),
       githubLink: validateGithubLink(formData.githubLink),
-      // Only validate password if profileStatus is false
       password: !profileStatus ? validatePassword(formData.password) : "",
       cpassword:
         !profileStatus && formData.password !== formData.cpassword
@@ -450,15 +447,13 @@ const StudentProfileV = () => {
       cityname: validateInput(formData.cityname),
       qualification: validateInput(formData.qualification),
       collegeName: validateInput(formData.collegeName),
+      department: formData.department ? "" : "Please select a department.",
     };
-
-    console.log("Form errors:", newErrors); // Log errors to see which field is causing the issue
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
     if (hasErrors) {
-      setErrors(newErrors); // Show error messages
-      console.log("Form has errors", newErrors); // Log error details
-      return; // Prevent submission if errors are present
+      setErrors(newErrors);
+      return;
     }
 
     Swal.fire({
@@ -476,34 +471,31 @@ const StudentProfileV = () => {
         dob: formData.dob,
         cityName: formData.cityname,
         department: formData.department,
-        yearOfPassing: formData.yearOfPassing,
+        yearOfPassing: formData.yearOfPassing || null,
         state: formData.state,
         collegeName: formData.collegeName,
-        qualification: formData.qualification,
+        qualification: formData.qualification || null,
         age: formData.age ? Number(formData.age) : calculateAge(formData.dob),
         collegeUSNNumber: formData.collegeUSNNumber,
-        githubLink: formData.githubLink,
+        githubLink: formData.githubLink || null,
         arrears: formData.arrears,
         arrearsCount: formData.arrears ? Number(arrearsCount) : 0,
         tenthStandard: Number(formData.tenthStandard),
         tenthPassoutYear: formData.tenthPassoutYear,
         twelfthStandard: Number(formData.twelfthStandard),
         twelfthPassoutYear: formData.twelfthPassoutYear,
-        highestGraduationPercentage: Number(
-          formData.highestGraduationPercentage
-        ),
-        studentSkills: selectedSkills,
+        highestGraduationPercentage: formData.highestGraduationPercentage
+          ? Number(formData.highestGraduationPercentage)
+          : null,
+        studentSkills: selectedSkills.length > 0 ? selectedSkills : null,
         profileStatus: true,
       };
 
-      // Only add password, profilePic, and resume if profileStatus is false
       if (!profileStatus) {
         dataToSend.password = formData.password;
         dataToSend.profilePic = formData.profilePic;
         dataToSend.resume = formData.resume;
       }
-
-      console.log("Data being sent to backend: ", dataToSend);
 
       const response = profileStatus
         ? await axios.put(
@@ -567,7 +559,7 @@ const StudentProfileV = () => {
   };
 
   useEffect(() => {
-    if (!studentDetails) return; // ⛔ Prevent errors when studentDetails is null
+    if (!studentDetails) return;
 
     setFormData({
       name: studentDetails.name || "",
@@ -581,13 +573,11 @@ const StudentProfileV = () => {
       collegeUSNNumber: studentDetails.collegeUSNNumber || "",
       githubLink: studentDetails.githubLink || "",
       arrears: studentDetails.arrears === "true",
-      arrearsCount: studentDetails.ArrearsCount
-        ? Number(studentDetails.ArrearsCount)
-        : "",
+      arrearsCount: studentDetails.ArrearsCount || "",
       qualification: studentDetails.qualification || "",
       department: studentDetails.department || "",
-      password: "", // Empty password field for security reasons
-      cpassword: "", // Empty confirm password field for security reasons
+      password: "",
+      cpassword: "",
       state: studentDetails.state || "",
       cityname: studentDetails.city || "",
       yearOfPassing: studentDetails.yearOfPassing || "",
@@ -598,25 +588,20 @@ const StudentProfileV = () => {
       twelfthPassoutYear: studentDetails.TwelfthPassoutYear || "",
       profilePic: studentDetails.profilePic || null,
       resume: studentDetails.resume || null,
-      highestGraduationPercentage:
-        studentDetails.highestGraduationpercentage || "",
+      highestGraduationPercentage: studentDetails.highestGraduationpercentage || "",
     });
 
-    setArrearsCount(
-      studentDetails.ArrearsCount ? Number(studentDetails.ArrearsCount) : ""
-    ); // ✅ Update arrearsCount separately
-
+    setArrearsCount(studentDetails.ArrearsCount || "");
     setSelectedSkills(studentDetails.studentSkills || []);
   }, [studentDetails]);
 
   return (
-    <div className="student-profile-container ">
+    <div className="student-profile-container">
       <h1 style={{ color: "black" }} className="font-semibold text-3xl">
         Student Profile
       </h1>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="input-group">
-          {/* Name Field */}
           <div className="form-group">
             <label>
               Name <span style={{ color: "red" }}>*</span>
@@ -632,7 +617,6 @@ const StudentProfileV = () => {
             {errors.name && <p className="error-message">{errors.name}</p>}
           </div>
 
-          {/* Date of Birth Field */}
           <div className="form-group">
             <label>
               Date of Birth <span style={{ color: "red" }}>*</span>
@@ -644,7 +628,6 @@ const StudentProfileV = () => {
               onChange={handleDOBChange}
               required
             />
-            {/* Display calculated age */}
             {formData.age && <p>Your age: {formData.age} years</p>}
             {errors.age && <p className="error-message">{errors.age}</p>}
           </div>
@@ -736,16 +719,13 @@ const StudentProfileV = () => {
             {errors.gender && <p className="error-message">{errors.gender}</p>}
           </div>
           <div className="form-group">
-            <label>
-              Highest Qualification <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>Highest Qualification</label>
             <input
               type="text"
               name="qualification"
               placeholder="Ex: Btech"
               value={formData.qualification}
               onChange={handleChange}
-              required
             />
             {errors.qualification && (
               <p className="error-message">{errors.qualification}</p>
@@ -770,16 +750,13 @@ const StudentProfileV = () => {
             )}
           </div>
           <div className="form-group">
-            <label>
-              Github Link <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>Github Link</label>
             <input
               type="text"
               name="githubLink"
               placeholder="Ex: Enter github Url"
               value={formData.githubLink}
               onChange={handleChange}
-              required
             />
             {errors.githubLink && (
               <p className="error-message">{errors.githubLink}</p>
@@ -819,9 +796,7 @@ const StudentProfileV = () => {
           </div>
         </div>
 
-        {/* Academic Information */}
         <div className="input-group">
-          {/* 10th Details */}
           <div className="form-group">
             <label>
               10th Percentage <span style={{ color: "red" }}>*</span>
@@ -858,7 +833,6 @@ const StudentProfileV = () => {
         </div>
 
         <div className="input-group">
-          {/* 12th / Intermediate Details */}
           <div className="form-group">
             <label>
               12th Percentage <span style={{ color: "red" }}>*</span>
@@ -904,9 +878,7 @@ const StudentProfileV = () => {
               onChange={handleDepartmentChange}
               required
             >
-              <option value="">
-                Select Department <span style={{ color: "red" }}>*</span>
-              </option>
+              <option value="">Select Department</option>
               {departments.map((dept, index) => (
                 <option key={index} value={dept}>
                   {dept}
@@ -933,17 +905,13 @@ const StudentProfileV = () => {
           </div>
 
           <div className="form-group">
-            <label>
-              Highest Qualification Year of Passing{" "}
-              <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>Highest Qualification Year of Passing</label>
             <input
               type="text"
               name="yearOfPassing"
               placeholder="Ex: 2019"
               value={formData.yearOfPassing}
               onChange={handleChange}
-              required
             />
             {errors.yearOfPassing && (
               <p className="error-message">{errors.yearOfPassing}</p>
@@ -951,11 +919,9 @@ const StudentProfileV = () => {
           </div>
         </div>
         <div className="input-group">
-          {/* Graduation Details */}
           <div className="form-group">
             <label>
-              Graduated College Name (PG/UG){" "}
-              <span style={{ color: "red" }}>*</span>
+              Graduated College Name (PG/UG) <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="text"
@@ -971,16 +937,13 @@ const StudentProfileV = () => {
           </div>
 
           <div className="form-group">
-            <label>
-              Graduation Passout Year <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>Graduation Passout Year</label>
             <input
               type="text"
               name="yearOfPassing"
               placeholder="Ex: 2021"
               value={formData.yearOfPassing}
               onChange={handleChange}
-              required
             />
             {errors.yearOfPassing && (
               <p className="error-message">{errors.yearOfPassing}</p>
@@ -992,7 +955,7 @@ const StudentProfileV = () => {
           <div className="input-group">
             <div className="form-group">
               <label>
-                Profile Picture (10KB)<span style={{ color: "red" }}>*</span>
+                Profile Picture (10KB) <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 type="file"
@@ -1026,28 +989,20 @@ const StudentProfileV = () => {
 
         <div className="input-group">
           <div className="form-group">
-            <label>
-              Percentage(Highest Graduation){" "}
-              <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>Percentage (Highest Graduation)</label>
             <input
               type="text"
               name="highestGraduationPercentage"
               placeholder="Ex: 92"
               value={formData.highestGraduationPercentage}
               onChange={handleChange}
-              required
             />
             {errors.highestGraduationPercentage && (
-              <p className="error-message">
-                {errors.highestGraduationPercentage}
-              </p>
+              <p className="error-message">{errors.highestGraduationPercentage}</p>
             )}
           </div>
           <div>
-            <label className="form-group">
-              Skills: <span style={{ color: "red" }}>*</span>
-            </label>
+            <label className="form-group">Skills:</label>
             <select
               id="skills"
               name="skills"
@@ -1125,12 +1080,10 @@ const StudentProfileV = () => {
             </div>
           </div>
 
-          {/* Conditionally show input field for arrears count */}
           {formData.arrears === true && (
             <div className="form-group">
               <label>
-                How many arrears do you have?{" "}
-                <span style={{ color: "red" }}>*</span>
+                How many arrears do you have? <span style={{ color: "red" }}>*</span>
               </label>
               <input
                 type="text"
