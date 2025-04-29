@@ -95,7 +95,6 @@ import CPOnlineCompiler from "./CodePlayground/OnlineCompiler.jsx";
 import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
 import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 import LeaderBoard from "./Student/LeaderBoard.jsx";
-import NewSubTopicsFigma from "./CodePlayground/NewSubTopicsFigma.jsx";
 import NewAttendanceSystem from "./Mentor/NewAttendanceSystem.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -684,14 +683,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/figmatester"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <NewSubTopicsFigma />
-                  </ProtectedRoute>
-                }
-              />
+              
               <Route
                 path="/cparea"
                 element={
