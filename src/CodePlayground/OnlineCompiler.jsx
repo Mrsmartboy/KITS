@@ -294,9 +294,10 @@ function CPOnlineCompiler() {
   /* ─────────── back nav ─────────── */
   const handleBack = () => {
     if (subjectname && topicname && subtopic) {
-      navigate(`/code-playground/${subjectname}/${topicname}/${subtopic}`, {
-        state: { tag: tags },
-      });
+      // navigate(`/code-playground/${subjectname}/${topicname}/${subtopic}`, {
+      //   state: { tag: tags },
+      // });
+      navigate(-1)
     } else navigate("/code-playground");
   };
 
