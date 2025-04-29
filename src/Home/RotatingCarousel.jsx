@@ -12,12 +12,11 @@ const profiles = [
    { id: 4, package: '7 LPA', company: 'Healthsyst', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849464/varuni_br_ji3lzr.webp", alt: 'varuni-br' },
    { id: 5, package: '7 LPA', company: 'TCS', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/morampudu_anu_sri_m0ni5y.webp", alt: 'morampudi_anu_sri' },
    { id: 6, package: '7 LPA', company: 'Healthsyst', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849444/kavya_c_zkvdnm.webp", alt: 'kavya_c' },
- 
-   {id:7,package:'9 LPA', company:'MorganStanley',image:"https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658096/venkatareshma_ke93qk.png",alt:'venkata_reshma'},
-   { id: 8, package: '11.10 LPA', company: 'ThoghtWorks', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658095/babysuvarna_xam0qb.png", alt: 'baby_suvarna' },
+   {id:7,package:'6.5 LPA', company:'Mastech',image:"https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/manoj_naidu_m_itdtcw.webp",alt:'manoj_naidu'},
+   { id: 8, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/bhargavi_g_hegde_cvurt4.webp", alt: 'bhargavi_g_hegde' },
    { id: 9, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849456/sharath_s_bznwej.webp", alt: 'sharath_s' },
    { id: 10, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/manu_n_oqizdn.webp", alt: 'manu_n' },
-   { id: 11, package: '6.5 LPA', company: 'Sigmoid', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658095/saikrishna_o2aahc.png", alt: 'sai_krishna' },
+   { id: 11, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/t_shivani_bkgftb.webp", alt: 't_shivani' },
   { id: 12, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/suhas_zrwtlu.webp", alt: 'suhas' }
 ];
 
