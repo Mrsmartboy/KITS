@@ -67,7 +67,7 @@ const LeaderBoard = () => {
 
   /*  helpers  */
   const positionCardBg = (pos) =>
-    pos === 1 ? "bg-white text-[#181D27]" : "bg-[#2333CB] text-white";
+    pos !== 1 ? "bg-white text-[#181D27]" : "bg-[#2333CB] text-white";
   const positionCrown = (pos) => `/kits/card${pos}.png`;
   // Put first-place card in the middle (visual order 2 → 1 → 3 on ≥ sm)
   const orderClass = (pos) => {
@@ -107,20 +107,24 @@ const LeaderBoard = () => {
               <div
                 key={p.position}
                 className={`flex flex-col items-center rounded-lg p-3 sm:p-5
-                        w-full min-w-[190px] sm:w-[190px] h-60 sm:h-[260px] shadow-md
+                        w-full min-w-[190px] sm:w-[190px] h-full sm:h-[280px] shadow-md
                         gap-2 sm:gap-4
                         ${positionCardBg(p.position)}
                         ${p.position === 1 ? "md:-translate-y-12" : ""}
                         ${orderClass(p.position)}`} // ⬅️ add this
               >
                 {/* crown + avatar */}
-                <div className="flex flex-col items-center gap-1 mt-[-6px]">
+                <div className="flex flex-col items-center mt-[-6px]">
                   <img
                     src={positionCrown(p.position)}
                     alt="Crown"
                     className="w-10 sm:w-11 h-10 sm:h-11 object-contain"
                   />
-                  <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-full border-2 sm:border-[3px] border-white/80 shadow-md overflow-hidden">
+                  <div
+                    className={`w-14 sm:w-16 h-14 sm:h-16 rounded-full border-2 sm:border-[4px] shadow-md overflow-hidden ${
+                      p.position === 1 ? "border-1" : "border-[#2333CB]"
+                    }`}
+                  >
                     <img
                       src={picUrl(picUrl(p.img))}
                       alt={p.name}
@@ -131,12 +135,13 @@ const LeaderBoard = () => {
 
                 {/* name, batch/class */}
                 <div className="flex flex-col items-center gap-1">
-                  <h2 className="text-sm sm:text-xl font-semibold leading-5 sm:leading-6 whitespace-nowrap">
+                  <h2 className="text-sm sm:text-xl font-semibold leading-5 sm:leading-6 text-center text-ellipsis overflow-hidden max-w-[90%] break-words line-clamp-2">
                     {p.name}
                   </h2>
+
                   <p
                     className={`text-xs sm:text-sm font-semibold ${
-                      p.position === 1 ? "text-[#535862]" : "text-[#F5F5F5]"
+                      p.position !== 1 ? "text-[#535862]" : "text-[#F5F5F5]"
                     }`}
                   >
                     {activeTab === "Class" ? `Class ${p.batchNo}` : p.batchNo}
@@ -146,7 +151,9 @@ const LeaderBoard = () => {
                 {/* score */}
                 <div
                   className={`flex items-center gap-1 sm:gap-2 mt-auto ${
-                    p.position === 1 ? "text-[#2333CB]" : ""
+                    p.position !== 1
+                      ? "bg-[#2333CB] rounded-full text-white px-2 p-1"
+                      : "text-[#2333CB] bg-white rounded-full px-2 p-1"
                   }`}
                 >
                   <img
