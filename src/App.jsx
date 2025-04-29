@@ -1036,6 +1036,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+               
               <Route
                 path="/ats-upload"
                 element={
