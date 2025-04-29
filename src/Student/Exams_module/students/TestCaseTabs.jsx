@@ -68,28 +68,24 @@ const TestCaseTabs = ({ testCases }) => {
 
             {/* Show Input only if it's not hidden */}
             {currentTest.type !== "hidden" && (
-              <p className="mb-1">
-                <strong>Input:</strong>
-              </p>
+              <>
+                <p className="mb-1">
+                  <strong>Input:</strong>
+                </p>
+                <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words max-w-80">
+                  {currentTest.input}
+                </pre>
+              </>
             )}
 
-            {/* Input Field */}
-            {currentTest.input && (
-              <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words max-w-80">
-                {currentTest.input}
-              </pre>
-            )}
-
+            {/* Always show outputs */}
             <div className="flex flex-col max-w-80">
-              {/* Expected Output */}
               <div className="flex-1 min-w-0">
                 <strong>Expected Output:</strong>
                 <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words">
                   {parsedExpectedOutput}
                 </pre>
               </div>
-
-              {/* Your Output */}
               <div className="flex-1 min-w-0">
                 <strong>Your Output:</strong>
                 <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words">

@@ -104,7 +104,7 @@ const OnlineCompiler = () => {
       hidden_test_cases: question.hidden_test_cases,
       sample_input: question.sample_input,
       sample_output: question.sample_output,
-      score: question.score,
+      score: Number(question.score),
       type: question.type,
     };
 
