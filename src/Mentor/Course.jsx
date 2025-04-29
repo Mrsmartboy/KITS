@@ -40,7 +40,7 @@ const Course = () => {
   
 
   return (
-    <div className="bg-[#F5F5F5] flex flex-col justify-start items-center px-4 sm:px-6 md:px-8 lg:px-8 xl:px-8 mt-0">
+    <div className="flex flex-col justify-start items-center px-4 sm:px-6 md:px-8 lg:px-8 xl:px-8 mt-0">
       <h1 className="text-[#19216f] font-poppins font-semibold text-[32px] leading-[48px] text-center">
         Mentor Curriculum
       </h1>
