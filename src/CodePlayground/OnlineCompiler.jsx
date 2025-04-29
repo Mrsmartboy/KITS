@@ -119,7 +119,9 @@ function CPOnlineCompiler() {
     if (!questionId || question.Question) return;
     setIsLoadingQuest(true);
     try {
-      const url = `${import.meta.env.VITE_BACKEND_URL}/api/v1/question-crud?subject=${subject}&questionId=${questionId}&questionType=${questionType}`;
+      const url = `${
+        import.meta.env.VITE_BACKEND_URL
+      }/api/v1/question-crud?subject=${subject}&questionId=${questionId}&questionType=${questionType}`;
 
       const { data } = await axios.get(url);
       if (data?.codeQuestions?.length) setQuestion(data.codeQuestions[0]);
@@ -140,10 +142,10 @@ function CPOnlineCompiler() {
   const clean = (txt, trimEnd = false) =>
     typeof txt === "string"
       ? txt
-        .replace(/\r/g, "")
-        .split("\n")
-        .map((l) => (trimEnd ? l.trimEnd() : l.trim()))
-        .join("\n")
+          .replace(/\r/g, "")
+          .split("\n")
+          .map((l) => (trimEnd ? l.trimEnd() : l.trim()))
+          .join("\n")
       : String(txt ?? "");
 
   const cleanedSampleInput = clean(question?.Sample_Input);
@@ -193,7 +195,7 @@ function CPOnlineCompiler() {
       hidden_test_cases: hiddenWithSample,
       sample_input: question.Sample_Input,
       sample_output: question.Sample_Output,
-      Score: question.Score,
+      Score: Number(question.Score),
       type: question.Question_Type,
     };
 
@@ -258,11 +260,16 @@ function CPOnlineCompiler() {
       setSampleResults(results);
 
       if (hidSum.failed === 0) {
-        toast.success("All test cases passed!", {position:"bottom-left"});
+        toast.success("All test cases passed!", { position: "bottom-left" });
       } else {
-        toast.warn(`Some test cases failed. Passed: ${hidSum.passed}/${hidSum.passed + hidSum.failed}`, {position:"bottom-left"});
+        toast.warn(
+          `Some test cases failed. Passed: ${hidSum.passed}/${
+            hidSum.passed + hidSum.failed
+          }`,
+          { position: "bottom-left" }
+        );
       }
-      
+
       if (isSubmit) {
         setModalLoading(true);
         setShowModal(true);
@@ -307,7 +314,9 @@ function CPOnlineCompiler() {
               onClick={handleBack}
             >
               <FaArrowLeft className="text-white w-4 h-4" />
-              <div className="text-white text-base font-medium">Code Playground</div>
+              <div className="text-white text-base font-medium">
+                Code Playground
+              </div>
             </div>
 
             {/* Question Box */}
@@ -325,7 +334,9 @@ function CPOnlineCompiler() {
                   </div>
                   <div>
                     <div>Constraints:</div>
-                    <div>{question.Constraints || "No constraints provided."}</div>
+                    <div>
+                      {question.Constraints || "No constraints provided."}
+                    </div>
                   </div>
                   <div>
                     <div>Difficulty:</div>
@@ -334,7 +345,9 @@ function CPOnlineCompiler() {
                   <div>Sample Input:</div>
                   <div className="bg-[#525252] rounded-lg min-h-[70px] p-4 flex items-center overflow-x-auto">
                     {cleanedSampleInput.trim() ? (
-                      <pre className="whitespace-pre-wrap break-words">{cleanedSampleInput}</pre>
+                      <pre className="whitespace-pre-wrap break-words">
+                        {cleanedSampleInput}
+                      </pre>
                     ) : (
                       "No sample input available."
                     )}
@@ -342,7 +355,9 @@ function CPOnlineCompiler() {
                   <div>Sample Output:</div>
                   <div className="bg-[#525252] rounded-lg min-h-[52px] p-4 flex items-center overflow-x-auto">
                     {cleanedSampleOutput.trim() ? (
-                      <pre className="whitespace-pre-wrap break-words">{cleanedSampleOutput}</pre>
+                      <pre className="whitespace-pre-wrap break-words">
+                        {cleanedSampleOutput}
+                      </pre>
                     ) : (
                       "No sample output available."
                     )}
@@ -362,7 +377,9 @@ function CPOnlineCompiler() {
                   className="flex items-center gap-3 px-3 py-2 border-2 border-[#BABABA] bg-[#1E1E1E] rounded-md flex-shrink-0 cursor-pointer"
                   onClick={toggleDropdown}
                 >
-                  <div className="text-white text-base font-medium">{language}</div>
+                  <div className="text-white text-base font-medium">
+                    {language}
+                  </div>
                   <FaChevronDown
                     className={`text-white w-5 h-5 transition-transform ${
                       isDropdownOpen ? "rotate-180" : ""
@@ -419,7 +436,9 @@ function CPOnlineCompiler() {
               {/* Code Editor */}
               <div className="flex flex-col flex-1 bg-[#1E1E1E] border border-[rgba(216,216,216,0.8)] rounded-lg overflow-hidden">
                 <div className="bg-[#525252] rounded-t-lg flex items-center h-9 px-4">
-                  <div className="text-white text-base font-medium">{initIndex + 1}</div>
+                  <div className="text-white text-base font-medium">
+                    {initIndex + 1}
+                  </div>
                 </div>
                 <div className="flex-1 h-full">
                   <Editor
@@ -473,7 +492,10 @@ function CPOnlineCompiler() {
                   {hiddenTestCaseSummary.failed === 0
                     ? "All test cases passed! 🎉"
                     : hiddenTestCaseSummary.failed > 0
-                    ? `${hiddenTestCaseSummary.passed}/${hiddenTestCaseSummary.passed + hiddenTestCaseSummary.failed} cases passed.`
+                    ? `${hiddenTestCaseSummary.passed}/${
+                        hiddenTestCaseSummary.passed +
+                        hiddenTestCaseSummary.failed
+                      } cases passed.`
                     : "Test cases not passed."}
                 </p>
                 {hiddenTestCaseSummary.failed > 0 && (

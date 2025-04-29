@@ -124,7 +124,7 @@ const OnlineCompiler = () => {
               .join("\n")
           : String(question.sample_output),
 
-      score: question.score,
+      score: Number(question.score),
       type: question.type,
     };
 

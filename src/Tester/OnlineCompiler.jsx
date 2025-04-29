@@ -331,7 +331,7 @@ function OnlineCompiler() {
       hidden_test_cases: hiddenTestCasesWithSample,
       sample_input: editedQuestion.Sample_Input,
       sample_output: editedQuestion.Sample_Output,
-      Score: editedQuestion.Score,
+      Score: Number(editedQuestion.Score),
       type: editedQuestion.Question_Type,
     };
     try {
