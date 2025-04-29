@@ -9,7 +9,7 @@ const SuccessStories = () => {
   const [companyPage, setCompanyPage] = useState(1);
   const [collegePage, setCollegePage] = useState(1);
 
-  const companiesPerPage = 5;
+  const companiesPerPage = 7;
   const collegesPerPage = 5;
 
   if (loading) {
@@ -68,7 +68,7 @@ const SuccessStories = () => {
     }
 
     return (
-      <div className="flex justify-end px-4 mt-4 font-['Inter'] text-sm md:text-base">
+      <div className="flex justify-end px-4 mt-4 font-['Inter'] text-sm md:text-base mb-10">
         <button
           className={`flex items-center gap-1 px-2 py-1 ${
             currentPage === 1
@@ -145,7 +145,7 @@ const SuccessStories = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 font-[Afacad] relative mt-2 mb-2">
+    <div className=" mx-auto px-10 py-8 font-[Afacad] relative bg-[#f3f4f6]">
       <h2 className="text-2xl md:text-3xl lg:text-[43px] font-semibold text-[#020031] mb-10 text-center">
         Our Students Success Stories
       </h2>
