@@ -11,10 +11,13 @@ const SubTopics = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+
+
   useEffect(() => {
     const fetchCurriculum = async () => {
       if (!studentDetails?.location || !studentDetails?.BatchNo) {
         setError('Location or Batch Number not available.');
+        navigate(-1);
         return;
       }
 

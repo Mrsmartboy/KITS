@@ -19,6 +19,7 @@ const SubTopicQuestions = () => {
     const fetchQuestionsAndProgress = async () => {
       if (!state?.tag) {
         setError("No tag provided for questions.");
+        navigate(-1)
         return;
       }
       setLoading(true);

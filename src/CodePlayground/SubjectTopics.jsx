@@ -8,15 +8,21 @@ const SubjectTopicsWithSubTopics = () => {
   const { studentDetails } = useStudent();
   const navigate = useNavigate();
 
+
   const [curriculumData, setCurriculumData] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(subjectname || "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+
+
   // Fetch curriculum data
   const fetchCurriculum = async () => {
     if (!studentDetails?.location || !studentDetails?.BatchNo) {
       setError("Location or Batch Number not available.");
+      console.error("Location or Batch Number not available.");
+      navigate(-1)
       return;
     }
 
