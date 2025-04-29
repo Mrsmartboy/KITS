@@ -1,12 +1,13 @@
 import React, { Suspense, useState, useEffect } from "react";
-import { useDashboard } from "../contexts/DashboardContext";
 import StatsChart from "./StatsChart";
 import "./BannerPage.css";
+import { useDashboard } from "../contexts/DashboardContext";
+
 
 
 
 const BannerPage = () => {
-  const { dashboardData, loading } = useDashboard();
+  const { dashboardData, loading } = useDashboard(); // Assuming you have a custom hook to fetch dashboard data
   const [count, setCount] = useState(0);
 
   useEffect(() => {
