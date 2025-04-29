@@ -12,7 +12,7 @@ const CourseCard = ({ course }) => {
       <div className="flex flex-col items-start gap-3 sm:gap-4 w-full flex-1">
         <div className="flex flex-col items-start gap-2 sm:gap-3 w-full">
           <div className="flex flex-row justify-start items-start gap-2 w-full">
-            <h3 className="text-[#414651] font-['Inter'] font-semibold text-[20px] sm:text-2xl leading-tight w-full">
+            <h3 className="text-[#414651] font-['Inter'] truncate font-semibold text-[20px] sm:text-2xl leading-tight w-full">
               {course.title}
             </h3>
           </div>
