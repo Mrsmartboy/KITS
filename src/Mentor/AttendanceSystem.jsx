@@ -11,7 +11,7 @@ import { decryptData } from '../../cryptoUtils.jsx';
 const dropdownStyles = {
   container: "relative w-full sm:w-[230px] h-[46px] rounded-[4px] bg-white border border-[#00007F] shadow-sm",
   select: "w-full h-full px-4 py-2 bg-transparent text-[#00007F] text-[14px] sm:text-[16px] font-medium outline-none appearance-none cursor-pointer",
-  icon: "absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00007F] pointer-events-none"
+  icon: "absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00007F] pointer PERFECTevents-none"
 };
 
 const AttendanceSystem = () => {
@@ -23,6 +23,7 @@ const AttendanceSystem = () => {
   const [filteredBatches, setFilteredBatches] = useState([]);
   const [students, setStudents] = useState([]);
   const [counts, setCounts] = useState({ total: 0, present: 0, absent: 0 });
+  const [isLoading, setIsLoading] = useState(false); // New loading state
   const location = decryptData(sessionStorage.getItem("location"));
 
   useEffect(() => {
@@ -37,11 +38,15 @@ const AttendanceSystem = () => {
         .filter((item) => item.subject === selectedSubject)
         .flatMap((item) => item.batchNo);
       setFilteredBatches(["Select Batch", ...subjectBatches]);
+      // Only reset selectedBatch if it's no longer valid for the new subject
+      if (!subjectBatches.includes(selectedBatch) && selectedBatch !== "") {
+        setSelectedBatch("");
+      }
     } else {
       setFilteredBatches(["Select Batch"]);
+      setSelectedBatch("");
     }
-    setSelectedBatch("");
-  }, [selectedSubject, scheduleData]);
+  }, [selectedSubject, scheduleData, selectedBatch]);
 
   const fetchStudents = useCallback(
     async (batches, subject) => {
@@ -64,6 +69,7 @@ const AttendanceSystem = () => {
           }
         } else {
           console.error("Failed to fetch students:", response.statusText);
+          setStudents([]);
         }
       } catch (error) {
         console.error("Error fetching students:", error);
@@ -105,6 +111,7 @@ const AttendanceSystem = () => {
   };
 
   const saveAttendance = async () => {
+    setIsLoading(true); // Set loading to true
     const now = new Date();
     const year = now.getFullYear().toString().slice(-2);
     const month = String(now.getMonth() + 1).padStart(2, "0");
@@ -137,6 +144,7 @@ const AttendanceSystem = () => {
           text: `Attendance for ${selectedBatch} on ${selectedDate.toLocaleDateString()} has already been saved.`,
           icon: "info",
         });
+        setIsLoading(false); // Reset loading
         return;
       } else if (checkResponse.status === 202 && checkResponse.data.Message === "notexisted") {
         const response = await axios.post(
@@ -159,6 +167,8 @@ const AttendanceSystem = () => {
       }
     } catch (error) {
       console.error("Error saving attendance:", error);
+    } finally {
+      setIsLoading(false); // Always reset loading in finally block
     }
   };
 
@@ -174,7 +184,7 @@ const AttendanceSystem = () => {
       </div>
 
       {/* Selection Filters */}
-      <div className="w-full sm:w-[90%] max-w-[1440px] bg-white shadow-md rounded-[20px] flex flex-col sm:flex-row items-center justify-between px-4 sm:px-8 py-6 gap-6">
+      <div className="w-full sm:w-[95%] max-w-[1440px] bg-white shadow-md rounded-[20px] flex flex-col sm:flex-row items-center justify-between px-4 sm:px-3 py-6 gap-2">
         {/* Select a Subject */}
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
           <div className="text-[#00007F] font-semibold text-[18px] sm:text-[20px] leading-[24px] whitespace-nowrap">
@@ -218,11 +228,11 @@ const AttendanceSystem = () => {
         </div>
 
         {/* Select Date & Time */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 w-full sm:w-auto">
           <div className="text-[#00007F] font-semibold text-[18px] sm:text-[20px] leading-[24px] whitespace-nowrap">
             Date & Time
           </div>
-          <div className="flex items-center justify-between w-full sm:w-[230px] h-[46px] bg-[#EFF0F7] rounded-[4px] px-4">
+          <div className="flex items-center justify-between w-full max-sm:w-[230px] h-[46px] bg-[#EFF0F7] rounded-[4px] px-4">
             <span className="text-black text-[14px] sm:text-[16px] font-normal">
               {selectedDate.toLocaleDateString("en-US", {
                 year: "numeric",
@@ -235,7 +245,7 @@ const AttendanceSystem = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="w-full sm:w-[90%] max-w-[1440px] flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-6 min-h-[calc(100vh-400px)]">
+      <div className="w-full sm:w-[95%] max-w-[1440px] flex flex-col lg:grid lg:grid-cols-[70%_30%] gap-6 min-h-[calc(100vh-400px)]">
         {/* Left Side - Student Attendance */}
         <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 flex flex-col gap-6 h-full">
           {/* Header Row */}
@@ -260,7 +270,7 @@ const AttendanceSystem = () => {
           {/* Table Section */}
           <div className="bg-white shadow-md rounded-md overflow-x-auto h-[400px] overflow-y-auto">
             {/* Table Header */}
-            <div className="bg-[#00007F] text-white grid grid-cols-4 text-center font-semibold text-[14px] sm:text-[16px] leading-[71px] sticky top-0">
+            <div className="bg-[#00007F] text-white grid grid-cols-4 text-center font-semibold text-[14px] sm:text-[16px] leading-[71px] z-50 sticky top-0">
               <div>Student ID</div>
               <div>Name</div>
               <div>Attendance</div>
@@ -322,8 +332,8 @@ const AttendanceSystem = () => {
           </div>
 
           {/* Pagination + Save */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2 text-black font-medium text-[14px] sm:text-[16px]">
+          <div className="flex flex-col sm:flex-row justify-end items-center gap-4">
+            {/* <div className="flex items-center gap-2 text-black font-medium text-[14px] sm:text-[16px]">
               <FaArrowLeft />
               <span>Prev</span>
               <span>1</span>
@@ -332,13 +342,13 @@ const AttendanceSystem = () => {
               <span>4</span>
               <span>Next</span>
               <FaArrowRight />
-            </div>
+            </div> */}
             <button
               onClick={saveAttendance}
-              disabled={!selectedBatch || students.length === 0}
+              disabled={isLoading || !selectedBatch || selectedBatch === "Select Batch" || students.length === 0}
               className="flex items-center justify-center gap-2 bg-[#00007F] text-white font-semibold text-[14px] sm:text-[16px] rounded-[4px] px-4 sm:px-6 h-[46px] disabled:bg-gray-400 w-full sm:w-auto"
             >
-              Save Attendance
+              {isLoading ? "Saving..." : "Save Attendance"}
             </button>
           </div>
         </div>
