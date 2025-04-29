@@ -2,7 +2,7 @@ import React from 'react';
 
 const KitsCollaboration = () => {
   return (
-    <div className="container mx-auto font-[Afacad]">
+    <div className=" mx-auto font-[Afacad] bg-[#f3f4f6]">
        <h2 className=" text-[25px] lg:text-[50px] text-center text-[#020031] font-semibold text mb-3 ">Our Collaboration</h2>
        <div className="flex flex-col gap-7 md:flex-row  items-center justify-center">
 
