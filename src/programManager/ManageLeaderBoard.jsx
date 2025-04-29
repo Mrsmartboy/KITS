@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useStudent } from "../contexts/StudentProfileContext";
+
+import { useUniqueBatches } from '../contexts/UniqueBatchesContext.jsx';
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 const picUrl = (raw) =>
@@ -10,17 +11,25 @@ const picUrl = (raw) =>
     ? raw
     : `${BASE_URL}/api/v1/pic?student_id=${raw}`;
 
-const LeaderBoard = () => {
+const ManageLeaderBoard = () => {
   const [activeTab, setActiveTab] = useState("Class");
+  const [selectedBatch, setSelectedBatch] = useState("");
   const [topThree, setTopThree] = useState([]);
   const [others, setOthers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const { studentDetails } = useStudent();
+
+  const { batches, loading: batchesLoading, fetchBatches } = useUniqueBatches();
+
+  // Fetch batches when component mounts
+  useEffect(() => {
+    const location = "KITS";
+    fetchBatches(location);
+  }, [fetchBatches]);
 
   const fetchData = useCallback(
-    async (tab) => {
-      if (!studentDetails) return;
+    async (tab, batch) => {
+     
       setLoading(true);
 
       try {
@@ -29,7 +38,7 @@ const LeaderBoard = () => {
           mode: isClass ? "class" : "overall",
           location: "KITS",
           limit: 10,
-          ...(isClass && { batchNo: studentDetails.BatchNo }),
+          ...(isClass && batch && { batchNo: batch }),
         };
 
         const { data } = await axios.get(`${BASE_URL}/api/v1/leaderboard`, {
@@ -43,18 +52,37 @@ const LeaderBoard = () => {
           toast.error(data.message || "Unknown error");
         }
       } catch (err) {
-        console.error(err);
         toast.error("Could not load leaderboard");
       } finally {
         setLoading(false);
       }
     },
-    [studentDetails]
+    []
   );
 
+  // Fetch data when activeTab, selectedBatch, or batches change
   useEffect(() => {
-    fetchData(activeTab);
-  }, [activeTab, fetchData]);
+   
+    if (activeTab === "Overall") {
+      fetchData("Overall");
+    } else if (activeTab === "Class" && !batchesLoading) {
+      if (batches.length === 0) {
+        toast.warn("No batches available for this location");
+        setSelectedBatch("");
+      } else if (selectedBatch) {
+        fetchData("Class", selectedBatch);
+      }
+    }
+  }, [activeTab, selectedBatch, batches, batchesLoading, fetchData]);
+
+  // Set default batch when batches are loaded
+  useEffect(() => {
+    if (activeTab === "Class" && batches.length > 0 && !batchesLoading && !selectedBatch) {
+      setSelectedBatch(batches[0]?.Batch || "");
+    } else if (activeTab === "Overall") {
+      setSelectedBatch("");
+    }
+  }, [activeTab, batches, batchesLoading, selectedBatch]);
 
   const positionCardBg = (pos) =>
     pos !== 1 ? "bg-white text-[#181D27]" : "bg-[#2333CB] text-white";
@@ -62,7 +90,7 @@ const LeaderBoard = () => {
   const orderClass = (pos) => {
     switch (pos) {
       case 2:
-        return "lg:order-1"; // Reorder only on desktop (≥1024px)
+        return "lg:order-1";
       case 1:
         return "lg:order-2";
       case 3:
@@ -94,9 +122,57 @@ const LeaderBoard = () => {
         ))}
       </div>
 
+      {/* Batch Filter (Visible only for Class tab) */}
+      {activeTab === "Class" && (
+        <div className="w-full sm:w-[90%] md:w-[400px] lg:w-[450px] mb-6">
+          <div className="relative w-full h-12 rounded-full bg-[#2333CB] p-1">
+            <select
+              value={selectedBatch}
+              onChange={(e) => {
+                console.log("Batch selected:", e.target.value);
+                setSelectedBatch(e.target.value);
+              }}
+              disabled={batchesLoading || loading}
+              className="w-full h-full px-4 py-2 bg-white text-[#010181] text-sm md:text-base font-medium rounded-full outline-none appearance-none cursor-pointer"
+            >
+              {batchesLoading ? (
+                <option>Loading batches...</option>
+              ) : batches.length === 0 ? (
+                <option>No batches available</option>
+              ) : (
+                <>
+                  <option value="">Select Batch</option>
+                  {batches.map((batch) => (
+                    <option key={batch.Batch} value={batch.Batch}>
+                      {batch.Batch}
+                    </option>
+                  ))}
+                </>
+              )}
+            </select>
+            <svg
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#010181] pointer-events-none"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+          </div>
+        </div>
+      )}
+
       {/* Top-3 Cards */}
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-12 w-full justify-center items-center px-2 sm:mt-24 sm:mb-0 mx-auto">
-        {topThree.length ? (
+        {loading ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="animate-pulse flex flex-col items-center bg-[#2333CB]/60 rounded-lg p-5 w-full max-w-[250px] lg:w-[190px] h-60 sm:h-[260px]"
+            />
+          ))
+        ) : topThree.length ? (
           topThree.map((p) => (
             <div
               key={p.position}
@@ -126,7 +202,7 @@ const LeaderBoard = () => {
               </div>
 
               <div className="flex flex-col items-center gap-1">
-                <h2 className="text-sm sm:text-md font-semibold leading-5 sm:leading-6 text-center text-ellipsis overflow-hidden max-w-[100%] break-words line-clamp-2">
+                <h2 className="text-sm sm:text-xl font-semibold leading-5 sm:leading-6 text-center text-ellipsis overflow-hidden max-w-[100%] break-words line-clamp-2">
                   {p.name}
                 </h2>
                 <p
@@ -157,19 +233,25 @@ const LeaderBoard = () => {
             </div>
           ))
         ) : (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse flex flex-col items-center bg-[#2333CB]/60 rounded-lg p-5 w-full max-w-[250px] lg:w-[190px] h-60 sm:h-[260px]"
-            />
-          ))
+          <div className="text-center text-lg font-semibold text-[#2333CB]">
+            {activeTab === "Class" && !selectedBatch
+              ? "Please select a batch"
+              : "No data available"}
+          </div>
         )}
       </div>
 
       {/* Leaderboard Rows */}
       <div className="flex flex-col w-full max-w-[100%] sm:max-w-[1470px] mb-6 sm:mb-0 mt-12 p-6">
         <div className="flex sm:hidden flex-col">
-          {others.map((p) => (
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse flex flex-col items-center w-full bg-[#2333CB]/60 rounded-[25px] p-4 mx-2 mb-6 h-40"
+              />
+            ))
+          ) : others.map((p) => (
             <div
               key={p.position}
               className="flex flex-col items-center w-full bg-[#2333CB] rounded-[25px] p-4 mx-2 mb-6"
@@ -214,7 +296,14 @@ const LeaderBoard = () => {
         </div>
 
         <div className="hidden sm:flex flex-col">
-          {others.map((p) => (
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse flex items-center justify-between bg-[#2333CB]/60 rounded-[25px] px-6 py-3 mb-2 h-20"
+              />
+            ))
+          ) : others.map((p) => (
             <div
               key={p.position}
               className="flex items-center justify-between bg-[#2333CB] rounded-[25px] px-6 py-3 mb-2"
@@ -263,4 +352,4 @@ const LeaderBoard = () => {
   );
 };
 
-export default LeaderBoard;
+export default ManageLeaderBoard;
