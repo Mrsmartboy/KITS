@@ -8,10 +8,10 @@ import TeamPage from "./TeamPage";
 import RotatingCarousel from "./RotatingCarousel";
 import TestimonialsV from "./TestimonialsV";
 import CourseQuerySection from "./CourseQuerySection";
-import Collaboration from "./Collaboration";
 import BannerPage from "./BannerPage";
-import Dashboard from "./Dashboard";
 import Footer from "../Footer/Footer";
+import SuccessStories from "./StudentSuccess";
+import KitsCollaboration from "./KitsCollaboration";
 
 export default function Home() {
   return (
@@ -46,11 +46,10 @@ export default function Home() {
       <BannerPage />
       <InfoBanner />
       <TestimonialsV />
-
       <RotatingCarousel />
-      <Dashboard />
+      <KitsCollaboration />
+      <SuccessStories />
       <CourseQuerySection />
-      <Collaboration />
       <TeamPage />
       <Footer />
     </div>
