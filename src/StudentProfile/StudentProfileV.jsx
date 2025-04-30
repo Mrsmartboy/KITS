@@ -91,16 +91,48 @@ const StudentProfileV = () => {
   const [newSkill, setNewSkill] = useState('');
   const profileStatus = sessionStorage.getItem('profileStatus') === 'true';
 
-  const totalFields = 22; // Excluding age, including all other fields
+  // Define required fields (excluding optional ones)
+  const requiredFields = [
+    'name', 'dob', 'gender', 'collegeUSNNumber', 'cityname', 'state',
+    'tenthStandard', 'tenthPassoutYear', 'twelfthStandard', 'twelfthPassoutYear',
+    'department', 'collegeName', 'arrears',
+  ];
 
-  // Calculate progress based on filled fields
+  // Calculate total required fields
+  let totalFields = requiredFields.length; // 13 (including 'arrears')
+  if (formData.arrears) totalFields += 1; // Add 'arrearsCount' if arrears is true
+  if (!profileStatus) totalFields += 4; // Add 'password', 'cpassword', 'profilePic', 'resume' if profileStatus is false
+
+  // Calculate progress based on filled required fields
   useEffect(() => {
-    const filledFields = Object.keys(formData).filter(
-      key => key !== 'age' && formData[key] !== '' && formData[key] !== null && formData[key] !== false
-    ).length + (selectedSkills.length > 0 ? 1 : 0);
+    let filledFields = 0;
+
+    // Count filled required fields
+    requiredFields.forEach(field => {
+      if (field !== 'arrears' && formData[field] !== '' && formData[field] !== null) {
+        filledFields += 1;
+      }
+    });
+
+    // Handle 'arrears' field (boolean, so always considered filled)
+    filledFields += 1;
+
+    // Handle 'arrearsCount' only if 'arrears' is true
+    if (formData.arrears && formData.arrearsCount !== '' && formData.arrearsCount !== null) {
+      filledFields += 1;
+    }
+
+    // Handle fields required only when profileStatus is false
+    if (!profileStatus) {
+      if (formData.password) filledFields += 1;
+      if (formData.cpassword) filledFields += 1;
+      if (formData.profilePic) filledFields += 1;
+      if (formData.resume) filledFields += 1;
+    }
+
     const calculatedProgress = Math.round((filledFields / totalFields) * 100);
     setProgress(calculatedProgress);
-  }, [formData, selectedSkills]);
+  }, [formData, profileStatus]);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const toggleCPasswordVisibility = () => setShowCPassword(!showCPassword);
@@ -491,7 +523,7 @@ const StudentProfileV = () => {
   }, [studentDetails]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 font-[inter]">
+    <div className="min-h-screen flex flex-col items-center bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       {/* Progress Bar (Fixed Horizontal on Mobile/Tablet) */}
       <div className="md:hidden fixed top-0 left-0 w-full bg-white shadow-md z-10 p-4">
         <div className="flex items-center justify-between">
