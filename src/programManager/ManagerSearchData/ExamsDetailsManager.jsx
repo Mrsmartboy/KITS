@@ -133,7 +133,7 @@ const ExamsDetailsManager = ({ data }) => {
       if (Object.keys(exam.subjects).length > 0) {
         attemptedDays.add(day);
       } else if (!attemptedDays.has(day)) {
- effettuatoDays.add(day);
+        unattemptedDays.add(day); // Fixed typo from effettuatoDays
       }
     }
   });
