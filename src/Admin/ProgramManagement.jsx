@@ -13,8 +13,7 @@ const ProgramManagement = () => {
   const [countryCodes, setCountryCodes] = useState([]);
 const [selectedCountryCode, setSelectedCountryCode] = useState(null);
 const [phoneNumber, setPhoneNumber] = useState(""); // Store only the number
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com)$/;
-
+const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|kitsguntur\.ac\.in|codegnan\.com)$/;
 
 
 

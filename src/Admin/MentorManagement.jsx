@@ -21,7 +21,7 @@ const MentorManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com)$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|kitsguntur\.ac\.in|codegnan\.com)$/;  
   const locations = ["KITS"];
   const designations = [
     "C",

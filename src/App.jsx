@@ -96,6 +96,7 @@ import SubjectTopicsWithSubTopics from "./CodePlayground/SubjectTopics.jsx";
 import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 import LeaderBoard from "./Student/LeaderBoard.jsx";
 import NewAttendanceSystem from "./Mentor/NewAttendanceSystem.jsx";
+import ManageLeaderBoard from "./programManager/ManageLeaderBoard.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -776,6 +777,15 @@ export default function App() {
                 element={
                   <ProtectedRoute allowedRoles={["Manager", "BDE_data"]}>
                     <ManageStudentsList />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/manageleaderboard"
+                element={
+                  <ProtectedRoute allowedRoles={["Manager"]}>
+                    <ManageLeaderBoard />
                   </ProtectedRoute>
                 }
               />
