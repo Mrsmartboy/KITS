@@ -44,7 +44,7 @@ const CalendarDay = ({ dayNumber, isAttempted, isUnattempted, dayOfWeekName }) =
 
 const ExamsDetailsManager = ({ data }) => {
   // =================== 0) Initial Validation ===================
-  if (!data || !Array.isArray(data) || data.length === 0) {
+  if (!data || !data.reports || !Array.isArray(data.reports) || data.reports.length === 0) {
     return (
       <div className="w-full min-h-[60vh] flex flex-col items-center justify-center text-center p-6">
         <img
@@ -60,16 +60,16 @@ const ExamsDetailsManager = ({ data }) => {
 
   // =================== 1) Sort exams descending by exam number ===================
   const allExams = useMemo(() => {
-    return [...data].sort((a, b) => {
-      const numA = parseInt(a.examName.match(/\d+/)[0], 10) || 0;
-      const numB = parseInt(b.examName.match(/\d+/)[0], 10) || 0;
+    return [...data.reports].sort((a, b) => {
+      const numA = parseInt(a.examDetails.examName.match(/\d+/)[0], 10) || 0;
+      const numB = parseInt(b.examDetails.examName.match(/\d+/)[0], 10) || 0;
       return numB - numA; // Most recent first
     });
-  }, [data]);
+  }, [data.reports]);
 
   // =================== 2) STAT CARDS ===================
   const totalExams = allExams.length;
-  const attemptCount = allExams.filter((exam) => exam.analysis?.examCompleted).length;
+  const attemptCount = allExams.filter((exam) => Object.keys(exam.subjects).length > 0).length;
   const unattemptedCount = totalExams - attemptCount;
 
   const statCards = [
@@ -88,7 +88,7 @@ const ExamsDetailsManager = ({ data }) => {
   const uniqueSubjects = useMemo(() => {
     const subjects = new Set();
     allExams.forEach((exam) => {
-      (exam.subjects || []).forEach((sub) => subjects.add(sub.subject));
+      Object.keys(exam.subjects).forEach((subject) => subjects.add(subject));
     });
     return Array.from(subjects);
   }, [allExams]);
@@ -124,16 +124,16 @@ const ExamsDetailsManager = ({ data }) => {
   const unattemptedDays = new Set();
 
   allExams.forEach((exam) => {
-    if (!exam.startDate) return;
-    const dt = new Date(exam.startDate);
+    if (!exam.examDetails.startDate) return;
+    const dt = new Date(exam.examDetails.startDate);
     if (Number.isNaN(dt.getTime())) return;
 
     if (dt.getMonth() === displayedMonth && dt.getFullYear() === displayedYear) {
       const day = dt.getDate();
-      if (exam.analysis?.examCompleted) {
+      if (Object.keys(exam.subjects).length > 0) {
         attemptedDays.add(day);
       } else if (!attemptedDays.has(day)) {
-        unattemptedDays.add(day);
+ effettuatoDays.add(day);
       }
     }
   });
@@ -152,8 +152,8 @@ const ExamsDetailsManager = ({ data }) => {
     return allExams.filter((exam) => {
       const subjectMatch =
         !selectedSubject ||
-        (exam.subjects || []).some((s) => s.subject === selectedSubject);
-      const inRange = isWithinRange(exam.startDate, fromDate, toDate);
+        Object.keys(exam.subjects).includes(selectedSubject);
+      const inRange = isWithinRange(exam.examDetails.startDate, fromDate, toDate);
       return subjectMatch && (!fromDate || !toDate || inRange);
     });
   }, [allExams, selectedSubject, fromDate, toDate, isWithinRange]);
@@ -161,54 +161,25 @@ const ExamsDetailsManager = ({ data }) => {
   // =================== 6) TABLE ROWS ===================
   const tableRows = useMemo(() => {
     return filteredExams.map((exam, index) => {
-      const allSubs = (exam.subjects || []).map((s) => s.subject).join(', ') || 'N/A';
-      let marks = 'N/A';
-
-      // Try to use subjectBreakdown if available
-      if (exam.analysis && exam.analysis.subjectBreakdown) {
-        const subjectScores = Object.entries(exam.analysis.subjectBreakdown)
-          .map(([subject, details]) => {
-            const score = details.score || 0;
-            const totalQuestions = details.totalQuestions || 0;
-            return `${subject}: ${score}/${totalQuestions}`;
-          })
-          .filter((scoreString) => !scoreString.includes('0/0')); // Exclude subjects with no questions
-        marks = subjectScores.length > 0 ? subjectScores.join(', ') : 'N/A';
-      } else if (exam.subjects && exam.subjects.length > 0 && exam.analysis) {
-        // Fallback: Derive scores from subjects and analysis
-        const subjectScores = exam.subjects.map((subject) => {
-          // Calculate total questions for the subject
-          const mcqCount =
-            (subject.selectedMCQs?.easy || 0) +
-            (subject.selectedMCQs?.medium || 0) +
-            (subject.selectedMCQs?.hard || 0);
-          const codingCount =
-            (subject.selectedCoding?.easy || 0) +
-            (subject.selectedCoding?.medium || 0) +
-            (subject.selectedCoding?.hard || 0);
-          const totalQuestions = mcqCount + codingCount; // Coding questions may have different scoring, adjust if needed
-
-          if (totalQuestions === 0) {
-            return `${subject.subject}: N/A`;
-          }
-
-          // Since analysis.details doesn't link questions to subjects, we can't accurately split scores
-          // As a fallback, assume equal distribution of totalScore or mark as N/A
-          const totalScore = exam.analysis.totalScore || 0;
-          const numSubjects = exam.subjects.length;
-          const score = numSubjects > 0 ? Math.round(totalScore / numSubjects) : 0;
-
-          return `${subject.subject}: ${score}/${totalQuestions}`;
-        });
-        const validScores = subjectScores.filter((s) => !s.includes('N/A'));
-        marks = validScores.length > 0 ? validScores.join(', ') : 'N/A';
-      }
+      const allSubs = Object.keys(exam.subjects).join(', ') || 'N/A';
+      const marks = Object.entries(exam.subjects)
+        .map(([subject, details]) => {
+          const mcqScore = details.obtained_mcq_marks || 0;
+          const mcqTotal = details.max_mcq_marks || 0;
+          const codeScore = details.obtained_code_marks || 0;
+          const codeTotal = details.max_code_marks || 0;
+          const totalScore = mcqScore + codeScore;
+          const totalMax = mcqTotal + codeTotal;
+          return totalMax > 0 ? `${subject}: ${totalScore}/${totalMax}` : null;
+        })
+        .filter(Boolean)
+        .join(', ') || 'N/A';
 
       return {
         sno: index + 1,
-        date: exam.startDate || 'N/A',
+        date: exam.examDetails.startDate || 'N/A',
         subject: allSubs,
-        examName: exam.examName || 'N/A',
+        examName: exam.examDetails.examName || 'N/A',
         marks,
       };
     });
@@ -218,7 +189,6 @@ const ExamsDetailsManager = ({ data }) => {
   const handleDownload = useCallback(() => {
     const header = '"S.No","Date","Subject","Exam Name","Marks"\n';
     const rows = tableRows.map((row) => {
-      // Sanitize data to prevent CSV injection
       const sanitize = (value) =>
         typeof value === 'string' ? `"${value.replace(/"/g, '""').replace(/^([=+@-])/g, "'$1")}"` : value;
       const columns = [

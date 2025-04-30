@@ -280,7 +280,7 @@ const ExamStatistics = () => {
               <div className="border-t border-gray-300 mt-2"></div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 items-center flex-grow">
-              <div className="relative w-[100px] sm:w-[120px] md:w-[160px] lg:w-[120px]">
+              <div className="relative w-[100px] sm:w-[120px] md:w-[160px] lg:w-[200px]">
                 <CircularProgressbar
                   value={animatedPercentage}
                   strokeWidth={4}

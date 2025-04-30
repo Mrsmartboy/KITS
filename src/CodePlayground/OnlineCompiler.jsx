@@ -442,19 +442,27 @@ function CPOnlineCompiler() {
                   </div>
                 </div>
                 <div className="flex-1 h-full">
-                  <Editor
-                    height="100%"
-                    language={languageExtensions[language]}
-                    value={code}
-                    theme="vs-dark"
-                    onChange={handleCodeChange}
-                    options={{
-                      minimap: { enabled: false },
-                      fontSize: 16,
-                      lineNumbers: "on",
-                      scrollBeyondLastLine: false,
-                    }}
-                  />
+                <Editor
+      height="100%"
+      language={languageExtensions[language]}
+      value={code}
+      theme="vs-dark"
+      onChange={handleCodeChange}
+      options={{
+        minimap: { enabled: false },
+        fontSize: 16,
+        lineNumbers: "on",
+        scrollBeyondLastLine: false,
+        // Disable auto-suggestions
+        suggestOnTriggerCharacters: false, // Prevents suggestions on typing trigger characters (e.g., '.', '(')
+        acceptSuggestionOnEnter: false, // Disables accepting suggestions with Enter
+        quickSuggestions: false, // Disables quick suggestions that appear while typing
+        suggest: {
+          showSnippets: false, // Disables snippet suggestions
+          showWords: false, // Disables word-based suggestions
+        },
+      }}
+    />
                 </div>
               </div>
 

@@ -696,18 +696,28 @@ export default function App() {
               />
               <Route
                 path="/code-playground/solve/:questionId"
-                element={<CPOnlineCompiler />}
+                element={
+                  <ProtectedRoute allowedRoles={["student_login_details"]}>
+                <CPOnlineCompiler />
+                </ProtectedRoute>
+                }
               />
               <Route
                 path="/code-playground/:subjectname/:topicname/:subtopic"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    {<SubTopicQuestions />}
+                    <SubTopicQuestions />
                   </ProtectedRoute>
                 }
               />
 
-              <Route path="/leaderboard" element={<LeaderBoard />} />
+              <Route path="/leaderboard" 
+              element={
+                <ProtectedRoute allowedRoles={["student_login_details"]}>
+                  <LeaderBoard />
+                </ProtectedRoute>
+              }
+               />
 
               <Route
                 path="/compiler"
