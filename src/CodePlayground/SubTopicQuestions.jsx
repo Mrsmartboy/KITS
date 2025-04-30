@@ -114,7 +114,7 @@ const SubTopicQuestions = () => {
       </div>
 
       {loading && <p className="text-gray-600">Loading questions...</p>}
-      {error && <p className="text-red-600">Questions will be upadated Soon ...</p>}
+      {error && <p className="text-red-600">Questions will be updated Soon ...</p>}
 
       {questions.length > 0 && !loading ? (
         <>
