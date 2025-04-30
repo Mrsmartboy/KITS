@@ -10,7 +10,6 @@ const LiveClasses = () => {
   const [loading, setLoading] = useState(true);
   const [locationFilter, setLocationFilter] = useState("all");
 
-  const locations = ["all", "vijayawada", "hyderabad", "bangalore"];
   const storedLocation = decryptData(sessionStorage.getItem("location"))|| "all";
 
   // Fetch live classes
@@ -83,22 +82,8 @@ const LiveClasses = () => {
           📚 Live Mentor Classes
         </h1>
 
-        {/* Location Filter */}
-        {storedLocation === "all" && (
-          <div className="text-center mb-8">
-            <select
-              value={locationFilter}
-              onChange={handleLocationFilterChange}
-              className="border border-gray-300 bg-white shadow-md rounded-lg px-4 py-2 text-sm sm:text-base text-gray-700 focus:ring focus:ring-blue-300 focus:border-blue-400 transition"
-            >
-              {locations.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc === "all" ? "🌍 All Locations" : loc}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+
+      
 
         {loading ? (
           <div className="text-center text-gray-700 text-lg font-semibold animate-pulse">

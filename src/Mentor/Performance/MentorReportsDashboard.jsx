@@ -20,7 +20,6 @@ export const MentorReportsDashboard = () => {
   const itemsPerPage = 9; // Adjust as needed
 
   const sessionStorageLocation = decryptData(sessionStorage.getItem("location"));
-  const locations = ["all", "vijayawada", "hyderabad", "bangalore"];
 
   const uniqueBatches = useMemo(() => {
     if (Array.isArray(scheduleData) && scheduleData.length > 0) {
@@ -104,21 +103,7 @@ export const MentorReportsDashboard = () => {
       </h1>
 
       {/* Location Filter */}
-      {sessionStorageLocation === "all" && (
-        <div className="text-center mb-8">
-          <select
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
-            className="border rounded-lg px-4 py-2 text-sm sm:text-base"
-          >
-            {locations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc === "all" ? "All Locations" : loc}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+    
 
       {/* Display Batches */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 w-full max-w-6xl">

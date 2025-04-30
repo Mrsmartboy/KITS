@@ -97,6 +97,7 @@ import NewOnlineCompiler from "./CodePlayground/NewOnlineCompiler.jsx";
 import LeaderBoard from "./Student/LeaderBoard.jsx";
 import NewAttendanceSystem from "./Mentor/NewAttendanceSystem.jsx";
 import ManageLeaderBoard from "./programManager/ManageLeaderBoard.jsx";
+import MentorLeaderBoard from "./Mentor/MentorLeaderBoard.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -786,6 +787,15 @@ export default function App() {
                 element={
                   <ProtectedRoute allowedRoles={["Manager"]}>
                     <ManageLeaderBoard />
+                  </ProtectedRoute>
+                }
+              />
+
+               <Route
+                path="/mentor-leaderboard"
+                element={
+                  <ProtectedRoute allowedRoles={["Mentors"]}>
+                    <MentorLeaderBoard/>
                   </ProtectedRoute>
                 }
               />
