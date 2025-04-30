@@ -66,7 +66,7 @@ const Maincomponent = () => {
         // Non-managers use a POST request with studentId in the request body
         response = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/v1/searchstudent`,
-          { studentId: trimmedInput }
+          { studentId: trimmedInput,location:location }
         );
       }
   
