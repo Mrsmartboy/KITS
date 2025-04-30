@@ -28,24 +28,7 @@ const MentorDailyExamDetails = () => {
   }, [scheduleData]);
 
 
-  // Check if all uniqueSubjects are present in the subjects of the exam
-  useEffect(() => {
-    // Loop through each report in the state data to check for subjects
-    const missingSubjects = uniqueSubjects.filter((subject) => {
-      return !data.reports.some((report) =>
-        report.subjects.hasOwnProperty(subject)
-      );
-    });
 
-    if (missingSubjects.length > 0) {
-      toast.error(
-        `Subject(s) ${missingSubjects.join(
-          ", "
-        )} were not conducted for this exam.`
-      );
-      navigate(-1);
-    }
-  }, [data.reports, uniqueSubjects, navigate]);
 
   // Redirect if data is missing or doesn't have reports
   useEffect(() => {
