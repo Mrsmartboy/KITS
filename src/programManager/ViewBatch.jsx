@@ -21,7 +21,6 @@ const ViewBatch = () => {
   const itemsPerPage = 6; // Show 6 batches per page
 
   const sessionStorageLocation = decryptData(sessionStorage.getItem("location"));
-  const locations = ["all", "vijayawada", "hyderabad", "bangalore"];
 
   useEffect(() => {
     fetchBatches(sessionStorageLocation);
@@ -164,22 +163,7 @@ const ViewBatch = () => {
         </span>
       </h1>
 
-      {/* Location Filter */}
-      {sessionStorageLocation === "all" && (
-        <div className="text-center mb-8">
-          <select
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
-            className="border rounded-lg px-4 py-2 text-sm sm:text-base"
-          >
-            {locations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc === "all" ? "All Locations" : loc}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+    
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
         {displayedBatches.map((batch) => (

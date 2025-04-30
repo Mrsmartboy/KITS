@@ -37,7 +37,7 @@ const ManageLeaderBoard = () => {
         const params = {
           mode: isClass ? "class" : "overall",
           location: "KITS",
-          limit: 10,
+          limit: 50,
           ...(isClass && batch && { batchNo: batch }),
         };
 
@@ -67,7 +67,6 @@ const ManageLeaderBoard = () => {
       fetchData("Overall");
     } else if (activeTab === "Class" && !batchesLoading) {
       if (batches.length === 0) {
-        toast.warn("No batches available for this location");
         setSelectedBatch("");
       } else if (selectedBatch) {
         fetchData("Class", selectedBatch);

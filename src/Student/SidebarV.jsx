@@ -267,6 +267,11 @@ export const SidebarV = ({
             path: "/studentdata",
             icon: MentorStudentDataIcon,
           },
+          {
+            label: "Leaderboard",
+            path: "/mentor-leaderboard",
+            icon: FaChartBar,
+          },
 
           {
             label: "Students Performance",
