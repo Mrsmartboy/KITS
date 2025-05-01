@@ -26,7 +26,6 @@ const ExamStatistics = () => {
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
 
   const Location = decryptData(sessionStorage.getItem("location"))?.toLowerCase() || 'all';
-  console.log("Location:", Location);
 
   useEffect(() => {
     const fetchData = async () => {

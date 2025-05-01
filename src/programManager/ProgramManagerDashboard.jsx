@@ -18,7 +18,7 @@ const ProgramManagerDashboard = () => {
   };
 
   return (
-    <div className=" bg-gradient-to-r from-blue-50 to-gray-100 mt-0">
+    <div className=" mt-0">
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-8">

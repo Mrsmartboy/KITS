@@ -43,7 +43,7 @@ const DailyExamReport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 mt-0">
+    <div className="min-h-screen  p-6 mt-0">
       {/* Back button */}
       <button
         className="mb-6 inline-block bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded shadow-lg transition duration-200"

@@ -184,7 +184,6 @@ export const SidebarV = ({
             path: "/exam-statistics",
             icon: FaChartBar,
           },
-          { label: "Manage Jobs List", path: "/jobs-dashboard", icon: FaBook },
           { label: "Students List", path: "/studentslist", icon: FaUsers },
           {
             label: "Student Attendance",
@@ -192,6 +191,22 @@ export const SidebarV = ({
             icon: StudentAttendanceIcon,
           },
           { label: "Student Search", path: "/studentsearch", icon: FaSearch },
+          {
+            label: "Students Performance",
+            path: "/students-performance-manager",
+            icon: StudentPerformanceIcon,
+          },
+          {
+            label: "Leaderboard",
+            path: "/manageleaderboard",
+            icon: FaChartBar,
+          },
+          {
+            label: "Student Enrollment",
+            path: "/student-enroll",
+            icon: StudentEnrollmentIcon,
+          },
+          
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
       case "Testers":
@@ -233,6 +248,11 @@ export const SidebarV = ({
           },
           { label: "Students List", path: "/studentslist", icon: FaUsers },
           {
+            label: "Student Enrollment",
+            path: "/student-enroll",
+            icon: StudentEnrollmentIcon,
+          },
+          {
             label: "Exam Statistics",
             path: "/exam-statistics",
             icon: FaChartBar,
@@ -241,6 +261,16 @@ export const SidebarV = ({
             label: "Student Attendance",
             path: "/studentattendance",
             icon: StudentAttendanceIcon,
+          },
+          {
+            label: "Students Performance",
+            path: "/students-performance-manager",
+            icon: StudentPerformanceIcon,
+          },
+          {
+            label: "Leaderboard",
+            path: "/manageleaderboard",
+            icon: FaChartBar,
           },
           { label: "Student Search", path: "/studentsearch", icon: FaSearch },
           { label: "Curriculum", path: "/curriculum", icon: FaBookOpen },

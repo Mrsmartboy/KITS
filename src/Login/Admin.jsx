@@ -29,7 +29,8 @@ export default function SuperAdmin() {
       if (response.status === 200) {
         // Encrypt and store data in sessionStorage (clears on tab closure)
         const encryptedUserType = encryptData(response.data.userType);
-        const encryptedLocation = encryptData("all");
+        const encryptedLocation = encryptData(response.data.location);
+        console.log(response.data.location);
 
         sessionStorage.setItem("userType", encryptedUserType);
         sessionStorage.setItem("location", encryptedLocation);
