@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import moment from "moment";
-import { FaChalkboardTeacher, FaClock, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaDoorOpen } from "react-icons/fa";
+import { FaChalkboardTeacher, FaClock, FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaDoorOpen, FaList } from "react-icons/fa"; // Added FaList for Batch No
 import { decryptData } from '../../cryptoUtils.jsx';
 
 const LiveClasses = () => {
@@ -10,7 +10,7 @@ const LiveClasses = () => {
   const [loading, setLoading] = useState(true);
   const [locationFilter, setLocationFilter] = useState("all");
 
-  const storedLocation = decryptData(sessionStorage.getItem("location"))|| "all";
+  const storedLocation = decryptData(sessionStorage.getItem("location")) || "all";
 
   // Fetch live classes
   const fetchLiveClasses = useCallback(async () => {
@@ -76,14 +76,11 @@ const LiveClasses = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFD6FF] to-[#B5E2FA] py-10 mt-0">
+    <div className="min-h-screen py-10 mt-0">
       <div className="container mx-auto px-6">
         <h1 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
           📚 Live Mentor Classes
         </h1>
-
-
-      
 
         {loading ? (
           <div className="text-center text-gray-700 text-lg font-semibold animate-pulse">
@@ -104,7 +101,7 @@ const LiveClasses = () => {
               >
                 <h2 className="text-xl font-bold mb-2 flex items-center text-blue-600">
                   <FaChalkboardTeacher className="mr-2" />
-                  {liveClass.course}
+                  {liveClass.batch}
                 </h2>
                 <p className="text-gray-600 text-md flex items-center">
                   <FaUsers className="mr-2" />
@@ -130,6 +127,7 @@ const LiveClasses = () => {
                   <FaDoorOpen className="mr-2" />
                   <span className="font-semibold">Room No:</span> {liveClass.roomNo}
                 </p>
+                
                 <div className="text-center mt-4">
                   <span
                     className={`inline-block px-4 py-1 rounded-full text-sm font-semibold shadow-md ${

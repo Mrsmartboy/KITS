@@ -469,7 +469,7 @@ export default function App() {
                 path="/student-enroll"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["superAdmin", "Manager", "admin"]}
+                    allowedRoles={["superAdmin", "Manager", "admin","super"]}
                   >
                     <ProgramManagerSignup />
                   </ProtectedRoute>
@@ -795,7 +795,7 @@ export default function App() {
               <Route
                 path="/manageleaderboard"
                 element={
-                  <ProtectedRoute allowedRoles={["Manager"]}>
+                  <ProtectedRoute allowedRoles={["Manager","super","superAdmin"]}>
                     <ManageLeaderBoard />
                   </ProtectedRoute>
                 }

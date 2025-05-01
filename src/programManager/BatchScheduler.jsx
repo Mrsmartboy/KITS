@@ -297,7 +297,7 @@ const BatchScheduler = () => {
   }, [selectedSubject, fetchMentors]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8 mt-0">
+    <div className="min-h-screen  py-10 px-4 sm:px-6 lg:px-8 mt-0">
       <div className="bg-white shadow-md rounded-lg p-8 max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-blue-700 mb-8">
           Batch Scheduler - KITS
