@@ -13,8 +13,7 @@ import axios from "axios";
 import { decryptData } from '../../cryptoUtils.jsx';
 
 const techStacks = {
- 
-  KITS:["KITS"]
+  KITS: ["KITS"]
 };
 
 const BatchForm = () => {
@@ -26,91 +25,30 @@ const BatchForm = () => {
     Status: "",
   });
 
-  const [duration, setDuration] = useState(null); // Store calculated duration
-  const location = decryptData(sessionStorage.getItem("location")); // Default to Vijayawada
+  const [duration, setDuration] = useState(null);
+  const location = decryptData(sessionStorage.getItem("location"));
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
   const { fetchBatches } = useUniqueBatches();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-  
-    setFormData({ ...formData, [name]: value });
-  
-    // Auto-calculate EndDate and Duration when StartDate is selected and TechStack is PFS or JFS
-    if (name === "StartDate" && value) {
-      const techStack = formData.TechStack;
-      if (techStack === "Python Full Stack (PFS)" || techStack === "Java Full Stack (JFS)") {
-        const holidays = [
-          "2025-01-14", // Jan-14
-          "2025-01-26", // Jan-26
-          "2025-02-26", // Feb-26
-          "2025-03-30", // Mar-30
-          "2025-03-31", // Mar-31
-          "2025-04-06", // Apr-6
-          "2025-08-15", // Aug-15
-          "2025-08-27", // Aug-27
-          "2025-10-02", // Oct-2
-          "2025-10-20", // Oct-20
-          "2025-12-25", // Dec-25
-        ];
-  
-        let currentDate = new Date(value);
-        let daysCounted = 0;
-  
-        // Loop until we reach 100 valid days (excluding Sundays and holidays)
-        while (daysCounted < 100) {
-          currentDate.setDate(currentDate.getDate() + 1); // Move to next day
-  
-          const isSunday = currentDate.getDay() === 0;
-          const formattedDate = currentDate.toISOString().split("T")[0];
-          const isHoliday = holidays.includes(formattedDate);
-  
-          if (!isSunday && !isHoliday) {
-            daysCounted++;
-          }
-        }
-  
-        // Set the calculated EndDate
-        const endDate = currentDate.toISOString().split("T")[0];
-        setFormData((prev) => ({ ...prev, EndDate: endDate }));
-  
-        // **Change 1**: Set duration to 100 working days directly
-        setDuration("100 Days");
-      }
-    } else if (name === "EndDate" && formData.StartDate) {
-      // **Change 2**: Calculate working days between StartDate and EndDate when EndDate is manually changed
-      const holidays = [
-        "2025-01-14", // Jan-14
-        "2025-01-26", // Jan-26
-        "2025-02-26", // Feb-26
-        "2025-03-30", // Mar-30
-        "2025-03-31", // Mar-31
-        "2025-04-06", // Apr-6
-        "2025-08-15", // Aug-15
-        "2025-08-27", // Aug-27
-        "2025-10-02", // Oct-2
-        "2025-10-20", // Oct-20
-        "2025-12-25", // Dec-25
-      ];
-  
+    setFormData({ ...formData, [name]: value.trim() });
+
+    if (name === "EndDate" && formData.StartDate) {
       const startDate = new Date(formData.StartDate);
       const endDate = new Date(value);
       let currentDate = new Date(startDate);
       let workingDays = 0;
-  
-      // Count working days between StartDate and EndDate
+
       while (currentDate <= endDate) {
         const isSunday = currentDate.getDay() === 0;
-        const formattedDate = currentDate.toISOString().split("T")[0];
-        const isHoliday = holidays.includes(formattedDate);
-  
-        if (!isSunday && !isHoliday) {
+        if (!isSunday) {
           workingDays++;
         }
         currentDate.setDate(currentDate.getDate() + 1);
       }
-  
+
       if (endDate >= startDate) {
         setDuration(`${workingDays} Days`);
       } else {
@@ -119,20 +57,16 @@ const BatchForm = () => {
     }
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
-
-    
 
     const payload = {
       BatchId: formData.BatchId.toUpperCase(),
       TechStack: formData.TechStack,
       StartDate: formData.StartDate,
       EndDate: formData.EndDate,
-      Duration: duration, // Calculated duration in days
+      Duration: duration,
       Status: formData.Status,
       location,
     };
@@ -149,7 +83,7 @@ const BatchForm = () => {
         confirmButtonText: "OK",
       });
 
-      await fetchBatches(location)
+      await fetchBatches(location);
 
       setFormData({
         BatchId: "",
@@ -168,18 +102,18 @@ const BatchForm = () => {
         confirmButtonText: "OK",
       });
     } finally {
-      setIsLoading(false); // End loading
+      setIsLoading(false);
     }
   };
 
   const handleViewBatches = (e) => {
-    e.preventDefault()
-    fetchBatches(location)
+    e.preventDefault();
+    fetchBatches(location);
     navigate("/viewbatch");
   };
 
   return (
-    <div className=" flex items-center justify-center p-6 mt-0">
+    <div className="flex items-center justify-center p-6 mt-0">
       <div className="bg-white rounded-lg shadow-2xl p-8 w-full max-w-3xl">
         <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           <span className="text-black bg-clip-text">
@@ -188,8 +122,7 @@ const BatchForm = () => {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Tech Stack */}
-                <div>
+            <div>
               <label
                 htmlFor="TechStack"
                 className="block text-sm font-medium text-gray-700"
@@ -214,7 +147,6 @@ const BatchForm = () => {
                 ))}
               </select>
             </div>
-            {/* Batch ID */}
             <div>
               <label
                 htmlFor="BatchId"
@@ -229,14 +161,10 @@ const BatchForm = () => {
                 id="BatchId"
                 value={formData.BatchId.toUpperCase()}
                 onChange={handleInputChange}
-                placeholder="Enter Batch ID (e.g., PFS-100)"
+                placeholder="Enter Batch ID (e.g., KITS-100)"
                 className="mt-1 block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-        
-
-            {/* Start Date */}
             <div>
               <label
                 htmlFor="StartDate"
@@ -251,12 +179,9 @@ const BatchForm = () => {
                 id="StartDate"
                 value={formData.StartDate}
                 onChange={handleInputChange}
-                // Sets the minimum date to today
                 className="mt-1 cursor-pointer block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </div>
-
-            {/* End Date */}
             <div>
               <label
                 htmlFor="EndDate"
@@ -271,12 +196,10 @@ const BatchForm = () => {
                 id="EndDate"
                 value={formData.EndDate}
                 onChange={handleInputChange}
-                min={formData.StartDate} // Ensure End Date is after Start Date
+                min={formData.StartDate}
                 className="mt-1 cursor-pointer block w-full p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
-
-            {/* Duration (Auto-Calculated) */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 <FaClock className="inline mr-2 text-indigo-500" />
@@ -286,8 +209,6 @@ const BatchForm = () => {
                 {duration ? duration : "Select Start and End Date"}
               </div>
             </div>
-
-            {/* Status */}
             <div>
               <label
                 htmlFor="Status"
@@ -310,13 +231,7 @@ const BatchForm = () => {
               </select>
             </div>
           </div>
-          
-
-          
-          
-
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
             <button
               type="submit"
               disabled={isLoading}
@@ -335,11 +250,7 @@ const BatchForm = () => {
               View Batches
             </button>
           </div>
-          
         </form>
-
-        
-        
       </div>
     </div>
   );

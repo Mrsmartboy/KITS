@@ -7,7 +7,6 @@ const DailyPerformance = () => {
   const navigate = useNavigate();
   const data = location.state;
 
-  // Redirect if data is missing or doesn't have reports
   useEffect(() => {
     if (!data || !data.reports) {
       navigate("/exam-dashboard");
@@ -16,9 +15,6 @@ const DailyPerformance = () => {
 
   if (!data || !data.reports) return null;
 
-  // -----------------------------
-  //     Utility Functions
-  // -----------------------------
   const getSubjectWiseAnalysis = (subjects) => {
     if (!subjects || Object.keys(subjects).length === 0) return [];
     return Object.entries(subjects).map(([subjectName, subjData]) => {
@@ -28,20 +24,22 @@ const DailyPerformance = () => {
       const obtainedMCQ = subjData.obtained_mcq_marks || 0;
       return {
         subject: subjectName,
-        scoreObtained: obtainedCode + obtainedMCQ,
-        totalPossible: maxCode + maxMCQ,
+        scoreText:
+          maxCode + maxMCQ === 0
+            ? "N/A"
+            : `${obtainedCode + obtainedMCQ}/${maxCode + maxMCQ}`,
       };
     });
   };
 
   const getTotalScore = (subjects) => {
     const analysis = getSubjectWiseAnalysis(subjects);
-    return analysis.reduce((acc, subj) => acc + subj.scoreObtained, 0);
+    return analysis.reduce((acc, subj) => {
+      const scoreMatch = subj.scoreText.match(/^(\d+)/);
+      return scoreMatch ? acc + parseInt(scoreMatch[1]) : acc;
+    }, 0);
   };
 
-  // -----------------------------
-  //  Enrich the Data
-  // -----------------------------
   const enrichedData = useMemo(() => {
     return data.reports.map((report) => {
       const totalScore = getTotalScore(report.subjects);
@@ -52,29 +50,24 @@ const DailyPerformance = () => {
           examName: data.examName,
           batch: data.batch,
         },
-        examDetails: report.examDetails, // include exam details (date, time, totalExamTime)
+        examDetails: report.examDetails,
       };
     });
   }, [data.reports, data.examName, data.batch]);
 
-  // Extract exam details from the first report (assumes all reports share the same exam details)
   const examDetails = useMemo(() => {
     return enrichedData.length > 0 ? enrichedData[0].examDetails : null;
   }, [enrichedData]);
 
-  // -----------------------------
-  //     Filtering
-  // -----------------------------
   const [studentIdFilter, setStudentIdFilter] = useState("");
   const [studentNameFilter, setStudentNameFilter] = useState("");
   const [attemptStatusFilter, setAttemptStatusFilter] = useState("all");
-  const [scoreSort, setScoreSort] = useState("none"); // "none", "highest", "lowest"
+  const [scoreSort, setScoreSort] = useState("none");
 
   const filteredData = useMemo(() => {
     return enrichedData.filter((item) => {
       const { student, subjects } = item;
 
-      // Filter by Student ID
       if (
         studentIdFilter.trim() &&
         !(student.studentId || "")
@@ -84,7 +77,6 @@ const DailyPerformance = () => {
         return false;
       }
 
-      // Filter by Student Name
       if (
         studentNameFilter.trim() &&
         !(student.name || "")
@@ -94,8 +86,16 @@ const DailyPerformance = () => {
         return false;
       }
 
-      // Filter by attempt status (inferred from subjects object)
-      const attempted = subjects && Object.keys(subjects).length > 0;
+      const attempted =
+        subjects &&
+        Object.keys(subjects).some((subject) => {
+          const subjData = subjects[subject];
+          return (
+            subjData &&
+            (subjData.obtained_code_marks > 0 || subjData.obtained_mcq_marks > 0)
+          );
+        });
+
       if (attemptStatusFilter !== "all") {
         if (attemptStatusFilter === "attempted" && !attempted) return false;
         if (attemptStatusFilter === "not attempted" && attempted) return false;
@@ -105,9 +105,6 @@ const DailyPerformance = () => {
     });
   }, [enrichedData, studentIdFilter, studentNameFilter, attemptStatusFilter]);
 
-  // -----------------------------
-  //     Sorting
-  // -----------------------------
   const sortedData = useMemo(() => {
     let dataToSort = [...filteredData];
     if (scoreSort === "highest") {
@@ -118,11 +115,8 @@ const DailyPerformance = () => {
     return dataToSort;
   }, [filteredData, scoreSort]);
 
-  // -----------------------------
-  //  Pagination State
-  // -----------------------------
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Adjust as needed
+  const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -135,31 +129,30 @@ const DailyPerformance = () => {
     }
   };
 
-  // -----------------------------
-  //     Export to Excel
-  // -----------------------------
   const exportToExcel = () => {
     const exportData = sortedData.map((item) => {
       const { student, exam, totalScore, subjects, examDetails } = item;
       const subjectAnalysis = getSubjectWiseAnalysis(subjects);
-      const subjectAnalysisString =
-        subjectAnalysis.length > 0
-          ? subjectAnalysis
-              .map(
-                (subj) =>
-                  `${subj.subject}(${subj.scoreObtained}/${subj.totalPossible})`
-              )
-              .join(", ")
-          : "N/A";
-      const attempted = subjects && Object.keys(subjects).length > 0;
+      const subjectAnalysisString = subjectAnalysis
+        .map((subj) => `${subj.subject}: ${subj.scoreText}`)
+        .join(", ");
+      const attempted =
+        subjects &&
+        Object.keys(subjects).some((subject) => {
+          const subjData = subjects[subject];
+          return (
+            subjData &&
+            (subjData.obtained_code_marks > 0 || subjData.obtained_mcq_marks > 0)
+          );
+        });
       return {
         "Student ID": student?.studentId || "",
-        "Name": student?.name || "",
+        "Name": student?.name || "Unknown",
         "Phone": student?.phNumber || "",
         "Batch": exam?.batch || "",
         "Attempt Status": attempted ? "Attempted" : "Not Attempted",
         "Marks Overall": totalScore,
-        "Subject-wise Analysis": subjectAnalysisString,
+        "Subject-wise Analysis": subjectAnalysisString || "N/A",
         "Date": examDetails?.startDate || "N/A",
         "Time": examDetails?.startTime || "N/A",
         "Total Time (mins)": examDetails?.totalExamTime || "N/A",
@@ -172,7 +165,6 @@ const DailyPerformance = () => {
     XLSX.writeFile(wb, "DailyPerformance.xlsx");
   };
 
-
   return (
     <div className="min-h-screen bg-gray-100 p-4 mt-0">
       <h1 className="text-2xl font-bold text-center mb-2">
@@ -181,15 +173,13 @@ const DailyPerformance = () => {
       <h2 className="text-xl font-medium text-center mb-4">
         Exam: {data.examName} | Batch: {data.batch}
       </h2>
-      {examDetails && ( 
+      {examDetails && (
         <div className="text-center mb-6">
           <p className="text-xl">
             Exam Date: {examDetails.startDate} | Exam Time: {examDetails.startTime} | Total Time: {examDetails.totalExamTime} mins
           </p>
         </div>
       )}
-
-      {/* Filters Section */}
       <div className="mb-6 flex flex-col sm:flex-row items-center justify-center gap-6 flex-wrap">
         <div className="flex flex-col">
           <label className="font-medium text-gray-700 mb-1">Student ID</label>
@@ -247,15 +237,11 @@ const DailyPerformance = () => {
           </button>
         </div>
       </div>
-
-      {/* Display Filtered Count */}
       <div className="text-right mb-2">
         <p className="text-gray-700">
           <strong>Filtered Results Count:</strong> {sortedData.length}
         </p>
       </div>
-
-      {/* Data Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-300">
           <thead className="bg-gray-200">
@@ -270,6 +256,9 @@ const DailyPerformance = () => {
                 Phone
               </th>
               <th className="border border-gray-300 px-4 py-2 text-left">
+                Exam Date
+              </th>
+              <th className="border border-gray-300 px-4 py-2 text-left">
                 Attempt Status
               </th>
               <th className="border border-gray-300 px-4 py-2 text-left">
@@ -278,14 +267,22 @@ const DailyPerformance = () => {
               <th className="border border-gray-300 px-4 py-2 text-left">
                 Subject-wise Analysis
               </th>
-             
             </tr>
           </thead>
           <tbody>
             {currentPageData.map((item, index) => {
               const { student, exam, totalScore, subjects, examDetails } = item;
               const subjectAnalysis = getSubjectWiseAnalysis(subjects);
-              const attempted = subjects && Object.keys(subjects).length > 0;
+              const attempted =
+                subjects &&
+                Object.keys(subjects).some((subject) => {
+                  const subjData = subjects[subject];
+                  return (
+                    subjData &&
+                    (subjData.obtained_code_marks > 0 ||
+                      subjData.obtained_mcq_marks > 0)
+                  );
+                });
               const rowKey = `${student.id}-${index}`;
               const rowClassName = attempted
                 ? index % 2 === 0
@@ -299,36 +296,39 @@ const DailyPerformance = () => {
                     {student.studentId}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {student.name || "N/A"}
+                    {student.name || "Unknown"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {student.phNumber || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
+                    {examDetails.startDate || "N/A"}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
                     {attempted ? "Attempted" : "Not Attempted"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {totalScore}
+                    {totalScore === 0
+                      ? attempted
+                        ? "0 (Attempted)"
+                        : "0 (Not Attempted)"
+                      : totalScore}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {subjectAnalysis.length > 0
                       ? subjectAnalysis.map((subj, idx) => (
                           <div key={idx}>
-                            <strong>{subj.subject}:</strong>{" "}
-                            {subj.scoreObtained} / {subj.totalPossible}
+                            <strong>{subj.subject}:</strong> {subj.scoreText}
                           </div>
                         ))
                       : "N/A"}
                   </td>
-                 
                 </tr>
               );
             })}
           </tbody>
         </table>
       </div>
-
-      {/* Pagination Controls */}
       <div className="flex justify-center mt-4 space-x-2">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
