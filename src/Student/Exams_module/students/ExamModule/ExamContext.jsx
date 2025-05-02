@@ -30,10 +30,6 @@ export const ExamProvider = ({ children }) => {
     return acc + mcqScore + codingScore;
   }, 0);
 
-  // useEffect(() => {
-  //   console.log("examData in ExamProvider:", examData);
-  // }, [examData]);
-
   useEffect(() => {
     if (!examData) return;
 
@@ -67,8 +63,6 @@ export const ExamProvider = ({ children }) => {
     setCodingQuestions(extractedCoding);
   }, [examData]);
 
-
-
   useEffect(() => {
     if (!examData && !submissionComplete && window.location.pathname.includes("/conduct-exam")) {
       console.log("No examData in ExamProvider, redirecting...");
@@ -91,8 +85,8 @@ export const ExamProvider = ({ children }) => {
       updated[codingIndex] = {
         ...updated[codingIndex],
         ...data,
-        sourceCode: data.sourceCode, // Store sourceCode
-        language: data.language,     // Store language
+        sourceCode: data.sourceCode,
+        language: data.language,
         answered: true,
       };
       return updated;
@@ -154,19 +148,19 @@ export const ExamProvider = ({ children }) => {
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-  
+
     if (!examData) {
       console.error("No exam data available");
       toast.error("No exam data available");
       setIsSubmitting(false);
       return;
     }
-  
+
     const examCollection = examData.exam.examName
       .split("-")
       .slice(0, -1)
       .join("-");
-  
+
     const validQuestionIds = new Set();
     examData.exam.paper.forEach((subject) => {
       if (subject.MCQs?.length > 0) {
@@ -176,12 +170,12 @@ export const ExamProvider = ({ children }) => {
         subject.Coding.forEach((q) => validQuestionIds.add(q.questionId));
       }
     });
-  
+
     const payload = {
       examId: examData.exam.examId,
       exam: examCollection,
     };
-  
+
     mcqQuestions.forEach((q) => {
       if (q.answered && validQuestionIds.has(q.questionId)) {
         payload[q.questionId] = {
@@ -189,44 +183,52 @@ export const ExamProvider = ({ children }) => {
         };
       }
     });
-  
+
     codingQuestions.forEach((q) => {
       if (q.answered && validQuestionIds.has(q.questionId)) {
+        // Skip if testCaseSummary exists and both passed and failed are 0
+        if (
+          q.testCaseSummary &&
+          q.testCaseSummary.passed === 0 &&
+          q.testCaseSummary.failed === 0
+        ) {
+          return;
+        }
         payload[q.questionId] = {
           testCaseSummary: q.testCaseSummary || {},
-          sourceCode: q.sourceCode || "", 
-          language: q.language || "",     
+          sourceCode: q.sourceCode || "",
+          language: q.language || "",
         };
       }
     });
-    
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/submit-exam`,
         payload
       );
-  
+
       if (document.fullscreenElement) {
         document.exitFullscreen().catch((err) => {
           console.error("Error exiting fullscreen:", err);
         });
       }
-  
+
       if (response.data.success) {
         toast.success("Exam submitted successfully! And Check your Exam Report");
         setExamData(null);
-        setSubmissionComplete(true); // Mark submission as complete
-        return response; // Return response for safeSubmit to handle navigation
+        setSubmissionComplete(true);
+        return response;
       } else {
         toast.error("Submission failed: " + response.data.message);
         setSubmissionComplete(true);
-        return response; // Return response even on failure
+        return response;
       }
     } catch (error) {
       toast.error("Error during exam submission: " + error.message);
       console.error("Error during exam submission:", error);
       setSubmissionComplete(false);
-      throw error; // Throw error for safeSubmit to catch and handle
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -276,7 +278,7 @@ export const ExamProvider = ({ children }) => {
         updateCodingAnswer,
         handleSubmit,
         onlineCompilerQuestion,
-        submissionComplete
+        submissionComplete,
       }}
     >
       {children}
