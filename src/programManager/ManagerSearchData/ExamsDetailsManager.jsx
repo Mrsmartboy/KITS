@@ -69,7 +69,16 @@ const ExamsDetailsManager = ({ data }) => {
 
   // =================== 2) STAT CARDS ===================
   const totalExams = allExams.length;
-  const attemptCount = allExams.filter((exam) => Object.keys(exam.subjects).length > 0).length;
+  const attemptCount = allExams.filter((exam) => {
+    // An exam is attempted if at least one subject has non-zero marks
+    return Object.values(exam.subjects).some(
+      (details) =>
+        (details.max_mcq_marks || 0) > 0 ||
+        (details.obtained_mcq_marks || 0) > 0 ||
+        (details.max_code_marks || 0) > 0 ||
+        (details.obtained_code_marks || 0) > 0
+    );
+  }).length;
   const unattemptedCount = totalExams - attemptCount;
 
   const statCards = [
@@ -130,10 +139,17 @@ const ExamsDetailsManager = ({ data }) => {
 
     if (dt.getMonth() === displayedMonth && dt.getFullYear() === displayedYear) {
       const day = dt.getDate();
-      if (Object.keys(exam.subjects).length > 0) {
+      const isAttempted = Object.values(exam.subjects).some(
+        (details) =>
+          (details.max_mcq_marks || 0) > 0 ||
+          (details.obtained_mcq_marks || 0) > 0 ||
+          (details.max_code_marks || 0) > 0 ||
+          (details.obtained_code_marks || 0) > 0
+      );
+      if (isAttempted) {
         attemptedDays.add(day);
       } else if (!attemptedDays.has(day)) {
-        unattemptedDays.add(day); // Fixed typo from effettuatoDays
+        unattemptedDays.add(day);
       }
     }
   });
@@ -150,9 +166,11 @@ const ExamsDetailsManager = ({ data }) => {
 
   const filteredExams = useMemo(() => {
     return allExams.filter((exam) => {
+      // Include unattempted exams (no subjects) or exams with the selected subject
       const subjectMatch =
-        !selectedSubject ||
-        Object.keys(exam.subjects).includes(selectedSubject);
+        !selectedSubject || // No subject selected, include all exams
+        Object.keys(exam.subjects).length === 0 || // Include unattempted exams
+        Object.keys(exam.subjects).includes(selectedSubject); // Include exams with the selected subject
       const inRange = isWithinRange(exam.examDetails.startDate, fromDate, toDate);
       return subjectMatch && (!fromDate || !toDate || inRange);
     });
@@ -200,7 +218,7 @@ const ExamsDetailsManager = ({ data }) => {
       ];
       return columns.join(',');
     });
-    const csvContent = header + rows.join('\n');
+    const csvContent = header + rows.join('\n')
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

@@ -92,7 +92,10 @@ const DailyPerformance = () => {
           const subjData = subjects[subject];
           return (
             subjData &&
-            (subjData.obtained_code_marks > 0 || subjData.obtained_mcq_marks > 0)
+            (typeof subjData.max_code_marks !== "undefined" ||
+              typeof subjData.max_mcq_marks !== "undefined" ||
+              subjData.obtained_code_marks > 0 ||
+              subjData.obtained_mcq_marks > 0)
           );
         });
 
@@ -142,7 +145,10 @@ const DailyPerformance = () => {
           const subjData = subjects[subject];
           return (
             subjData &&
-            (subjData.obtained_code_marks > 0 || subjData.obtained_mcq_marks > 0)
+            (typeof subjData.max_code_marks !== "undefined" ||
+              typeof subjData.max_mcq_marks !== "undefined" ||
+              subjData.obtained_code_marks > 0 ||
+              subjData.obtained_mcq_marks > 0)
           );
         });
       return {
@@ -279,7 +285,9 @@ const DailyPerformance = () => {
                   const subjData = subjects[subject];
                   return (
                     subjData &&
-                    (subjData.obtained_code_marks > 0 ||
+                    (typeof subjData.max_code_marks !== "undefined" ||
+                      typeof subjData.max_mcq_marks !== "undefined" ||
+                      subjData.obtained_code_marks > 0 ||
                       subjData.obtained_mcq_marks > 0)
                   );
                 });
