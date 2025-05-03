@@ -62,7 +62,7 @@ const LeaderBoard = () => {
   const orderClass = (pos) => {
     switch (pos) {
       case 2:
-        return "lg:order-1"; // Reorder only on desktop (≥1024px)
+        return "lg:order-1";
       case 1:
         return "lg:order-2";
       case 3:
@@ -100,17 +100,17 @@ const LeaderBoard = () => {
           topThree.map((p) => (
             <div
               key={p.position}
-              className={`flex flex-col items-center rounded-lg p-3 sm:p-5 w-full max-w-[250px] lg:w-[250px] h-full sm:h-[300px] shadow-md gap-2 sm:gap-4 ${positionCardBg(
+              className={`flex flex-col items-center justify-between rounded-lg p-3 sm:p-5 w-full max-w-[250px] lg:w-[250px] h-[320px] shadow-md gap-3 ${positionCardBg(
                 p.position
               )} ${p.position === 1 ? "lg:-translate-y-16" : ""} ${
                 orderClass(p.position)
               }`}
             >
-              <div className="flex flex-col items-center mt-[-6px]">
+              <div className="flex flex-col items-center">
                 <img
                   src={positionCrown(p.position)}
                   alt="Crown"
-                  className="w-14 sm:w-16 h-14 sm:h-11 object-contain"
+                  className="w-14 sm:w-16 h-11 object-contain mb-2"
                 />
                 <div
                   className={`w-20 sm:w-24 h-20 sm:h-24 rounded-full border-4 sm:border-[6px] shadow-md overflow-hidden ${
@@ -125,8 +125,8 @@ const LeaderBoard = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-1">
-                <h2 className="text-sm sm:text-md font-semibold leading-5 sm:leading-6 text-center text-ellipsis overflow-hidden max-w-[100%] break-words line-clamp-2">
+              <div className="flex flex-col items-center gap-2">
+                <h2 className="text-sm sm:text-md font-semibold leading-5 text-center text-ellipsis overflow-hidden max-w-[100%] break-words line-clamp-2">
                   {p.name}
                 </h2>
                 <p
@@ -139,10 +139,10 @@ const LeaderBoard = () => {
               </div>
 
               <div
-                className={`flex items-center gap-1 sm:gap-2 mt-auto ${
+                className={`flex items-center gap-2 px-3 py-1.5 ${
                   p.position !== 1
-                    ? "bg-[#2333CB] rounded-full text-white px-2 p-1"
-                    : "text-[#2333CB] bg-white rounded-full px-2 p-1"
+                    ? "bg-[#2333CB] rounded-full text-white"
+                    : "text-[#2333CB] bg-white rounded-full"
                 }`}
               >
                 <img
@@ -160,7 +160,7 @@ const LeaderBoard = () => {
           Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="animate-pulse flex flex-col items-center bg-[#2333CB]/60 rounded-lg p-5 w-full max-w-[250px] lg:w-[190px] h-60 sm:h-[260px]"
+              className="animate-pulse flex flex-col items-center bg-[#2333CB]/60 rounded-lg p-5 w-full max-w-[250px] lg:w-[190px] h-[260px]"
             />
           ))
         )}
@@ -168,11 +168,11 @@ const LeaderBoard = () => {
 
       {/* Leaderboard Rows */}
       <div className="flex flex-col w-full max-w-[100%] sm:max-w-[1470px] mb-6 sm:mb-0 mt-12 p-6">
-        <div className="flex sm:hidden flex-col">
+        <div className="flex sm:hidden flex-col gap-4">
           {others.map((p) => (
             <div
               key={p.position}
-              className="flex flex-col items-center w-full bg-[#2333CB] rounded-[25px] p-4 mx-2 mb-6"
+              className="flex flex-col items-center w-full bg-[#2333CB] rounded-[25px] p-4 mx-2"
             >
               <div className="flex flex-col items-center justify-center gap-2">
                 <div className="flex items-center gap-2">
@@ -213,14 +213,14 @@ const LeaderBoard = () => {
           ))}
         </div>
 
-        <div className="hidden sm:flex flex-col">
+        <div className="hidden sm:flex flex-col gap-2">
           {others.map((p) => (
             <div
               key={p.position}
-              className="flex items-center justify-between bg-[#2333CB] rounded-[25px] px-6 py-3 mb-2"
+              className="flex items-center justify-between bg-[#2333CB] rounded-[25px] px-6 py-3"
             >
-              <div className="flex items-center gap-5">
-                <span className="text-2xl font-bold">{p.position}.</span>
+              <div className="flex items-center gap-4">
+                <span className="text-2xl font-bold w-12 text-center">{p.position}.</span>
                 <img
                   src="/kits/generalcard.png"
                   alt="Icon"
@@ -233,25 +233,27 @@ const LeaderBoard = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <span className="text-md font-semibold leading-tight whitespace-nowrap">
+                <span className="text-md font-semibold leading-tight whitespace-nowrap max-w-xs truncate">
                   {p.name}
                 </span>
               </div>
-              <p className="text-base font-semibold text-center">
-                {activeTab === "Class" ? `Class: ${p.batchNo}` : p.batchNo}
-              </p>
-              <p className="text-sm font-semibold text-center">
-                Date: {p.date}
-              </p>
-              <div className="flex items-center gap-2 px-3 py-2 bg-[#EF7989] rounded-full">
-                <img
-                  src="/kits/worldcup.png"
-                  alt="Trophy"
-                  className="w-6 h-6 object-contain"
-                />
-                <span className="text-sm font-semibold leading-none">
-                  Score: {p.score}
-                </span>
+              <div className="flex items-center gap-6">
+                <p className="text-base font-semibold text-center w-32">
+                  {activeTab === "Class" ? ` ${p.batchNo}` : p.batchNo}
+                </p>
+                <p className="text-sm font-semibold text-center w-32">
+                  Date: {p.date}
+                </p>
+                <div className="flex items-center gap-2 px-3 py-2 bg-[#EF7989] rounded-full">
+                  <img
+                    src="/kits/worldcup.png"
+                    alt="Trophy"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <span className="text-sm font-semibold leading-none">
+                    Score: {p.score}
+                  </span>
+                </div>
               </div>
             </div>
           ))}
