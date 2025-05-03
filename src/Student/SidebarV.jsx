@@ -17,6 +17,8 @@ import {
   FaTachometerAlt,
   FaUserCheck,
   FaChartLine,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -154,11 +156,11 @@ export const SidebarV = ({
             path: "/mock-interviews",
             icon: MockInterviewIcon,
           },
-          // {
-          //   label: "Code Playground",
-          //   path: "/code-playground",
-          //   icon: CodePlayGroundIcon,
-          // },
+          {
+            label: "Code Playground",
+            path: "/code-playground",
+            icon: CodePlayGroundIcon,
+          },
           {
             label: "Leaderboard",
             path: "/leaderboard",
@@ -206,7 +208,7 @@ export const SidebarV = ({
             path: "/student-enroll",
             icon: StudentEnrollmentIcon,
           },
-          
+
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
       case "Testers":
@@ -226,56 +228,90 @@ export const SidebarV = ({
       case "superAdmin":
         return [
           {
-            label: "Admin Dashboard",
-            path: "/admin-dashboard",
-            icon: FaChartBar,
+            label: "Dashboards",
+            items: [
+              {
+                label: "Admin Dashboard",
+                path: "/admin-dashboard",
+                icon: FaChartBar,
+              },
+              {
+                label: "Manager Dashboard",
+                path: "/manager-dashboard",
+                icon: FaTachometerAlt,
+              },
+            ],
           },
           {
-            label: "Manager Dashboard",
-            path: "/manager-dashboard",
-            icon: FaTachometerAlt,
+            label: "Management",
+            items: [
+              {
+                label: "Mentors",
+                path: "/mentors",
+                icon: FaChalkboardTeacher,
+              },
+              {
+                label: "Program Managers",
+                path: "/program-managers",
+                icon: FaSchool,
+              },
+            ],
           },
           {
-            label: "Manage Mentors",
-            path: "/mentors",
-            icon: FaChalkboardTeacher,
+            label: "Students",
+            items: [
+              {
+                label: "Students List",
+                path: "/studentslist",
+                icon: FaUsers,
+              },
+              {
+                label: "Student Enrollment",
+                path: "/student-enroll",
+                icon: StudentEnrollmentIcon,
+              },
+              {
+                label: "Student Attendance",
+                path: "/studentattendance",
+                icon: StudentAttendanceIcon,
+              },
+              {
+                label: "Students Performance",
+                path: "/students-performance-manager",
+                icon: StudentPerformanceIcon,
+              },
+              {
+                label: "Leaderboard",
+                path: "/manageleaderboard",
+                icon: FaChartBar,
+              },
+              {
+                label: "Student Search",
+                path: "/studentsearch",
+                icon: FaSearch,
+              },
+            ],
           },
-
           {
-            label: "Program Managers",
-            path: "/program-managers",
-            icon: FaSchool,
-          },
-          { label: "Students List", path: "/studentslist", icon: FaUsers },
-          {
-            label: "Student Enrollment",
-            path: "/student-enroll",
-            icon: StudentEnrollmentIcon,
-          },
-          {
-            label: "Exam Statistics",
-            path: "/exam-statistics",
-            icon: FaChartBar,
+            label: "Exams",
+            items: [
+              {
+                label: "Exam Statistics",
+                path: "/exam-statistics",
+                icon: FaChartBar,
+              },
+            ],
           },
           {
-            label: "Student Attendance",
-            path: "/studentattendance",
-            icon: StudentAttendanceIcon,
+            label: "Curriculum",
+            path: "/curriculum",
+            icon: FaBookOpen,
           },
           {
-            label: "Students Performance",
-            path: "/students-performance-manager",
-            icon: StudentPerformanceIcon,
+            label: "Logout",
+            action: handleLogout,
+            icon: FaSignOutAlt,
           },
-          {
-            label: "Leaderboard",
-            path: "/manageleaderboard",
-            icon: FaChartBar,
-          },
-          { label: "Student Search", path: "/studentsearch", icon: FaSearch },
-          { label: "Curriculum", path: "/curriculum", icon: FaBookOpen },
-
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
 
       case "Mentors":
@@ -405,46 +441,77 @@ export const SidebarV = ({
     );
   }
 
-  const MenuItem = ({ icon: Icon, label, path, action }) => {
+  const MenuItem = ({ icon: Icon, label, path, action, items }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
     const isActive = location.pathname === path;
+    const navigate = useNavigate();
 
     // Determine the color based on active and hover states
-    const iconColor = isActive ? "#19216F" : isHovered ? "#19216F" : "white"; // Change hover color to #19216F
+    const iconColor = isActive ? "#19216F" : isHovered ? "#19216F" : "white";
+
+    const handleClick = () => {
+      if (items) {
+        // Toggle sub-menu if items exist
+        setIsSubMenuOpen(!isSubMenuOpen);
+      } else if (action) {
+        action();
+      } else {
+        handleNavigation(path);
+      }
+    };
 
     return (
-      <button
-        className={classNames(
-          "flex items-center gap-3 px-4 py-2 my-2 text-sm font-medium rounded-md transition-colors w-full font-[inter]",
-          {
-            "bg-[#F4F4F4] text-[#19216F] font-semibold rounded-md": isActive,
-            "text-[#ffffff] hover:bg-[#F4F4F4] hover:text-[#19216F] font-semibold":
-              !isActive,
-          }
-        )}
-        onMouseEnter={() => setIsHovered(true)} // Set hover state to true on mouse enter
-        onMouseLeave={() => setIsHovered(false)} // Set hover state to false on mouse leave
-        onClick={() => {
-          if (action) {
-            action();
-          } else {
-            handleNavigation(path);
-          }
-        }}
-      >
-        <Icon color={iconColor} size={18} />{" "}
-        {/* Pass color based on active and hover state */}
-        <span
-          className={classNames({
-            hidden: isCollapsed,
-            block: !isCollapsed,
-          })}
+      <div>
+        <button
+          className={classNames(
+            "flex items-center gap-3 px-4 py-2 my-2 text-sm font-medium rounded-md transition-colors w-full font-[inter]",
+            {
+              "bg-[#F4F4F4] text-[#19216F] font-semibold rounded-md": isActive,
+              "text-[#ffffff] hover:bg-[#F4F4F4] hover:text-[#19216F] font-semibold":
+                !isActive,
+            }
+          )}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={handleClick}
         >
-          {label}
-        </span>
-      </button>
+          {Icon && <Icon color={iconColor} size={18} />}
+          <span
+            className={classNames({
+              hidden: isCollapsed,
+              block: !isCollapsed,
+            })}
+          >
+            {label}
+          </span>
+          {items && !isCollapsed && (
+            <span className="ml-auto">
+              {isSubMenuOpen ? (
+                <FaChevronUp color={iconColor} size={14} />
+              ) : (
+                <FaChevronDown color={iconColor} size={14} />
+              )}
+            </span>
+          )}
+        </button>
+        {items && isSubMenuOpen && !isCollapsed && (
+          <div className="ml-6">
+            {items.map((subItem, index) => (
+              <MenuItem
+                key={index}
+                icon={subItem.icon}
+                label={subItem.label}
+                path={subItem.path}
+                action={subItem.action}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     );
   };
+
   return (
     <>
       {/* Mobile Sidebar */}
@@ -454,11 +521,11 @@ export const SidebarV = ({
           <div
             className={classNames(
               "fixed inset-y-0 left-0 z-40 bg-[#19216F] text-[#ffffff] font-bold transition-all duration-300 flex flex-col h-screen overflow-y-auto font-[inter]",
-              isCollapsed ? "w-16" : "w-64", // Handle collapsed or expanded sidebar
+              isCollapsed ? "w-16" : "w-64",
               {
                 "translate-x-0": isMobileMenuOpen,
                 "-translate-x-full": !isMobileMenuOpen,
-              } // Sidebar toggle effect
+              }
             )}
           >
             <button
@@ -471,28 +538,17 @@ export const SidebarV = ({
             {!isCollapsed && (
               <div className="flex flex-row items-end justify-end">
                 <button
-                  onClick={() => setIsMobileMenuOpen(false)} // Close the sidebar when clicked
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className=" mr-5 mt-1 mb-2 text-white focus:outline-none font-light"
                 >
                   <FaTimes size={24} />
                 </button>
               </div>
             )}
-            {/* Sidebar Header */}
-            {/* <button
-           className="mt-4 mb-2 flex items-center justify-center text-white focus:outline-none"
-           onClick={() => setIsCollapsed(!isCollapsed)} // Toggle collapse state
-         >
-           
-           <FaChevronLeft
-             className={classNames("transition-transform", { "rotate-180": !isCollapsed })}
-             size={24}
-           />
-         </button> */}
 
             {/* User Profile */}
             {userType === "student_login_details" && (
-              <div className="flex flex-col items-center justify-center w-full pt-5   bg-[#19216F]">
+              <div className="flex flex-col items-center justify-center w-full pt-5 bg-[#19216F]">
                 {userProfile.avatarUrl ? (
                   <img
                     src={userProfile.avatarUrl}
@@ -519,6 +575,7 @@ export const SidebarV = ({
                   label={item.label}
                   path={item.path}
                   action={item.action}
+                  items={item.items}
                 />
               ))}
             </div>
@@ -548,7 +605,7 @@ export const SidebarV = ({
           {isMobileMenuOpen && (
             <div
               className="fixed inset-0 bg-black opacity-50 z-30"
-              onClick={() => setIsMobileMenuOpen(false)} // Close sidebar when clicking outside
+              onClick={() => setIsMobileMenuOpen(false)}
             />
           )}
         </div>
@@ -573,7 +630,7 @@ export const SidebarV = ({
               {!isCollapsed && (
                 <div className="flex flex-row items-end justify-end">
                   <button
-                    onClick={() => setIsCollapsed(!isCollapsed)} // Close the sidebar when clicked
+                    onClick={() => setIsCollapsed(!isCollapsed)}
                     className=" mr-6 mb-2 text-white focus:outline-none font-light"
                   >
                     <FaTimes size={24} />
@@ -583,11 +640,9 @@ export const SidebarV = ({
 
               {/* Content of the sidebar */}
               <div className="flex-grow flex flex-col justify-between h-[93%]">
-                {" "}
-                {/* Added justify-between */}
                 {/* User Profile - Only show when sidebar is expanded */}
                 {!isCollapsed && userType === "student_login_details" && (
-                  <div className="flex flex-col items-center justify-center w-full  bg-[#19216F] font-[inter]">
+                  <div className="flex flex-col items-center justify-center w-full bg-[#19216F] font-[inter]">
                     {userProfile.avatarUrl ? (
                       <img
                         src={userProfile.avatarUrl}
@@ -609,26 +664,21 @@ export const SidebarV = ({
                   </div>
                 )}
                 {/* Menu items */}
-                <div className="flex-grow flex flex-col mt-4 px-1 ">
-                  {menuItems.map((item, idx) => {
-                    if (item.label === "Logout") return null; // Handle logout at the bottom
-                    return (
-                      <MenuItem
-                        key={idx}
-                        icon={item.icon}
-                        size={26}
-                        label={item.label}
-                        path={item.path}
-                        action={item.action}
-                      />
-                    );
-                  })}
+                <div className="flex-grow flex flex-col mt-4 px-1">
+                  {menuItems.map((item, idx) => (
+                    <MenuItem
+                      key={idx}
+                      icon={item.icon}
+                      label={item.label}
+                      path={item.path}
+                      action={item.action}
+                      items={item.items}
+                    />
+                  ))}
                 </div>
                 {/* Logout at the bottom */}
                 {logoutItem && (
                   <div className="px-2 pb-4 mt-auto align-bottom">
-                    {" "}
-                    {/* mt-auto pushes it to the bottom */}
                     <button
                       className={classNames(
                         "flex items-center gap-3 px-4 py-2 text-sm font-semibold rounded-md transition-colors w-full",
@@ -648,7 +698,7 @@ export const SidebarV = ({
             {isMobileMenuOpen && (
               <div
                 className="fixed inset-0 bg-black opacity-50 z-30"
-                onClick={() => setIsMobileMenuOpen(false)} // Close the sidebar when clicking outside
+                onClick={() => setIsMobileMenuOpen(false)}
               />
             )}
           </div>
