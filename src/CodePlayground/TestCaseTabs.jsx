@@ -45,19 +45,25 @@ const TestCaseTabsNew = ({ testCases }) => {
     <div className="flex flex-col gap-4 overflow-hidden h-full">
       {/* Static Top Bar for Case Tabs */}
       <div className="flex gap-3 flex-wrap">
-        {testCases.map((_, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleTabClick(idx)}
-            className={`px-5 py-2 rounded-lg font-medium text-sm ${
-              activeTab === idx
-                ? "bg-[#656565] text-white"
-                : "bg-[#3A3A3A] text-white"
-            }`}
-          >
-            Case {idx + 1}
-          </button>
-        ))}
+        {testCases.map((testCase, idx) => {
+          const isActive = idx === activeTab;
+          const isPassed = testCase.status === "Passed";
+
+          return (
+            <button
+              key={idx}
+              onClick={() => handleTabClick(idx)}
+              className={`
+        px-5 py-2 rounded-lg font-medium text-sm
+        ${isActive ? "bg-[#656565]" : "bg-[#3A3A3A]"}
+        ${isPassed ? "text-green-400" : "text-red-400"}
+      `}
+            >
+              Case {idx + 1}
+            </button>
+          );
+        })}
+
         <button className="px-5 py-2 rounded-lg font-medium text-sm bg-[#3A3A3A] text-white">
           +
         </button>
@@ -98,7 +104,9 @@ const TestCaseTabsNew = ({ testCases }) => {
                     : "text-red-400"
                 }`}
               >
-                {currentTest.status}
+                {currentTest.status === "Passed"
+                  ? currentTest.status
+                  : "Failed"}
               </span>
             </div>
 
