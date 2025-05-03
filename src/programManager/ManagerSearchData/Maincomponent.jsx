@@ -58,7 +58,7 @@ const Maincomponent = () => {
     setError('');
     try {
       let response;
-      if (userType === "Manager") {
+      if (userType === "Manager" || "super" || "superadmin") {
         // Manager uses a GET request with studentId and location as query params
         const apiUrl = `${import.meta.env.VITE_BACKEND_URL}/api/v1/searchstudent?studentId=${trimmedInput}&location=${location}`;
         response = await axios.get(apiUrl);
