@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProgramManagerSignup from "./Signup/ProgramManagerSignup/ProgramManagerSignup.jsx";
 import Home from "./Home/Home.jsx";
@@ -98,6 +98,8 @@ import LeaderBoard from "./Student/LeaderBoard.jsx";
 import NewAttendanceSystem from "./Mentor/NewAttendanceSystem.jsx";
 import ManageLeaderBoard from "./programManager/ManageLeaderBoard.jsx";
 import MentorLeaderBoard from "./Mentor/MentorLeaderBoard.jsx";
+import { FlagsContext } from "./contexts/FlagsContext.jsx";
+import FeatureFlagManagement from "./FeatureFlagManagement.jsx";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const userType = decryptData(sessionStorage.getItem("userType")); // Changed to sessionStorage
@@ -117,7 +119,7 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!decryptData(sessionStorage.getItem("userType")) // Changed to sessionStorage
   );
-
+  const { codePlaygroundStatus } = useContext(FlagsContext);
   useEffect(() => {
     // Listen for changes in sessionStorage
     const checkAuth = () => {
@@ -129,10 +131,13 @@ export default function App() {
       window.removeEventListener("storage", checkAuth);
     };
   }, []);
-
   return (
     <div
-      style={{ overflow: "auto", height: "100vh", backgroundColor: "#f4f4f4" }}
+      style={{
+        overflow: "auto",
+        height: "100vh",
+        backgroundColor: "#f4f4f4",
+      }}
       className="no-scrollbar"
     >
       <ScrollToTop />
@@ -177,7 +182,6 @@ export default function App() {
                   )
                 }
               />
-
               <Route
                 path="/login"
                 element={
@@ -202,7 +206,6 @@ export default function App() {
                   )
                 }
               />
-
               <Route
                 path="/admin"
                 element={
@@ -227,7 +230,6 @@ export default function App() {
                   )
                 }
               />
-
               <Route
                 path="/forgotPassword"
                 element={
@@ -252,9 +254,7 @@ export default function App() {
                   )
                 }
               />
-
               <Route path="/request-form" element={<EnquiryForm />} />
-
               <Route
                 path="/addjob"
                 element={
@@ -265,7 +265,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/manager-dashboard"
                 element={
@@ -276,7 +275,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/leave-request"
                 element={
@@ -287,7 +285,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/live-classes"
                 element={
@@ -298,7 +295,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/course-completion"
                 element={
@@ -309,7 +305,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/studentsearch"
                 element={
@@ -330,7 +325,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/set-exam"
                 element={
@@ -341,7 +335,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/bdes"
                 element={
@@ -368,7 +361,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/intern-progress"
                 element={
@@ -377,7 +369,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/attendance"
                 element={
@@ -386,14 +377,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-                <Route
-                path="/newattendance"
-                element={
-                  
-                    <NewAttendanceSystem />
-                  
-                }
-              />
+              <Route path="/newattendance" element={<NewAttendanceSystem />} />
               <Route
                 path="/mentor-dashboard"
                 element={
@@ -410,7 +394,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/mentor-batches"
                 element={
@@ -419,7 +402,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/attendancedata"
                 element={
@@ -428,7 +410,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/mentor-student-reports"
                 element={
@@ -437,7 +418,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/studentattendance"
                 element={
@@ -455,7 +435,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/adminstudentattendance"
                 element={
@@ -464,12 +443,11 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/student-enroll"
                 element={
                   <ProtectedRoute
-                    allowedRoles={["superAdmin", "Manager", "admin","super"]}
+                    allowedRoles={["superAdmin", "Manager", "admin", "super"]}
                   >
                     <ProgramManagerSignup />
                   </ProtectedRoute>
@@ -491,7 +469,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/admin-dashboard"
                 element={
@@ -508,7 +485,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/dashboard"
                 element={
@@ -525,7 +501,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/manage-live-classes"
                 element={
@@ -542,7 +517,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/attendance-report"
                 element={
@@ -551,7 +525,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/jobs-dashboard"
                 element={
@@ -570,7 +543,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/jobs-manager"
                 element={
@@ -581,7 +553,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/jobslist"
                 element={
@@ -598,7 +569,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/courses"
                 element={
@@ -615,7 +585,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/leave-request-page"
                 element={
@@ -624,7 +593,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/exam-dashboard"
                 element={
@@ -643,7 +611,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/conduct-exam"
                 element={
@@ -652,7 +619,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/exam-analysis"
                 element={
@@ -661,64 +627,66 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+              {codePlaygroundStatus && (
+                <>
+                  <Route
+                    path="/code-playground"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <CodePractice />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/code-playground/:subjectname"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <SubjectTopicsWithSubTopics />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/code-playground/:subjectname/:topicname"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <SubTopics />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/cparea"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <CodePracticePlayGround />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/code-playground/solve/:questionId"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <CPOnlineCompiler />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/code-playground/:subjectname/:topicname/:subtopic"
+                    element={
+                      <ProtectedRoute allowedRoles={["student_login_details"]}>
+                        <SubTopicQuestions />
+                      </ProtectedRoute>
+                    }
+                  />
+                </>
+              )}
               <Route
-                path="/code-playground"
+                path="/leaderboard"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <CodePractice />
+                    <LeaderBoard />
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/code-playground/:subjectname"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <SubjectTopicsWithSubTopics />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/code-playground/:subjectname/:topicname"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <SubTopics />
-                  </ProtectedRoute>
-                }
-              />
-              
-              <Route
-                path="/cparea"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <CodePracticePlayGround />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/code-playground/solve/:questionId"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                <CPOnlineCompiler />
-                </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/code-playground/:subjectname/:topicname/:subtopic"
-                element={
-                  <ProtectedRoute allowedRoles={["student_login_details"]}>
-                    <SubTopicQuestions />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route path="/leaderboard" 
-              element={
-                <ProtectedRoute allowedRoles={["student_login_details"]}>
-                  <LeaderBoard />
-                </ProtectedRoute>
-              }
-               />
-
               <Route
                 path="/compiler"
                 element={
@@ -737,7 +705,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/exam-reports-dashboard"
                 element={
@@ -791,25 +758,24 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/manageleaderboard"
                 element={
-                  <ProtectedRoute allowedRoles={["Manager","super","superAdmin"]}>
+                  <ProtectedRoute
+                    allowedRoles={["Manager", "super", "superAdmin"]}
+                  >
                     <ManageLeaderBoard />
                   </ProtectedRoute>
                 }
               />
-
-               <Route
+              <Route
                 path="/mentor-leaderboard"
                 element={
                   <ProtectedRoute allowedRoles={["Mentors"]}>
-                    <MentorLeaderBoard/>
+                    <MentorLeaderBoard />
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/mentorstudentslist"
                 element={
@@ -826,7 +792,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route path="/upload" element={<UploadQuestions />} />
               <Route
                 path="/uploadcpq"
@@ -896,7 +861,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/batchschedule"
                 element={
@@ -907,7 +871,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/batch-schedule"
                 element={
@@ -924,7 +887,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/createbatch"
                 element={
@@ -935,7 +897,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/create-exam"
                 element={
@@ -966,7 +927,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/exam-statistics"
                 element={
@@ -977,7 +937,14 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
+              <Route
+                path="/feature-flags"
+                element={
+                  <ProtectedRoute allowedRoles={["superAdmin", "super"]}>
+                    <FeatureFlagManagement />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/students-performance-manager/exam-day"
                 element={
@@ -988,7 +955,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/students-performance-mentor"
                 element={
@@ -1009,7 +975,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/students-performance-mentor/exam-day"
                 element={
@@ -1020,7 +985,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/viewbatch"
                 element={
@@ -1031,7 +995,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/admin-view-batch"
                 element={
@@ -1040,7 +1003,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/student-dashboard"
                 element={
@@ -1049,7 +1011,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/student-profile"
                 element={
@@ -1058,7 +1019,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-               
               <Route
                 path="/ats-upload"
                 element={
@@ -1069,7 +1029,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/ats-result"
                 element={
@@ -1098,7 +1057,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/admin-students-list"
                 element={
@@ -1107,7 +1065,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/directapply/:student_id/:job_id"
                 element={
@@ -1116,7 +1073,6 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-
               {/* <Route path="/not-found" element={<NotFound />} /> */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
