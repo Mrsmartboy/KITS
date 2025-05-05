@@ -14,7 +14,7 @@ const FeatureFlagManagement = () => {
   }
 
   if (loading) {
-    return <div className="p-6">Loading feature flags...</div>;
+    return <div className="p-6 text-center">Loading feature flags...</div>;
   }
 
   if (error) {
