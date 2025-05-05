@@ -238,49 +238,41 @@ const ManageLeaderBoard = () => {
 
       {/* Leaderboard Rows */}
       <div className="flex flex-col w-full max-w-[100%] sm:max-w-[1470px] mb-6 sm:mb-0 mt-12 p-6">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse flex items-center justify-between bg-[#2333CB]/60 rounded-[25px] px-6 py-3 mb-2 h-20"
-            />
-          ))
-        ) : others.length > 0 ? (
-          others.map((p) => (
+        <div className="flex sm:hidden flex-col gap-4">
+          {others.map((p) => (
             <div
               key={p.position}
-              className="flex items-center justify-between bg-[#2333CB] rounded-[25px] px-4 sm:px-6 py-3 mb-2"
+              className="flex flex-col items-center w-full bg-[#2333CB] rounded-[25px] p-4 mx-2"
             >
-              <div className="flex items-center gap-3 sm:gap-5">
-                <span className="text-lg sm:text-2xl font-bold">{p.position}.</span>
-                <img
-                  src="/kits/generalcard.png"
-                  alt="Icon"
-                  className="w-8 sm:w-10 h-5 sm:h-6 object-contain"
-                />
-                <div className="w-12 sm:w-16 h-12 sm:h-16 rounded-full border-[3px] border-white/60 shadow-md overflow-hidden">
+              <div className="flex flex-col items-center justify-center gap-2">
+                <div className="flex items-center gap-2">
                   <img
-                    src={picUrl(p.img)}
-                    alt={p.name}
-                    className="w-full h-full object-cover"
+                    src="/kits/generalcard.png"
+                    alt="Icon"
+                    className="w-8 h-5 object-contain"
                   />
+                  <div className="w-16 h-16 rounded-full border-2 border-white/60 shadow-md overflow-hidden">
+                    <img
+                      src={picUrl(p.img)}
+                      alt={p.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
-                <span className="text-sm sm:text-md font-semibold leading-tight whitespace-nowrap">
+                <span className="text-base font-semibold leading-tight text-center whitespace-nowrap">
                   {p.name}
                 </span>
-              </div>
-              <div className="flex items-center gap-4 sm:gap-8">
-                <p className="text-sm sm:text-base font-semibold text-center">
-                  {activeTab === "Class" ? `${p.batchNo}` : p.batchNo}
+                <p className="text-sm font-semibold text-center">
+                  {activeTab === "Class" ? `Class: ${p.batchNo}` : p.batchNo}
                 </p>
-                <p className="text-xs sm:text-sm font-semibold text-center">
+                <p className="text-xs font-semibold text-center">
                   Date: {p.date}
                 </p>
-                <div className="flex items-center gap-1 sm:gap-2 px-3 py-1 sm:py-2 bg-[#EF7989] rounded-full">
+                <div className="flex items-center gap-1 px-2 py-1 bg-[#EF7989] rounded-full">
                   <img
                     src="/kits/worldcup.png"
                     alt="Trophy"
-                    className="w-4 sm:w-6 h-4 sm:h-6 object-contain"
+                    className="w-4 h-4 object-contain"
                   />
                   <span className="text-sm font-semibold leading-none">
                     Score: {p.score}
@@ -288,12 +280,54 @@ const ManageLeaderBoard = () => {
                 </div>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-lg font-semibold text-[#2333CB]">
-            No leaderboard data available
-          </div>
-        )}
+          ))}
+        </div>
+
+        <div className="hidden sm:flex flex-col gap-2">
+          {others.map((p) => (
+            <div
+              key={p.position}
+              className="flex items-center justify-between bg-[#2333CB] rounded-[25px] px-6 py-3"
+            >
+              <div className="flex items-center gap-4">
+                <span className="text-2xl font-bold w-12 text-center">{p.position}.</span>
+                <img
+                  src="/kits/generalcard.png"
+                  alt="Icon"
+                  className="w-10 h-6 object-contain"
+                />
+                <div className="w-16 h-16 rounded-full border-[3px] border-white/60 shadow-md overflow-hidden">
+                  <img
+                    src={picUrl(p.img)}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-md font-semibold leading-tight whitespace-nowrap max-w-xs truncate">
+                  {p.name}
+                </span>
+              </div>
+              <div className="flex items-center gap-6">
+                <p className="text-base font-semibold text-center w-32">
+                  {activeTab === "Class" ? ` ${p.batchNo}` : p.batchNo}
+                </p>
+                <p className="text-sm font-semibold text-center w-32">
+                  Date: {p.date}
+                </p>
+                <div className="flex items-center gap-2 px-3 py-2 bg-[#EF7989] rounded-full">
+                  <img
+                    src="/kits/worldcup.png"
+                    alt="Trophy"
+                    className="w-6 h-6 object-contain"
+                  />
+                  <span className="text-sm font-semibold leading-none">
+                    Score: {p.score}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <ToastContainer position="top-right" theme="colored" />
