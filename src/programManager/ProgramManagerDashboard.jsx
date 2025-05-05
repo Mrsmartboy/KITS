@@ -23,7 +23,7 @@ const ProgramManagerDashboard = () => {
       <main className="container mx-auto px-4 py-6">
         <h2 className="text-2xl font-bold text-center text-blue-700 mb-8">
           {" "}
-          Manager Dashboard
+          Dashboard
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Students Enrolled */}
@@ -56,8 +56,6 @@ const ProgramManagerDashboard = () => {
             </div>
           </div>
 
-        
-
           <div
             className="bg-white p-8 rounded-lg shadow-lg flex items-center space-x-4 cursor-pointer hover:shadow-2xl transform transition-transform hover:scale-105"
             onClick={() => handleNavigation("/viewbatch")}
@@ -86,8 +84,6 @@ const ProgramManagerDashboard = () => {
               </div>
             </div>
           )}
-
-    
         </div>
       </main>
     </div>

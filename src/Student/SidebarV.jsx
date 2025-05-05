@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Swal from "sweetalert2";
 import {
   FaBars,
@@ -20,6 +20,8 @@ import {
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
+import { FaGears } from "react-icons/fa6";
+import { FlagsContext } from "../contexts/FlagsContext.jsx";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
@@ -58,6 +60,7 @@ import {
   StudentPerformanceIcon,
 } from "../Icons/MentorIcons.jsx";
 import { Upload } from "lucide-react";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 
 export const SidebarV = ({
   isCollapsed,
@@ -69,7 +72,7 @@ export const SidebarV = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { codePlaygroundStatus, loading } = useContext(FlagsContext);
   // --- 1) Use our context to get student info + pic
   const { studentDetails, profilePicture } = useStudent();
 
@@ -141,11 +144,9 @@ export const SidebarV = ({
   const getMenuItems = (userType, handleLogout) => {
     switch (userType) {
       case "student_login_details":
-        return [
+        const studentItems = [
           { label: "Profile", path: "/student-profile", icon: ProfileIcon },
-
           { label: "Exams", path: "/exam-dashboard", icon: ExamIcon },
-
           {
             label: "Exam Reports",
             path: "/daily-exam-reports",
@@ -156,61 +157,96 @@ export const SidebarV = ({
             path: "/mock-interviews",
             icon: MockInterviewIcon,
           },
-          {
+          { label: "Leaderboard", path: "/leaderboard", icon: FaChartBar },
+          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
+        ];
+        if (codePlaygroundStatus) {
+          studentItems.splice(4, 0, {
             label: "Code Playground",
             path: "/code-playground",
             icon: CodePlayGroundIcon,
-          },
-          {
-            label: "Leaderboard",
-            path: "/leaderboard",
-            icon: FaChartBar,
-          },
-
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
-        ];
+          });
+        }
+        return studentItems;
       case "super":
         return [
           {
-            label: "Admin Dashboard",
-            path: "/admin-dashboard",
-            icon: FaChartBar,
+            label: "Dashboards",
+            items: [
+              {
+                label: "Admin Dashboard",
+                path: "/admin-dashboard",
+                icon: FaChartBar,
+              },
+              {
+                label: "Manage Dashboard",
+                path: "/manager-dashboard",
+                icon: FaTachometerAlt,
+              },
+            ],
           },
           {
-            label: "Manager Dashboard",
-            path: "/manager-dashboard",
-            icon: FaTachometerAlt,
+            label: "Students",
+            items: [
+              {
+                label: "Students List",
+                path: "/studentslist",
+                icon: FaUsers,
+              },
+              {
+                label: "Student Enrollment",
+                path: "/student-enroll",
+                icon: StudentEnrollmentIcon,
+              },
+              {
+                label: "Student Attendance",
+                path: "/studentattendance",
+                icon: StudentAttendanceIcon,
+              },
+              {
+                label: "Students Performance",
+                path: "/students-performance-manager",
+                icon: StudentPerformanceIcon,
+              },
+              {
+                label: "Student Search",
+                path: "/studentsearch",
+                icon: FaSearch,
+              },
+            ],
           },
           {
-            label: "Exam Statistics",
-            path: "/exam-statistics",
-            icon: FaChartBar,
-          },
-          { label: "Students List", path: "/studentslist", icon: FaUsers },
-          {
-            label: "Student Attendance",
-            path: "/studentattendance",
-            icon: StudentAttendanceIcon,
-          },
-          { label: "Student Search", path: "/studentsearch", icon: FaSearch },
-          {
-            label: "Students Performance",
-            path: "/students-performance-manager",
-            icon: StudentPerformanceIcon,
+            label: "Exams",
+            items: [
+              {
+                label: "Exam Statistics",
+                path: "/exam-statistics",
+                icon: FaChartBar,
+              },
+            ],
           },
           {
-            label: "Leaderboard",
-            path: "/manageleaderboard",
-            icon: FaChartBar,
+            label: "Code Playground",
+            items: [
+              {
+                label: "Leaderboard",
+                path: "/manageleaderboard",
+                icon: FaChartBar,
+              },
+            ],
           },
           {
-            label: "Student Enrollment",
-            path: "/student-enroll",
-            icon: StudentEnrollmentIcon,
+            label: "Feature's Settings",
+            path: "/feature-flags",
+            icon: FaGears,
           },
-
-          { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
+          {
+            label: "Logout",
+            action: handleLogout,
+            icon: FaSignOutAlt,
+          },
         ];
+
       case "Testers":
         return [
           {
@@ -236,7 +272,7 @@ export const SidebarV = ({
                 icon: FaChartBar,
               },
               {
-                label: "Manager Dashboard",
+                label: "Manage Dashboard",
                 path: "/manager-dashboard",
                 icon: FaTachometerAlt,
               },

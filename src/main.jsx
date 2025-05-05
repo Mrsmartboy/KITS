@@ -16,6 +16,7 @@ import { StudentProvider } from "./contexts/StudentProfileContext.jsx";
 import { UniqueBatchesProvider } from "./contexts/UniqueBatchesContext.jsx";
 import { DailyProvider } from "./contexts/DailyContext.jsx";
 import { NotificationProvider } from "./contexts/NotificationContext.jsx";
+import { FlagsProvider } from "./contexts/FlagsContext.jsx";
 
 const theme = createTheme();
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -34,7 +35,9 @@ root.render(
                       <EditProvider>
                         <DailyProvider>
                           <NotificationProvider>
-                            <App />
+                            <FlagsProvider>
+                              <App />
+                            </FlagsProvider>
                           </NotificationProvider>
                         </DailyProvider>
                       </EditProvider>
