@@ -297,13 +297,25 @@ function CPOnlineCompiler() {
       // navigate(`/code-playground/${subjectname}/${topicname}/${subtopic}`, {
       //   state: { tag: tags },
       // });
-      navigate(-1)
+      navigate(-1);
     } else navigate("/code-playground");
   };
 
+  const prevent = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
   /* ─────────── render ─────────── */
   return (
-    <div className="h-screen flex flex-col font-[Inter] bg-[#1E1E1E] overflow-hidden">
+    <div
+      className="h-screen flex flex-col font-[Inter] bg-[#1E1E1E] overflow-hidden"
+      onCopy={prevent}
+      onCut={prevent}
+      onPaste={prevent}
+      onContextMenu={prevent}
+      onMouseDown={prevent}
+      onSelectStart={prevent}
+    >
       {/* Main Compiler Container */}
       <div className="flex-1 m-4 md:m-6 p-4 md:p-6 border-2 border-gray-700 rounded-lg flex flex-col overflow-hidden">
         <div className="flex-1 grid grid-cols-1 lg:grid-cols-[45%_52%] gap-6 overflow-hidden">
@@ -442,27 +454,40 @@ function CPOnlineCompiler() {
                   </div>
                 </div>
                 <div className="flex-1 h-full">
-                <Editor
-      height="100%"
-      language={languageExtensions[language]}
-      value={code}
-      theme="vs-dark"
-      onChange={handleCodeChange}
-      options={{
-        minimap: { enabled: false },
-        fontSize: 16,
-        lineNumbers: "on",
-        scrollBeyondLastLine: false,
-        // Disable auto-suggestions
-        suggestOnTriggerCharacters: false, // Prevents suggestions on typing trigger characters (e.g., '.', '(')
-        acceptSuggestionOnEnter: false, // Disables accepting suggestions with Enter
-        quickSuggestions: false, // Disables quick suggestions that appear while typing
-        suggest: {
-          showSnippets: false, // Disables snippet suggestions
-          showWords: false, // Disables word-based suggestions
-        },
-      }}
-    />
+                  <Editor
+                    height="100%"
+                    language={languageExtensions[language]}
+                    value={code}
+                    theme="vs-dark"
+                    onChange={handleCodeChange}
+                    options={{
+                      contextmenu: false, // disable Monaco context menu
+                      minimap: { enabled: false },
+                      fontSize: 16,
+                      lineNumbers: "on",
+                      scrollBeyondLastLine: false,
+                      // turn off any inline suggestions/snippets
+                      suggestOnTriggerCharacters: false,
+                      acceptSuggestionOnEnter: false,
+                      quickSuggestions: false,
+                      suggest: {
+                        showSnippets: false,
+                        showWords: false,
+                      },
+                    }}
+                    onMount={(editor, monaco) => {
+                      // swallow Ctrl/Cmd + C, V, X
+                      editor.onKeyDown((e) => {
+                        if (
+                          (e.ctrlKey || e.metaKey) &&
+                          ["KeyC", "KeyV", "KeyX"].includes(e.browserEvent.code)
+                        ) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }
+                      });
+                    }}
+                  />
                 </div>
               </div>
 

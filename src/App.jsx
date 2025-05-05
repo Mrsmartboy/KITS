@@ -661,7 +661,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
-              {/* <Route
+              <Route
                 path="/code-playground"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
@@ -709,7 +709,7 @@ export default function App() {
                     <SubTopicQuestions />
                   </ProtectedRoute>
                 }
-              /> */}
+              />
 
               <Route path="/leaderboard" 
               element={
