@@ -156,11 +156,11 @@ export const SidebarV = ({
             path: "/mock-interviews",
             icon: MockInterviewIcon,
           },
-          // {
-          //   label: "Code Playground",
-          //   path: "/code-playground",
-          //   icon: CodePlayGroundIcon,
-          // },
+          {
+            label: "Code Playground",
+            path: "/code-playground",
+            icon: CodePlayGroundIcon,
+          },
           {
             label: "Leaderboard",
             path: "/leaderboard",
