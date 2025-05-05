@@ -10,10 +10,9 @@ import { Position } from "@react-pdf-viewer/core";
 
 const languageExtensions = {
   Python: "python",
-  Java: "java",
   C: "cpp",
   "C++": "cpp",
-  JavaScript: "javascript",
+
 };
 
 function CPOnlineCompiler() {
