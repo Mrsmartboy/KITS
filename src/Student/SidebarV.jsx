@@ -344,6 +344,11 @@ export const SidebarV = ({
             icon: FaBookOpen,
           },
           {
+            label: "Feature's Settings",
+            path: "/feature-flags",
+            icon: FaGears,
+          },
+          {
             label: "Logout",
             action: handleLogout,
             icon: FaSignOutAlt,

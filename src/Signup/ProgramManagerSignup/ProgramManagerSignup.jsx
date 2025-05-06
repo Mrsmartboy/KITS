@@ -164,7 +164,7 @@ const ProgramManagerSignup = () => {
                 ? `+91${parentPh}`
                 : parentPh,
               location:
-                row[headers.indexOf("location")]?.toString().toLowerCase() || "",
+                row[headers.indexOf("location")]?.toString() || "",
               subjects: subjectsStr ? subjectsStr.split(",").map((s) => s.trim()) : [],
             };
           });
