@@ -33,7 +33,7 @@ const BatchScheduler = () => {
   const location = decryptData(sessionStorage.getItem('location')); // Hardcode to KITS
 
   const techStacks = ["KITS"]; // Available tech stacks
-  const kitsSubjects = ["C", "Python", "DS-C"]; // Subjects for KITS tech stack
+  const kitsSubjects = ["C", "Python", "DS-C","SE","DBMS"]; // Subjects for KITS tech stack
 
   const formatTimeTo24Hour = (time) => {
     if (!time) return "";

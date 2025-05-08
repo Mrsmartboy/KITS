@@ -179,9 +179,7 @@ const CurriculumManagement = () => {
   };
 
   const subjects = [
-   "C","Python","DS-C",
-
-
+   "C","Python","DS-C","SE","DBMS"
   ];
 
   const handleAddSubTopicToList = (newSubTopic) => {
