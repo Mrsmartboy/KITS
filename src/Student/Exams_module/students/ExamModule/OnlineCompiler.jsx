@@ -10,6 +10,32 @@ import { javascript } from "@codemirror/lang-javascript";
 import { ExamContext } from "./ExamContext";
 import TestCaseTabs from "./TestCaseTabs";
 
+
+const disableClipboardAndDragExtension = EditorView.domEventHandlers({
+  paste(event) {
+    event.preventDefault(); // Block paste
+    return true;
+  },
+  copy(event) {
+    event.preventDefault(); // Block copy
+    return true;
+  },
+  cut(event) {
+    event.preventDefault(); // Block cut
+    return true;
+  },
+  dragstart(event) {
+    event.preventDefault(); // Block dragging content from the editor
+    return true;
+  },
+  drop(event) {
+    event.preventDefault(); // Block dropping content into the editor
+    return true;
+  },
+});
+
+
+
 const OnlineCompiler = () => {
   const {
     onlineCompilerQuestion,
@@ -260,7 +286,11 @@ const OnlineCompiler = () => {
           height="300px"
           width="100%"
           theme={oneDark}
-          extensions={[EditorView.lineWrapping, languageExtensions[language]]}
+           extensions={[
+            EditorView.lineWrapping,
+            languageExtensions[language],
+            disableClipboardAndDragExtension,
+          ]}
           onChange={handleCodeChange}
         />
       </div>
