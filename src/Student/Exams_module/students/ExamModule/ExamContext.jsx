@@ -32,7 +32,10 @@ export const ExamProvider = ({ children }) => {
 
   useEffect(() => {
     if (!examData) return;
-
+    setExistingData({});
+    setMcqIndex(0);
+    setCodingIndex(0);
+    setSelectedMCQ(true);
     const extractedMCQs = [];
     const extractedCoding = [];
 

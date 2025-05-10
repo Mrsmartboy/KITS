@@ -210,7 +210,8 @@ const ExamDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col px-4 py-4 md:px-8 lg:px-12 font-[inter]">
+    <>
+      <div className="hidden lg:block flex-col px-4 py-4 md:px-8 lg:px-12 font-[inter]">
       {/* ==================== ACTIVE EXAMS ==================== */}
       {active.length > 0 && (
         <div className="mb-6">
@@ -560,6 +561,10 @@ const ExamDashboard = () => {
         />
       )}
     </div>
+     <div >
+      <MobileWarningCard/>
+    </div>
+    </>
   );
 };
 
