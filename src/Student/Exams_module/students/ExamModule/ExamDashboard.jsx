@@ -13,6 +13,7 @@ import { toast } from "react-toastify"; // Added for error notifications
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FaBook } from "react-icons/fa";
+import MobileWarningCard from "./MobileWarningCard.jsx"; // Import the mobile warning card
 
 const ExamDashboard = () => {
   const { setExamData, examData } = useContext(ExamContext); // Added examData
