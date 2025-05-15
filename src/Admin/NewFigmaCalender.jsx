@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const CalendarMonthColumn = ({ label, days, onDayClick, selectedDate }) => {
@@ -56,7 +56,6 @@ const NewFigmaCalender = ({ onDayClick, selectedDate }) => {
     ];
     return Array.from({ length: daysInMonth[monthIndex] }, (_, i) => {
       const day = i + 1;
-      // Manually format date to YYYY-MM-DD to avoid UTC timezone shift
       const month = (monthIndex + 1).toString().padStart(2, '0');
       const dayStr = day.toString().padStart(2, '0');
       const date = `${year}-${month}-${dayStr}`;
@@ -78,6 +77,28 @@ const NewFigmaCalender = ({ onDayClick, selectedDate }) => {
     { name: "Nov", days: getDaysForMonth(10, selectedYear) },
     { name: "Dec", days: getDaysForMonth(11, selectedYear) },
   ];
+
+  const scrollToCurrentMonth = () => {
+    if (monthRef.current && window.innerWidth < 1280) { // xl breakpoint
+      const currentMonthIndex = new Date().getMonth(); // 0 for Jan, 1 for Feb, etc.
+      const monthElement = monthRef.current.querySelectorAll(".snap-center")[currentMonthIndex];
+      if (monthElement) {
+        const cardWidth = monthElement.offsetWidth;
+        const scrollPosition = currentMonthIndex * cardWidth;
+        monthRef.current.scrollTo({
+          left: scrollPosition,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    scrollToCurrentMonth();
+    // Re-run on window resize to handle dynamic screen size changes
+    window.addEventListener("resize", scrollToCurrentMonth);
+    return () => window.removeEventListener("resize", scrollToCurrentMonth);
+  }, []);
 
   const scroll = (dir) => {
     if (monthRef.current) {

@@ -275,7 +275,7 @@ const OnlineCompiler = () => {
           disabled={loading}
           className="px-4 py-2 text-white text-lg bg-green-600 rounded hover:bg-green-500 self-end sm:self-auto"
         >
-          {loading ? "Running..." : "Run"}
+          {loading ? "Running..." : "Compile & Run"}
         </button>
       </div>
 
