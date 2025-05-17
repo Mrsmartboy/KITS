@@ -31,7 +31,7 @@ const CourseQuerySection = () => {
     <div className="query-section bg-white">
       <div
         className="query-background lazy-background"
-        data-src="/images/question-bg.png"
+        data-src="/images/question-bg.webp"
       >
         <div className="query-content">
           <h1>Still have questions regarding courses?</h1>
@@ -43,7 +43,7 @@ const CourseQuerySection = () => {
           <Link to="/request-form" className="request-callback">
             <button className="callback-button-query">
               <img
-                src="/images/call.png"
+                src="/images/call.webp"
                 alt="call"
                 className="call"
                 width="50" 
@@ -54,7 +54,7 @@ const CourseQuerySection = () => {
           </Link>
         </div>
         <img
-          src="/images/student.png"
+          src="/images/student.webp"
           alt="Student"
           className="student-img"
           loading="lazy"

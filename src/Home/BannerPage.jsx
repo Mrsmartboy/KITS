@@ -114,7 +114,7 @@ const BannerPage = () => {
 
        <div className="image-container">
         <img
-          src="/images/banner-girl.png"
+          src="/images/banner-girl.webp"
           alt="Banner Girl"
           className="banner-girl"
           loading="lazy"

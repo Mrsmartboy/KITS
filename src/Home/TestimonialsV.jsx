@@ -14,7 +14,7 @@ const testimonials = [
     name: "SATHUPATI PREETHI",
     review:
       "I completed a Python course at Codegnan under the guidance of Saketh sir, and his teaching style is so effective. He explains concepts so clearly. I highly recommend Codegnan for their excellent training. Thanks to Saketh sir and the entire Codegnan team!",
-    image: "/images/sathupati_preethi.png", 
+    image: "/images/sathupati_preethi.webp", 
     className: "top-left",
   },
 
@@ -23,7 +23,7 @@ const testimonials = [
     name: "SUHAS",
     review:
       "The Java course at Codegnan helped me gain a deep understanding of object-oriented programming and backend development. The projects were challenging but rewarding, and the mentorship I received was invaluable. Highly recommend Codegnan for Java enthusiasts!",
-    image: "/images/suhas.png",
+    image: "/images/suhas.webp",
     className: "middle-left", 
   },
  
@@ -32,7 +32,7 @@ const testimonials = [
     name: "ANU RAJ N",
     review:
       "I’ve learned so much in the Data Science course. The content is well-structured, and the support I received was amazing. I now feel confident pursuing a career in data science. Thank you, Codegnan!",
-    image: "/images/anu_raj.png", 
+    image: "/images/anu_raj.webp", 
     className: "bottom-left",
   },
   {
@@ -40,7 +40,7 @@ const testimonials = [
     name: "VENUKRITHIK Br",
     review:
       "Codegnan’s course on machine learning gave me the perfect foundation for my career. The instructors were always available to help, and the practical exercises helped me build a strong skill set.",
-    image: "/images/venu_krithik.png", 
+    image: "/images/venu_krithik.webp", 
     className: "top-right",
   },
   {
@@ -48,7 +48,7 @@ const testimonials = [
     name: "MORAMPUDU ANU SRI",
     review:
       "I took the full-stack development course at Codegnan, and I’m now working at a tech company! The curriculum was comprehensive and up-to-date, and the support team was always there to guide me.",
-    image: "/images/morampudi_anu_sri.png", 
+    image: "/images/morampudi_anu_sri.webp", 
     className: "middle-right",
   },
   {
@@ -56,7 +56,7 @@ const testimonials = [
     name: "SHREESHA MS",
     review:
       "The Python programming course was amazing. I learned so much and was able to apply the knowledge immediately. Codegnan’s teaching approach is very hands-on, which I loved.",
-    image: "/images/shreesha_ms.png", 
+    image: "/images/shreesha_ms.webp", 
     className: "bottom-right",
   }
 ];
@@ -126,7 +126,7 @@ const TestimonialsV = () => {
               <div className="card-rating">★★★★★</div>
               <p className="card-description">{testimonial.review}</p>
             </div>
-            <img src="/images/smile.png" alt="smile" className="smile-icon" width={35} height={35}/>
+            <img src="/images/smile.webp" alt="smile" className="smile-icon" width={35} height={35}/>
           </div>
           <div className="gradient top-right"></div>
           <div className="gradient bottom-left"></div>

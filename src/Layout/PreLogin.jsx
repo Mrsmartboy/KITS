@@ -13,12 +13,12 @@ const PreLogin = ({ onToggleSidebar, userProfile, onLogout }) => {
       <div className="flex items-center space-x-4 cursor-pointer" onClick={() => navigate("/")}>
         <div className="flex items-center">
           <img
-            src="/images/codegnan-destination.png"
+            src="/images/codegnan-destination.webp"
             alt="Codegnan Logo"
             className="h-14 sm:h-10 w-auto object-contain align-middle"
           />
           <img
-            src="/images/kits_logo.png"
+            src="/images/kits_logo.webp"
             alt="KITS Logo"
             className="h-10  sm:h-10 -mt-2 ml-4 w-auto object-contain align-middle"
           />
