@@ -27,13 +27,13 @@ const PostLogin = ({
         )}
         <div className="flex items-center ">
         <img
-          src="/images/codegnan-destination.png"
+          src="/images/codegnan-destination.webp"
           alt="Codegnan Logo"
           className="cursor-pointer h-12 sm:h-10  md:ml-3 w-24 md:w-32 " // slightly bigger
           onClick={() => navigate("/")}
         />
         <img
-          src="/images/kits_logo.png"
+          src="/images/kits_logo.webp"
           alt="KITS Badge"
           className="cursor-pointer -mt-3 h-14 sm:h-20   md:-ml-1 w-24 md:w-24" // slightly bigger
         />

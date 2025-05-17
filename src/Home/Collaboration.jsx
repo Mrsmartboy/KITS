@@ -15,22 +15,22 @@ const Collaboration = () => {
   const carouselRef = useRef(null);
 
   const collaborationList = [
-    { id: 1, image: "/images/GEC.png", alt: 'GEC' },
-    { id: 2, image: "/images/KBN.png", alt: 'KBN' },
-    { id: 3, image: "/images/KIT.png", alt: 'KIT' },
-    { id: 4, image: "/images/LBC.png", alt: 'LBC' },
-    { id: 5, image: "/images/NEC.png", alt: 'NEC' },
+    { id: 1, image: "/images/GEC.webp", alt: 'GEC' },
+    { id: 2, image: "/images/KBN.webp", alt: 'KBN' },
+    { id: 3, image: "/images/KIT.webp", alt: 'KIT' },
+    { id: 4, image: "/images/LBC.webp", alt: 'LBC' },
+    { id: 5, image: "/images/NEC.webp", alt: 'NEC' },
     { id: 6, image: "/images/SECV.jpeg", alt: 'SEC' },
-    { id: 7, image: "/images/VIJAYAWADA.png", alt: 'Vijayawada' },
-      { id: 8, image: "/images/LOYOLA.png", alt: 'LOYOLA' },
-      { id: 9, image: "/images/GEC.png", alt: 'GEC' },
-    { id: 10, image: "/images/KBN.png", alt: 'KBN' },
-    { id: 11, image: "/images/KIT.png", alt: 'KIT' },
-    { id: 12, image: "/images/LBC.png", alt: 'LBC' },
-    { id: 13, image: "/images/NEC.png", alt: 'NEC' },
+    { id: 7, image: "/images/VIJAYAWADA.webp", alt: 'Vijayawada' },
+      { id: 8, image: "/images/LOYOLA.webp", alt: 'LOYOLA' },
+      { id: 9, image: "/images/GEC.webp", alt: 'GEC' },
+    { id: 10, image: "/images/KBN.webp", alt: 'KBN' },
+    { id: 11, image: "/images/KIT.webp", alt: 'KIT' },
+    { id: 12, image: "/images/LBC.webp", alt: 'LBC' },
+    { id: 13, image: "/images/NEC.webp", alt: 'NEC' },
     { id: 14, image: "/images/SECV.jpeg", alt: 'SEC' },
-    { id: 15, image: "/images/VIJAYAWADA.png", alt: 'Vijayawada' },
-      { id: 16, image: "/images/LOYOLA.png", alt: 'LOYOLA' },
+    { id: 15, image: "/images/VIJAYAWADA.webp", alt: 'Vijayawada' },
+      { id: 16, image: "/images/LOYOLA.webp", alt: 'LOYOLA' },
 
   ];
 

@@ -9,7 +9,7 @@ const KitsCollaboration = () => {
         {/* Logo Section */}
         <div className="mb-6 md:mb-0 ml-10">
           <img
-           src="/images/kits_logo.png"
+           src="/images/kits_logo.webp"
             alt="KITS AKSHAR Logo"
             className=" w-[250px]  md:w-[790px]   lg:w-[850px]  object-contain"
           />

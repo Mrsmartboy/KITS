@@ -6,18 +6,18 @@ import './RotatingCarousel.css';
 
 
 const profiles = [
-   { id: 1, package: '18.2 LPA', company: 'Akamai', image: "/images/sathupati_preethi.png", alt: 'sathupati_preethi' },
-   { id: 2, package: '9.5 LPA', company: 'Infosys', image: "/images/sathupati_preethi_1.png", alt: 'sathupati_preethi_1' },
-   { id: 3, package: '7.3 LPA', company: 'CodeYoung', image: "/images/anu_raj.png", alt: 'anu_raj_n' },
-   { id: 4, package: '7 LPA', company: 'Healthsyst', image: "/images/varuni.png", alt: 'varuni-br' },
-   { id: 5, package: '7 LPA', company: 'TCS', image: "/images/morampudi_anu_sri.png", alt: 'morampudi_anu_sri' },
-   { id: 6, package: '7 LPA', company: 'Healthsyst', image: "/images/kavya.png", alt: 'kavya_c' },
-   {id:7,package:'6.5 LPA', company:'Mastech',image:"/images/manoj_naidu.png",alt:'manoj_naidu'},
-   { id: 8, package: '6.5 LPA', company: 'Aptean', image: "/images/bhargavi.png", alt: 'bhargavi_g_hegde' },
-   { id: 9, package: '6.5 LPA', company: 'Aptean', image: "/images/sharath.png", alt: 'sharath_s' },
-   { id: 10, package: '6.5 LPA', company: 'Aptean', image: "/images/manu.png", alt: 'manu_n' },
-   { id: 11, package: '6.5 LPA', company: 'Aptean', image: "/images/t_shivani.png", alt: 't_shivani' },
-  { id: 12, package: '6.5 LPA', company: 'Aptean', image: "/images/suhas.png", alt: 'suhas' }
+   { id: 1, package: '18.2 LPA', company: 'Akamai', image: "/images/sathupati_preethi.webp", alt: 'sathupati_preethi' },
+   { id: 2, package: '9.5 LPA', company: 'Infosys', image: "/images/sathupati_preethi_1.webp", alt: 'sathupati_preethi_1' },
+   { id: 3, package: '7.3 LPA', company: 'CodeYoung', image: "/images/anu_raj.webp", alt: 'anu_raj_n' },
+   { id: 4, package: '7 LPA', company: 'Healthsyst', image: "/images/varuni.webp", alt: 'varuni-br' },
+   { id: 5, package: '7 LPA', company: 'TCS', image: "/images/morampudi_anu_sri.webp", alt: 'morampudi_anu_sri' },
+   { id: 6, package: '7 LPA', company: 'Healthsyst', image: "/images/kavya.webp", alt: 'kavya_c' },
+   {id:7,package:'6.5 LPA', company:'Mastech',image:"/images/manoj_naidu.webp",alt:'manoj_naidu'},
+   { id: 8, package: '6.5 LPA', company: 'Aptean', image: "/images/bhargavi.webp", alt: 'bhargavi_g_hegde' },
+   { id: 9, package: '6.5 LPA', company: 'Aptean', image: "/images/sharath.webp", alt: 'sharath_s' },
+   { id: 10, package: '6.5 LPA', company: 'Aptean', image: "/images/manu.webp", alt: 'manu_n' },
+   { id: 11, package: '6.5 LPA', company: 'Aptean', image: "/images/t_shivani.webp", alt: 't_shivani' },
+  { id: 12, package: '6.5 LPA', company: 'Aptean', image: "/images/suhas.webp", alt: 'suhas' }
 ];
 
 
@@ -87,7 +87,7 @@ const RotatingCarousel = () => {
   return (
     <div className='main-container'>
       <img
-        src="/images/spiral-bg.png"
+        src="/images/spiral-bg.webp"
         alt="Spiral Background"
         className="spiral-bg"
       />
@@ -139,13 +139,13 @@ const RotatingCarousel = () => {
             </p>
             <h1>WHO IS <br /> NEXT...</h1>
           </div>
-          <img src="/images/question-mark.png" alt="Question Mark" className="question-mark" 
+          <img src="/images/question-mark.webp" alt="Question Mark" className="question-mark" 
            width="300" height="300" />
           </div>
           <div className="callback-section">
             <Link to='/request-form' className='request-callback'>
             <button className="callback-button-rotating cursor-pointer">
-              <img src="/images/call.png" alt="call" className='call cursor-pointer'  width="50" 
+              <img src="/images/call.webp" alt="call" className='call cursor-pointer'  width="50" 
                height="50"/> Request A Callback
             </button>
             </Link>

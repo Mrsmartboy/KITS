@@ -85,7 +85,7 @@ export default function SuperAdmin() {
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl space-y-8 md:space-y-0 md:space-x-8">
         <div className="flex justify-center items-center w-full md:w-1/2">
           <img
-            src="/images/login-cartoon.png"
+            src="/images/login-cartoon.webp"
             alt="Cartoon logo"
             className="w-full max-w-lg"
           />

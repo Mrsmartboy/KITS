@@ -206,7 +206,7 @@ const SuccessStories = () => {
         {/* Colleges Section */}
         <div className="hidden lg:grid place-items-center">
           <img
-            src="/images/kits_success.png"
+            src="/images/kits_success.webp"
             alt="Students celebrating success"
             className="rounded-[20px] object-contain w-[100%] max-h-full"
           />

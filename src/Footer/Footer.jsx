@@ -41,13 +41,13 @@ const Footer = () => {
     <>
     <footer
         className="footer lazy-background"
-        data-src="/images/footer-bg.png">
+        data-src="/images/footer-bg.webp">
       
       <div className="footer-container">
         <div className="footer-left">
           <div className="logo">
             <img
-              src="/images/codegnan-white.png"
+              src="/images/codegnan-white.webp"
               alt="Codegnan Logo"
               className="footer-logo"
               width="150" 
@@ -63,27 +63,27 @@ const Footer = () => {
           </p>
           <div className="social-icons-footer">
             <a href="https://www.facebook.com/codegnan" target="_blank" rel="noopener noreferrer">
-              <img src="/images/facebook.png" alt="Facebook" width="50" 
+              <img src="/images/facebook.webp" alt="Facebook" width="50" 
              height="50"/>
             </a>
             <a href="https://www.instagram.com/codegnan/" target="_blank" rel="noopener noreferrer">
-              <img src="/images/insta-white.png"alt="Instagram" width="50" 
+              <img src="/images/insta-white.webp"alt="Instagram" width="50" 
                height="50"/>
             </a>
             <a href="https://www.youtube.com/@Codegnan" target="_blank" rel="noopener noreferrer">
-              <img src="/images/youtube.png" alt="YouTube" width="50" 
+              <img src="/images/youtube.webp" alt="YouTube" width="50" 
                height="50"/>
             </a>
             <a href="https://in.linkedin.com/company/codegnan" target="_blank" rel="noopener noreferrer">
-              <img src="/images/linkedin-white.png" alt="LinkedIn" width="50" 
+              <img src="/images/linkedin-white.webp" alt="LinkedIn" width="50" 
                height="50"/>
             </a>
             <a href="https://wa.me/message/V6KW6C7XJG6FK1" target="_blank" rel="noopener noreferrer">
-              <img src="/images/whatsapp-white.png" alt="WhatsApp" width="50" 
+              <img src="/images/whatsapp-white.webp" alt="WhatsApp" width="50" 
               height="50" />
             </a>
             <a href="https://x.com/i/flow/login?redirect_after_login=%2FCodegnandotcom" target="_blank" rel="noopener noreferrer">
-              <img src="/images/twitter.png" alt="Twitter" width="50" 
+              <img src="/images/twitter.webp" alt="Twitter" width="50" 
              height="50"/>
             </a>
           </div>
