@@ -17,7 +17,6 @@
     background-size: cover;
     display: flex; 
     width: 100%;
-    background-color: #f3f4f6;
 }
 
 
@@ -216,6 +215,10 @@
     .banner-girl{
         display: none;
     }
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
 
     .stats-studentplaced-container {
         gap: 30px;
@@ -244,6 +247,10 @@
 }
 
 @media screen and  (max-width:430px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .home-cover-text-container{
         width: 100%;
     }
@@ -337,6 +344,10 @@
 
 /* For devices up to 576px (smallest screens like phones) */
 @media screen and (min-width: 576px) and (max-width:796px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .home-cover-text-container{
         width: 100%;
     }
@@ -427,6 +438,10 @@
 
 /* For devices between 576px and 976px (Medium Screens) */
 @media screen and (min-width: 796px) and (max-width: 1025px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .coverpage-container {
         display: flex;
     justify-content: space-around;
@@ -516,6 +531,10 @@
 
 /* For devices between 976px and 1300px (Large Screens) */
 @media screen and (min-width: 1025px) and (max-width: 1300px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .coverpage-container {
         display: flex;
     justify-content: space-around;
@@ -611,6 +630,10 @@
 
 /* For devices larger than 1300px (Extra-Large Screens) */
 @media screen and (min-width: 1300px) and (max-width:1500px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .coverpage-container {
         display: flex;
     justify-content: space-around;
@@ -706,6 +729,10 @@
 
 /* For devices larger than 1500px (Extra-Large Screens) */
 @media screen and (min-width: 1500px) and (max-width: 1800px) {
+    .video-wrapper {
+        width: 400px;
+        height: 225px;
+      }
     .coverpage-container {
         display: flex;
     justify-content: center;
@@ -806,6 +833,36 @@
 
 
 @media screen and (min-width: 1800px) {
+          
+    .stats-studentplaced-container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 40px;
+        margin-bottom: 40px;
+        flex-wrap: nowrap;
+    }
+    
+    
+    .chart-with-caption {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 225px;
+        width: 55%;
+    }
+    
+   
+    .chart-caption {
+        margin-top: 12px;
+        font-size: 2.2rem;
+        font-weight: bold;
+        font-family: Afacad;
+        text-align: center;
+    }
+    
     .coverpage-container {
         display: flex;
     justify-content: center;
@@ -814,6 +871,15 @@
     gap: 40px;
     
     }
+
+    .placement-card{
+        border: 1px solid black;
+        border-radius: 20px;
+        box-shadow: #ED1334;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 10.25);
+    }
+
+   
     .home-text-container{
         justify-content: end;
         align-items: center;
@@ -826,18 +892,23 @@
         display: flex;
         flex-direction: column;
         align-items: end;
-
     }
+
 
     .home-title {
         font-size: 5.4rem;
+        font-family: Afacad;
+        font-weight: 500;
     }
 
     .tag-line {
         font-size: 2.5rem;
         text-align: end;
         letter-spacing: 0.6px;
+         font-family: Afacad;
+        font-weight: 500;
     }
+  
 
     .student-count {
         font-size: 6rem;
@@ -851,15 +922,26 @@
         font-size: 1.9rem;
         font-weight: 600;
         text-align: end;
-        margin-top: 0px;
+        margin-top: -37px;
     }
 
     .counting {
         font-size: 1.9rem;
+        margin-top: 00px;
         padding-left: 10px;
         padding-right: 10px;
+        border: 1px solid black;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     }
 
+    .video-wrapper {
+        margin-top: -85px;
+        width: 550px;
+        height: 200px;
+       
+      }
+      
   
     .plus-sign{
         font-size: 5rem;

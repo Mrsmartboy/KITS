@@ -1,5 +1,5 @@
 .team-page {
-  background-image: url('https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/team-bg_ononr2.webp');
+  background-image: url('/images/team-bg.png');
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -7,7 +7,6 @@
   align-items: center;
   width: 100%;
   padding-bottom: 30px;
-  background-color: #f3f3f5;
 }
 
 

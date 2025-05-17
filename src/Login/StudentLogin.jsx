@@ -116,7 +116,7 @@ export default function StudentLogin({ setIsAuthenticated }) {
           {/* Cartoon Image */}
           <div className="flex justify-center items-center w-full md:w-1/2">
             <img
-              src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849448/login-cartoon_znh33j.webp"
+              src="/images/login-cartoon.png"
               alt="Cartoon logo"
               className="w-full max-w-lg"
             />

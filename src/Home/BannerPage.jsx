@@ -1,27 +1,22 @@
-import React, { Suspense, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useDashboard } from "../contexts/DashboardContext";
 import StatsChart from "./StatsChart";
 import "./BannerPage.css";
-import { useDashboard } from "../contexts/DashboardContext";
-
-
-
 
 const BannerPage = () => {
-  const { dashboardData, loading } = useDashboard(); // Assuming you have a custom hook to fetch dashboard data
+  const { dashboardData, loading } = useDashboard();
   const [count, setCount] = useState(0);
+  const [poster, setPoster] = useState(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     let timer;
     if (!loading && dashboardData) {
-      // Calculate the total number of placements from dashboardData
-      const totalPlaced = Object.values(
-        dashboardData.yearOFPlacement || {}
-      ).reduce((acc, value) => acc + value, 0);
-      // Fallback value if totalPlaced is zero
+      const totalPlaced = Object.values(dashboardData.yearOFPlacement || {}).reduce((acc, value) => acc + value, 0);
       const finalCount = totalPlaced === 0 ? 0 : totalPlaced;
       let currentCount = 0;
-      const duration = 1000; // animation duration in milliseconds (2 seconds)
-      const intervalTime = 3; // update every 50ms
+      const duration = 1000;
+      const intervalTime = 3;
       const steps = duration / intervalTime;
       const increment = finalCount / steps;
 
@@ -37,17 +32,52 @@ const BannerPage = () => {
     return () => clearInterval(timer);
   }, [dashboardData, loading]);
 
+  // Automatically extract a frame from video and set it as poster
+  useEffect(() => {
+    const video = videoRef.current;
+    const canvas = document.createElement("canvas");
+
+    const generatePoster = () => {
+      const ctx = canvas.getContext("2d");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataURL = canvas.toDataURL("image/webp");
+      setPoster(dataURL);
+      video.pause();
+      video.currentTime = 0;
+    };
+
+    if (video) {
+      video.muted = true;
+      video.playsInline = true;
+
+      const onLoaded = () => {
+        video.currentTime = 1;
+      };
+
+      const onSeeked = () => {
+        generatePoster();
+        video.removeEventListener("seeked", onSeeked);
+      };
+
+      video.addEventListener("loadeddata", onLoaded);
+      video.addEventListener("seeked", onSeeked);
+
+      video.load(); // force reload
+    }
+  }, []);
+
   return (
-    <div className="coverpage-container">
+    <div className="coverpage-container bg-white">
       <div className="home-cover-text-container">
         <div className="home-text-container">
           <div className="home-titles">
             <p className="home-title">
-              It's <span className="span-home-title">Not Just</span> A Numbers
+              It's <span className="span-home-title">Not Just</span> A Number
             </p>
             <p className="tag-line">
-              See Successful Students{" "}
-              <span className="span-home-title">Placements</span> Journey
+              See Successful Students <span className="span-home-title">Placements</span> Journey
             </p>
           </div>
 
@@ -59,42 +89,32 @@ const BannerPage = () => {
               </h1>
               <p className="students-placed">Students Placed</p>
               <p className="counting">
-                <span className="blinking">
-                  &gt;&gt;&gt; Still Counting...!
-                </span>
+                <span className="blinking">&gt;&gt;&gt; Still Counting...!</span>
               </p>
             </div>
           )}
         </div>
 
         <div className="stats-studentplaced-container">
-          {dashboardData && (
-              <StatsChart />
-          )}
-
-          <div
-            className="video-wrapper"
-            style={{ width: "400px", height: "225px" }}
-          >
+          {dashboardData && <StatsChart />}
+          <div className="video-wrapper">
             <video
+              ref={videoRef}
               width="100%"
               height="100%"
               controls
-              poster="https://res.cloudinary.com/db2bpf0xw/image/upload/v1735634876/codegnan-thumbnail_gsscbz.webp"
-              style={{ backgroundColor: "#000" }}
+              poster={poster ?? ""}
+              style={{ backgroundColor: "#000", border: "1px solid black", borderRadius: "20px" }}
             >
-              <source
-                src="https://res.cloudinary.com/db2bpf0xw/video/upload/v1735634495/Placement_tt4kwi.mp4"
-                type="video/mp4"
-              />
+              <source src="/images/video.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
       </div>
 
-      <div className="image-container">
+       <div className="image-container">
         <img
-          src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/banner-girl_i195ik.webp"
+          src="/images/banner-girl.png"
           alt="Banner Girl"
           className="banner-girl"
           loading="lazy"
@@ -104,9 +124,7 @@ const BannerPage = () => {
       </div>
 
       {!dashboardData && !loading && (
-        <p className="error-message">
-          Placement data is currently unavailable.
-        </p>
+        <p className="error-message">Placement data is currently unavailable.</p>
       )}
     </div>
   );

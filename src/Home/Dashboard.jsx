@@ -13,11 +13,11 @@ export default function Dashboard() {
   const collegesPerPage = 5;
 
   if (loading) {
-    return <p>Loading data...</p>;
+    return ;
   }
 
   if (error) {
-    return <p>Error loading data: {error.message}</p>;
+    return;
   }
 
   const { companiesList = {}, collegesList = {} } = dashboardData || {};

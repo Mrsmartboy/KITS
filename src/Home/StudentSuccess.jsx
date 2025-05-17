@@ -206,7 +206,7 @@ const SuccessStories = () => {
         {/* Colleges Section */}
         <div className="hidden lg:grid place-items-center">
           <img
-            src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658096/succes_jf6uoa.png"
+            src="/images/kits_success.png"
             alt="Students celebrating success"
             className="rounded-[20px] object-contain w-[100%] max-h-full"
           />

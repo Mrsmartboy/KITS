@@ -28,10 +28,10 @@ const CourseQuerySection = () => {
   }, []);
 
   return (
-    <div className="query-section">
+    <div className="query-section bg-white">
       <div
         className="query-background lazy-background"
-        data-src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849453/question-bg_pwlqgo.webp"
+        data-src="/images/question-bg.png"
       >
         <div className="query-content">
           <h1>Still have questions regarding courses?</h1>
@@ -43,7 +43,7 @@ const CourseQuerySection = () => {
           <Link to="/request-form" className="request-callback">
             <button className="callback-button-query">
               <img
-                src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/call_ea4ffs.webp"
+                src="/images/call.png"
                 alt="call"
                 className="call"
                 width="50" 
@@ -54,7 +54,7 @@ const CourseQuerySection = () => {
           </Link>
         </div>
         <img
-          src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/student_hhy6rh.webp"
+          src="/images/student.png"
           alt="Student"
           className="student-img"
           loading="lazy"

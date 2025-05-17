@@ -3,21 +3,21 @@ import "./Home.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { AppBar } from "@mui/material";
+import Dashboard from "./Dashboard";
 import InfoBanner from "./InfoBanner";
 import TeamPage from "./TeamPage";
 import RotatingCarousel from "./RotatingCarousel";
 import TestimonialsV from "./TestimonialsV";
 import CourseQuerySection from "./CourseQuerySection";
+import Collaboration from "./Collaboration";
+import SuccessStories from "./StudentSuccess";
 import BannerPage from "./BannerPage";
 import Footer from "../Footer/Footer";
-import SuccessStories from "./StudentSuccess";
 import KitsCollaboration from "./KitsCollaboration";
 
 export default function Home() {
   return (
-    <>
-
-    <div >
+    <div className="mt-16">
       <a
         href="https://codegnan.com/job-accelerator-program/"
         target="accelerate-program"
@@ -46,13 +46,14 @@ export default function Home() {
       <BannerPage />
       <InfoBanner />
       <TestimonialsV />
+
       <RotatingCarousel />
-      <KitsCollaboration />
+            <KitsCollaboration />
+
       <SuccessStories />
       <CourseQuerySection />
       <TeamPage />
       <Footer />
     </div>
-    </>
   );
 }

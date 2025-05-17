@@ -10,7 +10,6 @@ const MentorDailyExamDetails = () => {
   const data = location.state;
   const { scheduleData, fetchMentorStudents } = useStudentsMentorData();
 
-
   // Fetch data on mount
   useEffect(() => {
     fetchMentorStudents();
@@ -20,15 +19,12 @@ const MentorDailyExamDetails = () => {
   const uniqueSubjects = useMemo(() => {
     if (Array.isArray(scheduleData) && scheduleData.length > 0) {
       const allSubjects = scheduleData
-        .map((entry) => entry.subject) // Extract subject from each entry
-        .filter(Boolean); // Remove any undefined or null values if any
-      return [...new Set(allSubjects)]; // Get unique subjects
+        .map((entry) => entry.subject)
+        .filter(Boolean);
+      return [...new Set(allSubjects)];
     }
     return [];
   }, [scheduleData]);
-
-
-
 
   // Redirect if data is missing or doesn't have reports
   useEffect(() => {
@@ -49,10 +45,15 @@ const MentorDailyExamDetails = () => {
       const maxMCQ = subjData.max_mcq_marks || 0;
       const obtainedCode = subjData.obtained_code_marks || 0;
       const obtainedMCQ = subjData.obtained_mcq_marks || 0;
+      const totalPossible = maxCode + maxMCQ;
+      const scoreObtained = Math.round(obtainedCode + obtainedMCQ);
+      const percentage =
+        totalPossible > 0 ? ((scoreObtained / totalPossible) * 100).toFixed(2) : "0.00";
       return {
         subject: subjectName,
-        scoreObtained: obtainedCode + obtainedMCQ,
-        totalPossible: maxCode + maxMCQ,
+        scoreObtained,
+        totalPossible,
+        percentage,
       };
     });
   };
@@ -60,6 +61,12 @@ const MentorDailyExamDetails = () => {
   const getTotalScore = (subjects) => {
     const analysis = getSubjectWiseAnalysis(subjects);
     return analysis.reduce((acc, subj) => acc + subj.scoreObtained, 0);
+  };
+
+  const isAttempted = (subjects) => {
+    const analysis = getSubjectWiseAnalysis(subjects);
+    if (analysis.length === 0) return false;
+    return analysis.some((subj) => subj.scoreObtained > 0 || subj.totalPossible > 0);
   };
 
   // -----------------------------
@@ -75,12 +82,12 @@ const MentorDailyExamDetails = () => {
           examName: data.examName,
           batch: data.batch,
         },
-        examDetails: report.examDetails, // include exam details (date, time, totalExamTime)
+        examDetails: report.examDetails,
       };
     });
   }, [data.reports, data.examName, data.batch]);
 
-  // Extract exam details from the first report (assumes all reports share the same exam details)
+  // Extract exam details from the first report
   const examDetails = useMemo(() => {
     return enrichedData.length > 0 ? enrichedData[0].examDetails : null;
   }, [enrichedData]);
@@ -91,7 +98,7 @@ const MentorDailyExamDetails = () => {
   const [studentIdFilter, setStudentIdFilter] = useState("");
   const [studentNameFilter, setStudentNameFilter] = useState("");
   const [attemptStatusFilter, setAttemptStatusFilter] = useState("all");
-  const [scoreSort, setScoreSort] = useState("none"); // "none", "highest", "lowest"
+  const [scoreSort, setScoreSort] = useState("none");
 
   const filteredData = useMemo(() => {
     return enrichedData.filter((item) => {
@@ -100,7 +107,7 @@ const MentorDailyExamDetails = () => {
       // Filter by Student ID
       if (
         studentIdFilter.trim() &&
-        !(student.studentId || "")
+        !(student?.studentId || "")
           .toLowerCase()
           .includes(studentIdFilter.trim().toLowerCase())
       ) {
@@ -110,15 +117,15 @@ const MentorDailyExamDetails = () => {
       // Filter by Student Name
       if (
         studentNameFilter.trim() &&
-        !(student.name || "")
+        !(student?.name || "")
           .toLowerCase()
           .includes(studentNameFilter.trim().toLowerCase())
       ) {
         return false;
       }
 
-      // Filter by attempt status (inferred from subjects object)
-      const attempted = subjects && Object.keys(subjects).length > 0;
+      // Filter by attempt status
+      const attempted = isAttempted(subjects);
       if (attemptStatusFilter !== "all") {
         if (attemptStatusFilter === "attempted" && !attempted) return false;
         if (attemptStatusFilter === "not attempted" && attempted) return false;
@@ -145,7 +152,7 @@ const MentorDailyExamDetails = () => {
   //  Pagination State
   // -----------------------------
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Adjust as needed
+  const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -168,13 +175,14 @@ const MentorDailyExamDetails = () => {
       const subjectAnalysisString =
         subjectAnalysis.length > 0
           ? subjectAnalysis
-              .map(
-                (subj) =>
-                  `${subj.subject}(${subj.scoreObtained}/${subj.totalPossible})`
+              .map((subj) =>
+                subj.scoreObtained === 0 && subj.totalPossible === 0
+                  ? `${subj.subject}: N/A`
+                  : `${subj.subject}(${subj.scoreObtained}/${subj.totalPossible}, ${subj.percentage}%)`
               )
               .join(", ")
           : "N/A";
-      const attempted = subjects && Object.keys(subjects).length > 0;
+      const attempted = isAttempted(subjects);
       return {
         "Student ID": student?.studentId || "",
         Name: student?.name || "",
@@ -300,7 +308,6 @@ const MentorDailyExamDetails = () => {
               <th className="border border-gray-300 px-4 py-2 text-left">
                 Attempt Status
               </th>
-             
               <th className="border border-gray-300 px-4 py-2 text-left">
                 Subject-wise Analysis
               </th>
@@ -308,10 +315,10 @@ const MentorDailyExamDetails = () => {
           </thead>
           <tbody>
             {currentPageData.map((item, index) => {
-              const { student, exam, totalScore, subjects, examDetails } = item;
+              const { student, subjects, examDetails } = item;
               const subjectAnalysis = getSubjectWiseAnalysis(subjects);
-              const attempted = subjects && Object.keys(subjects).length > 0;
-              const rowKey = `${student.id}-${index}`;
+              const attempted = isAttempted(subjects);
+              const rowKey = `${student?.id || index}-${index}`;
               const rowClassName = attempted
                 ? index % 2 === 0
                   ? "bg-green-50"
@@ -321,13 +328,13 @@ const MentorDailyExamDetails = () => {
               return (
                 <tr key={rowKey} className={rowClassName}>
                   <td className="border border-gray-300 px-4 py-2">
-                    {student.studentId}
+                    {student?.studentId || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {student.name || "N/A"}
+                    {student?.name || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {student.phNumber || "N/A"}
+                    {student?.phNumber || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {attempted ? "Attempted" : "Not Attempted"}
@@ -335,21 +342,20 @@ const MentorDailyExamDetails = () => {
                   <td className="border border-gray-300 px-4 py-2">
                     {uniqueSubjects.length > 0
                       ? uniqueSubjects.map((subject, idx) => {
-                          // Filter the subjectAnalysis for the current subject
-                          const subjectData = subjectAnalysis.filter(
+                          const subjectData = subjectAnalysis.find(
                             (subj) => subj.subject === subject
                           );
-
-                          // If data for this subject exists, display it
-                          return subjectData.length > 0 ? (
+                          if (!subjectData || (subjectData.scoreObtained === 0 && subjectData.totalPossible === 0)) {
+                            return (
+                              <div key={idx}>
+                                <strong>{subject}:</strong> N/A
+                              </div>
+                            );
+                          }
+                          return (
                             <div key={idx}>
                               <strong>{subject}:</strong>{" "}
-                              {subjectData[0].scoreObtained} /{" "}
-                              {subjectData[0].totalPossible}
-                            </div>
-                          ) : (
-                            <div key={idx}>
-                              <strong>{subject}:</strong> N/A
+                              {subjectData.scoreObtained} / {subjectData.totalPossible} ({subjectData.percentage}%)
                             </div>
                           );
                         })
