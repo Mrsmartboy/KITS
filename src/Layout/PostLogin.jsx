@@ -27,15 +27,15 @@ const PostLogin = ({
         )}
         <div className="flex items-center ">
         <img
-          src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/codegnan-logo_qxnxrq.webp"
+          src="/images/codegnan-destination.png"
           alt="Codegnan Logo"
-          className="cursor-pointer h-12 sm:h-20  md:ml-10 w-24 md:w-36 " // slightly bigger
+          className="cursor-pointer h-12 sm:h-10  md:ml-3 w-24 md:w-32 " // slightly bigger
           onClick={() => navigate("/")}
         />
         <img
-          src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1745658094/logo_s2toqb.png"
+          src="/images/kits_logo.png"
           alt="KITS Badge"
-          className="cursor-pointer -mt-3 h-12 sm:h-20   md:-ml-2 w-24 md:w-36" // slightly bigger
+          className="cursor-pointer -mt-3 h-14 sm:h-20   md:-ml-1 w-24 md:w-24" // slightly bigger
         />
 
       </div>

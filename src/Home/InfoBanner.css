@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-image: url('https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849442/info-bg_yawuha.webp');
+  background-image: url('/images/info-bg.png');
   color: #fff;
   text-align: center;
   background-size: cover;

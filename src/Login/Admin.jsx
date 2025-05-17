@@ -29,8 +29,7 @@ export default function SuperAdmin() {
       if (response.status === 200) {
         // Encrypt and store data in sessionStorage (clears on tab closure)
         const encryptedUserType = encryptData(response.data.userType);
-        const encryptedLocation = encryptData(response.data.location);
-        console.log(response.data.location);
+        const encryptedLocation = encryptData("all");
 
         sessionStorage.setItem("userType", encryptedUserType);
         sessionStorage.setItem("location", encryptedLocation);
@@ -86,7 +85,7 @@ export default function SuperAdmin() {
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-7xl space-y-8 md:space-y-0 md:space-x-8">
         <div className="flex justify-center items-center w-full md:w-1/2">
           <img
-            src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849448/login-cartoon_znh33j.webp"
+            src="/images/login-cartoon.png"
             alt="Cartoon logo"
             className="w-full max-w-lg"
           />

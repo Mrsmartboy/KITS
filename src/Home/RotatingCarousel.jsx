@@ -6,18 +6,18 @@ import './RotatingCarousel.css';
 
 
 const profiles = [
-   { id: 1, package: '18.2 LPA', company: 'Akamai', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849456/sathupati_preethi_mubejj.webp", alt: 'sathupati_preethi' },
-   { id: 2, package: '9.5 LPA', company: 'Infosys', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849456/sathupati_preethi_1_xyerqt.webp", alt: 'sathupati_preethi_1' },
-   { id: 3, package: '7.3 LPA', company: 'CodeYoung', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849438/anu_raj_n_crqd7w.webp", alt: 'anu_raj_n' },
-   { id: 4, package: '7 LPA', company: 'Healthsyst', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849464/varuni_br_ji3lzr.webp", alt: 'varuni-br' },
-   { id: 5, package: '7 LPA', company: 'TCS', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/morampudu_anu_sri_m0ni5y.webp", alt: 'morampudi_anu_sri' },
-   { id: 6, package: '7 LPA', company: 'Healthsyst', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849444/kavya_c_zkvdnm.webp", alt: 'kavya_c' },
-   {id:7,package:'6.5 LPA', company:'Mastech',image:"https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/manoj_naidu_m_itdtcw.webp",alt:'manoj_naidu'},
-   { id: 8, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/bhargavi_g_hegde_cvurt4.webp", alt: 'bhargavi_g_hegde' },
-   { id: 9, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849456/sharath_s_bznwej.webp", alt: 'sharath_s' },
-   { id: 10, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849449/manu_n_oqizdn.webp", alt: 'manu_n' },
-   { id: 11, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/t_shivani_bkgftb.webp", alt: 't_shivani' },
-  { id: 12, package: '6.5 LPA', company: 'Aptean', image: "https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849457/suhas_zrwtlu.webp", alt: 'suhas' }
+   { id: 1, package: '18.2 LPA', company: 'Akamai', image: "/images/sathupati_preethi.png", alt: 'sathupati_preethi' },
+   { id: 2, package: '9.5 LPA', company: 'Infosys', image: "/images/sathupati_preethi_1.png", alt: 'sathupati_preethi_1' },
+   { id: 3, package: '7.3 LPA', company: 'CodeYoung', image: "/images/anu_raj.png", alt: 'anu_raj_n' },
+   { id: 4, package: '7 LPA', company: 'Healthsyst', image: "/images/varuni.png", alt: 'varuni-br' },
+   { id: 5, package: '7 LPA', company: 'TCS', image: "/images/morampudi_anu_sri.png", alt: 'morampudi_anu_sri' },
+   { id: 6, package: '7 LPA', company: 'Healthsyst', image: "/images/kavya.png", alt: 'kavya_c' },
+   {id:7,package:'6.5 LPA', company:'Mastech',image:"/images/manoj_naidu.png",alt:'manoj_naidu'},
+   { id: 8, package: '6.5 LPA', company: 'Aptean', image: "/images/bhargavi.png", alt: 'bhargavi_g_hegde' },
+   { id: 9, package: '6.5 LPA', company: 'Aptean', image: "/images/sharath.png", alt: 'sharath_s' },
+   { id: 10, package: '6.5 LPA', company: 'Aptean', image: "/images/manu.png", alt: 'manu_n' },
+   { id: 11, package: '6.5 LPA', company: 'Aptean', image: "/images/t_shivani.png", alt: 't_shivani' },
+  { id: 12, package: '6.5 LPA', company: 'Aptean', image: "/images/suhas.png", alt: 'suhas' }
 ];
 
 
@@ -87,7 +87,7 @@ const RotatingCarousel = () => {
   return (
     <div className='main-container'>
       <img
-        src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849456/spiral-bg_vvbq62.webp"
+        src="/images/spiral-bg.png"
         alt="Spiral Background"
         className="spiral-bg"
       />
@@ -139,13 +139,13 @@ const RotatingCarousel = () => {
             </p>
             <h1>WHO IS <br /> NEXT...</h1>
           </div>
-          <img src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849454/question-mark_monpn0.webp" alt="Question Mark" className="question-mark" 
+          <img src="/images/question-mark.png" alt="Question Mark" className="question-mark" 
            width="300" height="300" />
           </div>
           <div className="callback-section">
             <Link to='/request-form' className='request-callback'>
             <button className="callback-button-rotating cursor-pointer">
-              <img src="https://res.cloudinary.com/db2bpf0xw/image/upload/v1734849439/call_ea4ffs.webp" alt="call" className='call cursor-pointer'  width="50" 
+              <img src="/images/call.png" alt="call" className='call cursor-pointer'  width="50" 
                height="50"/> Request A Callback
             </button>
             </Link>
