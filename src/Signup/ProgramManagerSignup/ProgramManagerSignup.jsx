@@ -17,6 +17,7 @@ const subjects = [
   { value: "C", label: "C" },
   { value: "DS-C", label: "DS-C" },
   { value: "Python", label: "Python" },
+  { value: "Java", label: "Java" },
 ];
 
 const ProgramManagerSignup = () => {

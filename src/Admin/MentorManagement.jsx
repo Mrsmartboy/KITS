@@ -28,7 +28,8 @@ const MentorManagement = () => {
     "Python",
     "DS-C",
     "SE",
-    "DBMS"
+    "DBMS",
+    "Java"
   ];
 
   const fetchData = async () => {
