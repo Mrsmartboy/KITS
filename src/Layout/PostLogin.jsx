@@ -29,13 +29,13 @@ const PostLogin = ({
         <img
           src="/images/codegnan-destination.webp"
           alt="Codegnan Logo"
-          className="cursor-pointer h-12 sm:h-10  md:ml-3 w-24 md:w-32 " // slightly bigger
+          className="cursor-pointer h-12 sm:h-10  md:ml-3 w-24 md:w-32 mr-4" // slightly bigger
           onClick={() => navigate("/")}
         />
         <img
           src="/images/kits_logo.webp"
           alt="KITS Badge"
-          className="cursor-pointer -mt-3 h-14 sm:h-20   md:-ml-1 w-24 md:w-24" // slightly bigger
+          className="cursor-pointer -mt-3 h-14 sm:h-14   md:-ml-1 w-24 md:w-20" // slightly bigger
         />
 
       </div>
