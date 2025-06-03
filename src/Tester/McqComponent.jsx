@@ -7,8 +7,6 @@ import Swal from "sweetalert2";
 import { ChevronDown, Pencil, Trash2, CheckCircle } from "lucide-react";
 import { MdOutlineFileDownload } from "react-icons/md";
 import { decryptData } from "../../cryptoUtils";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const McqComponent = () => {
   const [searchParams] = useSearchParams();
@@ -19,6 +17,7 @@ const McqComponent = () => {
   const questionType = "mcq_test";
 
   const [questions, setQuestions] = useState([]);
+  const [isDumping, setIsDumping] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
   const [editingQuestionId, setEditingQuestionId] = useState(null);
   const [editedQuestion, setEditedQuestion] = useState({});
@@ -164,7 +163,7 @@ const McqComponent = () => {
   useEffect(() => {
     const url = `${
       import.meta.env.VITE_BACKEND_URL
-    }/api/v1/question-crud?subject=${subjectParam}&tags=${tagsParam}`;
+    }/api/v1/question-crud?internId=${testerId}&subject=${subjectParam}&tags=${tagsParam}`;
     axios
       .get(url)
       .then((response) => {
@@ -351,56 +350,6 @@ const McqComponent = () => {
     );
   };
 
-  // Detect and extract code from question
-  const extractCodeFromQuestion = (question, subject) => {
-    const codeKeywords = [
-      "int ",
-      "printf",
-      "if (",
-      "else",
-      "return",
-      "void",
-      "for(",
-      "while(",
-      "def ",
-      "print(",
-      "class ",
-      "function ",
-    ];
-    const isCode = codeKeywords.some((keyword) => question.includes(keyword));
-
-    if (!isCode) {
-      return { isCode: false, text: question, code: null };
-    }
-
-    // Check for markdown code blocks
-    const codeBlockRegex = /```[a-z]*\n([\s\S]*?)\n```/;
-    const match = question.match(codeBlockRegex);
-
-    if (match) {
-      const code = match[1];
-      const text = question.replace(codeBlockRegex, "").trim();
-      return { isCode: true, text, code };
-    }
-
-    // If no markdown, assume the entire question is code
-    return { isCode: true, text: "", code: question };
-  };
-
-  // Infer programming language from subject
-  const getLanguage = (subject) => {
-    switch (subject.toLowerCase()) {
-      case "ckits":
-        return "c";
-      case "python":
-        return "python";
-      case "javascript":
-        return "javascript";
-      default:
-        return "text";
-    }
-  };
-
   // Edit functionality
   const handleEditClick = (question, index) => {
     setEditingQuestionId(question.questionId);
@@ -422,7 +371,7 @@ const McqComponent = () => {
       Text_Explanation: question.Text_Explanation,
       Explanation_URL: question.Explanation_URL,
       Question_Type: question.Question_Type || "mcq_test",
-      Image_URL: question.image_url || "",
+      Image_URL: question.image_url,
     });
     setEditPreview(null);
     setOpenIndex(index);
@@ -452,44 +401,44 @@ const McqComponent = () => {
     });
   };
 
-  const handleEditImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // const handleEditImageChange = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
 
-    setIsUploadingImage(true);
+  //   setIsUploadingImage(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
-      "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-    );
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   formData.append(
+  //     "upload_preset",
+  //     import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+  //   );
 
-    try {
-      const res = await axios.post(
-        `https://api.cloudinary.com/v1_1/${
-          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-        }/upload`,
-        formData
-      );
-      const secureUrl = res.data.secure_url;
-      setEditedQuestion((prev) => ({
-        ...prev,
-        Image_URL: secureUrl,
-      }));
-      setEditPreview(secureUrl);
-    } catch (err) {
-      console.error("Image upload failed", err);
-      toast.error("Failed to upload image");
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
+  //   try {
+  //     const res = await axios.post(
+  //       `https://api.cloudinary.com/v1_1/${
+  //         import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+  //       }/upload`,
+  //       formData
+  //     );
+  //     const secureUrl = res.data.secure_url;
+  //     setEditedQuestion((prev) => ({
+  //       ...prev,
+  //       Image_URL: secureUrl,
+  //     }));
+  //     setEditPreview(secureUrl);
+  //   } catch (err) {
+  //     console.error("Image upload failed", err);
+  //     toast.error("Failed to upload image");
+  //   } finally {
+  //     setIsUploadingImage(false);
+  //   }
+  // };
 
   const handleSaveEdit = () => {
     const updateUrl = `${
       import.meta.env.VITE_BACKEND_URL
-    }/api/v1/question-crud?subject=${subjectParam}`;
+    }/api/v1/question-crud?internId=${testerId}&subject=${subjectParam}`;
     axios
       .put(updateUrl, editedQuestion)
       .then(() => {
@@ -514,16 +463,16 @@ const McqComponent = () => {
                   Subject: editedQuestion.Subject,
                   Tags: editedQuestion.Tags,
                   Question_Type: editedQuestion.Question_Type,
-                  image_url: editedQuestion.Image_URL || "",
+                  image_url: editedQuestion.Image_URL,
                 }
               : q
           )
         );
+        fetchVerificationSummary();
         setEditingQuestionId(null);
         setEditedQuestion({});
         setEditPreview(null);
         setOpenIndex(null);
-        toast.success("Question updated successfully!");
       })
       .catch((err) => {
         console.error("Error updating MCQ question:", err);
@@ -552,7 +501,7 @@ const McqComponent = () => {
       if (result.isConfirmed) {
         const deleteUrl = `${
           import.meta.env.VITE_BACKEND_URL
-        }/api/v1/question-crud?subject=${subjectParam}&questionId=${questionId}&questionType=${
+        }/api/v1/question-crud?internId=${testerId}&subject=${subjectParam}&questionId=${questionId}&questionType=${
           questionToDelete.Question_Type || "mcq_test"
         }`;
 
@@ -567,7 +516,9 @@ const McqComponent = () => {
             setEditedQuestion({});
             setEditPreview(null);
             setOpenIndex(null);
-            toast.success("Question deleted successfully!");
+            toast.success("Question deleted successfully!", {
+              autoClose: 2000,
+            });
 
             if (
               updatedQuestions.length <= indexOfFirstQuestion &&
@@ -606,7 +557,12 @@ const McqComponent = () => {
     try {
       const response = await axios.put(verifyUrl, payload);
       await fetchVerificationSummary();
-      toast.success(response.data.message || "Question verified successfully!");
+      toast.success(
+        response.data.message || "Question verified successfully!",
+        {
+          autoClose: 2000,
+        }
+      );
     } catch (err) {
       console.error("Error verifying question:", err);
       toast.error("Failed to verify the question.");
@@ -638,7 +594,12 @@ const McqComponent = () => {
       "Explanation_URL",
     ];
 
-    const data = questions.map((q) => ({
+    // Filter only verified questions
+    const verifiedQuestions = questions.filter((q) =>
+      isQuestionVerified(q.questionId)
+    );
+
+    const data = verifiedQuestions.map((q) => ({
       Question_No: q.Question_No || "",
       Image_URL: q.image_url || "",
       Question_Type: "MCQ",
@@ -658,9 +619,9 @@ const McqComponent = () => {
 
     const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "MCQ Questions");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Verified MCQ Questions");
 
-    const filename = `${subjectParam}_${tagsParam}_mcq_questions.xlsx`;
+    const filename = `${subjectParam}_${tagsParam}_verified_mcq_questions.xlsx`;
     XLSX.writeFile(workbook, filename);
   };
 
@@ -673,6 +634,55 @@ const McqComponent = () => {
 
   const currentDay = tagsParam.split(":")[0];
   const currentTopic = tagToTopicMap[tagsParam] || "Unknown Topic";
+
+  const dumpQuestions = async () => {
+    setIsDumping(true);
+
+    // Show loading popup
+    Swal.fire({
+      title: "Dumping Questions...",
+      text: "Please wait while the questions are being processed.",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    // Filter only verified questions and remove unnecessary fields
+    const verifiedQuestions = questions
+      .filter((q) => isQuestionVerified(q.questionId))
+      .map(({ Question_No, options, number, ...rest }) => rest);
+
+    const payload = {
+      internId: testerId,
+      subject: subjectParam,
+      tags: tagsParam,
+      questions: verifiedQuestions,
+    };
+
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/dump-questions`,
+        payload
+      );
+      Swal.close(); // Close the loading popup
+      toast.success(response.data.message || "Questions dumped successfully!", {
+        autoClose: 2000,
+      });
+    } catch (err) {
+      console.error("Error dumping questions:", err);
+      Swal.close(); // Close the loading popup
+      toast.error("Failed to dump questions.");
+    } finally {
+      setIsDumping(false);
+    }
+  };
+
+  // Determine if there are any verified questions
+  const hasVerifiedQuestions = questions.some((q) =>
+    isQuestionVerified(q.questionId)
+  );
 
   return (
     <div className="w-full font-[inter] px-4 sm:px-6 lg:px-12 mt-3 md:mt-8 mb-5 bg-gray-100 flex flex-col">
@@ -734,6 +744,17 @@ const McqComponent = () => {
           >
             <MdOutlineFileDownload size={22} />
           </button>
+          <button
+            onClick={dumpQuestions}
+            disabled={!hasVerifiedQuestions || isDumping}
+            className={`flex items-center gap-2 text-sm sm:text-base font-medium px-4 py-2 rounded ${
+              hasVerifiedQuestions || isDumping
+                ? "bg-[#19216F] text-white hover:bg-[#141A5A]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            {isDumping ? "Dumping..." : "Dump"}
+          </button>
         </div>
       </div>
       <div className="border-t border-[#939393] w-full mb-6"></div>
@@ -749,12 +770,6 @@ const McqComponent = () => {
             const isLong = isLongQuestion(q.Question);
             const isVerified = isQuestionVerified(q.questionId);
             const isLoading = loadingQuestions[q.questionId] || false;
-
-            // Extract code and text from question
-            const { isCode, text, code } = extractCodeFromQuestion(
-              q.Question,
-              q.Subject
-            );
 
             return (
               <div key={q.questionId || index} className="flex flex-col w-full">
@@ -781,9 +796,7 @@ const McqComponent = () => {
                         />
                       </div>
                     ) : (
-                      `Q${q.Question_No}. ${
-                        isLong ? truncateQuestion(text || code) : text || code
-                      }`
+                      `Q${q.Question_No}. ${truncateQuestion(q.Question)}`
                     )}
                   </div>
                   <div className="px-4 py-2 sm:py-0 flex items-center gap-1">
@@ -868,8 +881,10 @@ const McqComponent = () => {
                   </div>
                   <div className="flex h-auto sm:h-[60px] px-4 sm:px-0 py-2 sm:py-0">
                     <div
-                      className="w-full sm:w-[42px] bg-[#129E00] flex items-center justify-center cursor-pointer"
-                      onClick={() => handleEditClick(q, index)}
+                      className={`w-full sm:w-[42px] bg-[#129E00] flex items-center justify-center cursor-pointer ${
+                        isVerified ? "cursor-not-allowed opacity-50" : ""
+                      }`}
+                      onClick={() => !isVerified && handleEditClick(q, index)}
                     >
                       <Pencil size={18} color="white" />
                     </div>
@@ -891,21 +906,19 @@ const McqComponent = () => {
                 >
                   {isEditing ? (
                     <div className="space-y-4 transition-opacity duration-500">
-                      {isLong && (
-                        <div className="flex flex-col gap-2">
-                          <span className="text-black font-semibold text-[18px]">
-                            Question:
-                          </span>
-                          <textarea
-                            value={editedQuestion.Question || ""}
-                            onClick={(e) => e.stopPropagation()}
-                            onChange={(e) =>
-                              handleInputChange("Question", e.target.value)
-                            }
-                            className="w-full h-[100px] px-3 py-2 text-black border border-[#4C4A4A] rounded-md text-base focus:outline-none focus:ring-2 focus:ring-[#19216F]"
-                          />
-                        </div>
-                      )}
+                      <div className="flex flex-col gap-2">
+                        <span className="text-black font-semibold text-[18px]">
+                          Question:
+                        </span>
+                        <textarea
+                          value={editedQuestion.Question || ""}
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={(e) =>
+                            handleInputChange("Question", e.target.value)
+                          }
+                          className="w-full h-[100px] px-3 py-2 text-black border border-[#4C4A4A] rounded-md text-base focus:outline-none focus:ring-2 focus:ring-[#19216F] font-mono"
+                        />
+                      </div>
                       <div className="flex flex-col gap-2">
                         <span className="text-black font-semibold text-[18px]">
                           Image:
@@ -920,7 +933,7 @@ const McqComponent = () => {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={handleEditImageChange}
+                        
                           disabled={isUploadingImage}
                           className="border rounded px-2 py-1"
                         />
@@ -1017,41 +1030,21 @@ const McqComponent = () => {
                     </div>
                   ) : (
                     <div className="space-y-4 transition-opacity duration-500">
-                      {isLong && text && (
-                        <div className="text-black font-semibold text-[18px]">
-                          Question:{" "}
-                          <span className="font-normal ml-1">{text}</span>
-                        </div>
-                      )}
-                      {isCode && code && (
-                        <div className="flex flex-col gap-2">
-                          <span className="text-black font-semibold text-[18px]">
-                            Code:
-                          </span>
-                          <SyntaxHighlighter
-                            language={getLanguage(q.Subject)}
-                            style={vscDarkPlus}
-                            showLineNumbers
-                            wrapLines
-                            customStyle={{
-                              borderRadius: "8px",
-                              padding: "16px",
-                              fontSize: "14px",
-                              maxWidth: "100%",
-                              overflowX: "auto",
-                            }}
-                          >
-                            {code}
-                          </SyntaxHighlighter>
-                        </div>
-                      )}
+                      <div className="flex flex-col gap-2">
+                        <span className="text-black font-semibold text-[18px]">
+                          Question:
+                        </span>
+                        <pre className="question-pre text-base font-mono">
+                          {q.Question}
+                        </pre>
+                      </div>
                       <div className="text-black font-semibold text-[18px]">
                         Type:{" "}
                         <span className="font-normal ml-1">
                           {q.Question_Type || "mcq_test"}
                         </span>
                       </div>
-                      {!q.image_url ? (
+                      {!q.Image_URL ? (
                         <div></div>
                       ) : (
                         <div className="flex flex-col gap-2">
@@ -1060,7 +1053,7 @@ const McqComponent = () => {
                           </span>
                           <img
                             className="w-[200px] mx-4 object-contain"
-                            src={q.image_url}
+                            src={q.Image_URL}
                             alt="Question"
                           />
                         </div>
@@ -1189,6 +1182,17 @@ const McqComponent = () => {
           </button>
         </div>
       </div>
+     <style jsx="true">{`
+        .question-pre {
+          white-space: pre-wrap;
+          overflow-wrap: break-word;
+          margin: 0;
+          font-family: monospace;
+          font-size: 1rem;
+          max-width: 100%;
+          overflow-x: auto;
+        }
+      `}</style>
     </div>
   );
 };

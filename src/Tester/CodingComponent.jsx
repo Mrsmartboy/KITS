@@ -16,6 +16,7 @@ const CodingComponent = () => {
   const testerId = decryptData(sessionStorage.getItem("Testers") || "");
 
   const [questions, setQuestions] = useState([]);
+  const [isDumping, setIsDumping] = useState(false);
   const [openIndex, setOpenIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [tagCountPerDay, setTagCountPerDay] = useState({});
@@ -182,7 +183,7 @@ const CodingComponent = () => {
   useEffect(() => {
     const url = `${
       import.meta.env.VITE_BACKEND_URL
-    }/api/v1/question-crud?subject=${subjectParam}&tags=${tagsParam}`;
+    }/api/v1/question-crud?internId=${testerId}&subject=${subjectParam}&tags=${tagsParam}`;
     axios
       .get(url)
       .then((response) => {
@@ -307,16 +308,25 @@ const CodingComponent = () => {
 
   const handleTestButton = (q, idx) => {
     const verification = verifications[q.questionId];
-    navigate("/testing/compiler", {
-      state: {
-        question: q,
-        index: idx,
-        questions: questions,
-        codeMap: verification?.sourceCode
-          ? { [idx]: verification.sourceCode }
-          : {},
-      },
-    });
+    // Calculate the absolute index in the full questions array
+    const absoluteIndex = indexOfFirstQuestion + idx;
+    navigate(
+      `/testing/compiler?questionId=${
+        q.questionId
+      }&subject=${subjectParam}&tags=${tagsParam}&questionType=${
+        q.Question_Type || "code_test"
+      }`,
+      {
+        state: {
+          question: q,
+          index: absoluteIndex,
+          questions: questions,
+          codeMap: verification?.sourceCode
+            ? { [absoluteIndex]: verification.sourceCode }
+            : {},
+        },
+      }
+    );
   };
 
   const handleDelete = (questionId) => {
@@ -340,7 +350,7 @@ const CodingComponent = () => {
       if (result.isConfirmed) {
         const deleteUrl = `${
           import.meta.env.VITE_BACKEND_URL
-        }/api/v1/question-crud?subject=${subjectParam}&questionId=${questionId}&questionType=${
+        }/api/v1/question-crud?internId=${testerId}&subject=${subjectParam}&questionId=${questionId}&questionType=${
           questionToDelete.Question_Type || "Code"
         }`;
 
@@ -352,7 +362,9 @@ const CodingComponent = () => {
             );
             setQuestions(updatedQuestions);
             setOpenIndex(null);
-            toast.success("Question deleted successfully!");
+            toast.success("Question deleted successfully!", {
+              autoClose: 2000,
+            });
 
             if (
               updatedQuestions.length <= indexOfFirstQuestion &&
@@ -400,7 +412,13 @@ const CodingComponent = () => {
 
     const headers = [...baseHeaders, ...hiddenHeaders, ...otherHeaders];
 
-    const data = questions.map((q) => {
+    // Filter only verified questions
+    const verifiedQuestions = questions.filter((q) => {
+      const verification = verifications[q.questionId];
+      return verification?.verified && verification?.sourceCode;
+    });
+
+    const data = verifiedQuestions.map((q) => {
       const row = {
         Question_No: q.Question_No ?? "",
         Question_Type: "Code",
@@ -429,11 +447,15 @@ const CodingComponent = () => {
 
     const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Coding Questions");
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Verified Coding Questions"
+    );
 
     XLSX.writeFile(
       workbook,
-      `${subjectParam}_${tagsParam}_coding_questions.xlsx`
+      `${subjectParam}_${tagsParam}_verified_coding_questions.xlsx`
     );
   };
 
@@ -445,6 +467,57 @@ const CodingComponent = () => {
 
   const currentDay = tagsParam.split(":")[0];
   const currentTopic = tagToTopicMap[tagsParam] || "Unknown Topic";
+
+  const dumpQuestions = async () => {
+    setIsDumping(true);
+
+    // Show loading popup
+    Swal.fire({
+      title: "Dumping Questions...",
+      text: "Please wait while the questions are being processed.",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    // Filter only verified questions
+    const verifiedQuestions = questions.filter((q) => {
+      const verification = verifications[q.questionId];
+      return verification?.verified && verification?.sourceCode;
+    });
+
+    const payload = {
+      internId: testerId,
+      subject: subjectParam,
+      tags: tagsParam,
+      questions: verifiedQuestions,
+    };
+
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/dump-questions`,
+        payload
+      );
+      Swal.close();
+      toast.success(response.data.message || "Questions dumped successfully!", {
+        autoClose: 2000,
+      });
+    } catch (err) {
+      console.error("Error dumping questions:", err);
+      Swal.close();
+      toast.error("Failed to dump questions.");
+    } finally {
+      setIsDumping(false);
+    }
+  };
+
+  // Determine if there are any verified questions
+  const hasVerifiedQuestions = questions.some((q) => {
+    const verification = verifications[q.questionId];
+    return verification?.verified && verification?.sourceCode;
+  });
 
   return (
     <div className="w-full font-[inter] px-4 sm:px-6 text-[12px] lg:px-12 mt-3 md:mt-8 mb-5 bg-gray-100 flex flex-col">
@@ -506,6 +579,17 @@ const CodingComponent = () => {
           >
             <MdOutlineFileDownload size={22} />
           </button>
+          <button
+            onClick={dumpQuestions}
+            disabled={!hasVerifiedQuestions || isDumping}
+            className={`flex items-center gap-2 text-sm sm:text-base font-medium px-4 py-2 rounded ${
+              hasVerifiedQuestions || isDumping
+                ? "bg-[#19216F] text-white hover:bg-[#141A5A]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
+          >
+            {isDumping ? "Dumping..." : "Dump"}
+          </button>
         </div>
       </div>
       <div className="border-t border-[#939393] w-full mb-6"></div>
@@ -520,7 +604,7 @@ const CodingComponent = () => {
             const isLong = isLongQuestion(q.Question);
             const verification = verifications[q.questionId];
             const isVerified =
-              verification?.verified &&  verification?.sourceCode;
+              verification?.verified && verification?.sourceCode;
 
             return (
               <div key={q.questionId || index} className="flex flex-col w-full">
@@ -554,16 +638,29 @@ const CodingComponent = () => {
                     </span>
                   </div>
                   <div className="px-4 py-2 sm:py-0 flex items-center gap-1">
-                    <span className={`${isOpen ? 'text-white' : 'text-[#19216F]'} font-bold`}>Score:</span>
-                    <span className={`${isOpen ? 'text-white' : 'text-[#129E00]'} font-bold`}>{q.Score}</span>
+                    <span
+                      className={`${
+                        isOpen ? "text-white" : "text-[#19216F]"
+                      } font-bold`}
+                    >
+                      Score:
+                    </span>
+                    <span
+                      className={`${
+                        isOpen ? "text-white" : "text-[#129E00]"
+                      } font-bold`}
+                    >
+                      {q.Score}
+                    </span>
                     {isVerified && (
-                      <>
-                     
-                        <CheckCircle size={24} className={`ml-20 font-bold ${isOpen ? 'text-white' : 'text-[#129E00]'}`} />
-                        </>
+                      <CheckCircle
+                        size={24}
+                        className={`ml-20 font-bold ${
+                          isOpen ? "text-white" : "text-[#129E00]"
+                        }`}
+                      />
                     )}
                   </div>
-
                   <div className="flex justify-center items-center px-4 py-2 sm:py-0">
                     <ChevronDown
                       size={20}

@@ -797,14 +797,6 @@ export default function App() {
                 path="/uploadcpq"
                 element={<UploadCodePracticeQuestions />}
               />
-              {/* <Route
-                path="/test-upload"
-                element={
-                  <ProtectedRoute allowedRoles={["Testers"]}>
-                    <UploadInternQuestions />
-                  </ProtectedRoute>
-                }
-              /> */}
               <Route
                 path="/test-upload-new"
                 element={
@@ -861,6 +853,7 @@ export default function App() {
                   </ProtectedRoute>
                 }
               />
+
               <Route
                 path="/batchschedule"
                 element={

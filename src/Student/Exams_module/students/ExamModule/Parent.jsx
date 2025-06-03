@@ -50,107 +50,107 @@ const ExamContent = () => {
     }
   };
 
-  useEffect(() => {
-    // Only attach event listeners if the exam isn't submitted
-    if (!submissionComplete) {
-      const handleContextMenu = (e) => {
-        e.preventDefault();
-        toast.warn("Right-click is disabled!");
-      };
-      const handleCopy = (e) => {
-        e.preventDefault();
-        toast.warn("Copy is disabled!");
-      };
-      const handleCut = (e) => {
-        e.preventDefault();
-        toast.warn("Cut is disabled!");
-      };
-      const handlePaste = (e) => {
-        e.preventDefault();
-        toast.warn("Paste is disabled!");
-      };
-      const handleKeyDown = (e) => {
-        if (e.key === "Escape") {
-          e.preventDefault();
-          toast.error(
-            "Full screen exited or Escape pressed. Auto-submitting exam."
-          );
-          safeSubmit();
-        }
-        if (e.key === "F5" || ((e.ctrlKey || e.metaKey) && e.key === "r")) {
-          e.preventDefault();
-          toast.error("Reload is disabled during the exam!");
-        }
-        if (
-          e.key === "F12" ||
-          ((e.ctrlKey || e.metaKey) &&
-            e.shiftKey &&
-            ["i", "j"].includes(e.key.toLowerCase()))
-        ) {
-          e.preventDefault();
-          toast.error("Opening DevTools is not allowed!");
-          safeSubmit();
-        }
-      };
-      const handleVisibilityChange = () => {
-        if (document.hidden) {
-          toast.error("Tab switch detected. Auto-submitting exam.");
-          safeSubmit();
-        }
-      };
-      const handlePopState = () => {
-        window.history.pushState(null, "", window.location.href);
-        toast.error("Navigating back is disabled!");
-      };
-      const handleBeforeUnload = (e) => {
-        e.preventDefault();
-        e.returnValue = "";
-      };
-      const handleFullscreenChange = () => {
-        if (!document.fullscreenElement) {
-          toast.error("Full screen mode exited. Auto-submitting exam.");
-          safeSubmit();
-        }
-      };
+  // useEffect(() => {
+  //   // Only attach event listeners if the exam isn't submitted
+  //   if (!submissionComplete) {
+  //     const handleContextMenu = (e) => {
+  //       e.preventDefault();
+  //       toast.warn("Right-click is disabled!");
+  //     };
+  //     const handleCopy = (e) => {
+  //       e.preventDefault();
+  //       toast.warn("Copy is disabled!");
+  //     };
+  //     const handleCut = (e) => {
+  //       e.preventDefault();
+  //       toast.warn("Cut is disabled!");
+  //     };
+  //     const handlePaste = (e) => {
+  //       e.preventDefault();
+  //       toast.warn("Paste is disabled!");
+  //     };
+  //     const handleKeyDown = (e) => {
+  //       if (e.key === "Escape") {
+  //         e.preventDefault();
+  //         toast.error(
+  //           "Full screen exited or Escape pressed. Auto-submitting exam."
+  //         );
+  //         safeSubmit();
+  //       }
+  //       if (e.key === "F5" || ((e.ctrlKey || e.metaKey) && e.key === "r")) {
+  //         e.preventDefault();
+  //         toast.error("Reload is disabled during the exam!");
+  //       }
+  //       if (
+  //         e.key === "F12" ||
+  //         ((e.ctrlKey || e.metaKey) &&
+  //           e.shiftKey &&
+  //           ["i", "j"].includes(e.key.toLowerCase()))
+  //       ) {
+  //         e.preventDefault();
+  //         toast.error("Opening DevTools is not allowed!");
+  //         safeSubmit();
+  //       }
+  //     };
+  //     const handleVisibilityChange = () => {
+  //       if (document.hidden) {
+  //         toast.error("Tab switch detected. Auto-submitting exam.");
+  //         safeSubmit();
+  //       }
+  //     };
+  //     const handlePopState = () => {
+  //       window.history.pushState(null, "", window.location.href);
+  //       toast.error("Navigating back is disabled!");
+  //     };
+  //     const handleBeforeUnload = (e) => {
+  //       e.preventDefault();
+  //       e.returnValue = "";
+  //     };
+  //     const handleFullscreenChange = () => {
+  //       if (!document.fullscreenElement) {
+  //         toast.error("Full screen mode exited. Auto-submitting exam.");
+  //         safeSubmit();
+  //       }
+  //     };
 
-      // Register all the event listeners
-      document.addEventListener("contextmenu", handleContextMenu);
-      document.addEventListener("copy", handleCopy);
-      document.addEventListener("cut", handleCut);
-      document.addEventListener("paste", handlePaste);
-      window.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("visibilitychange", handleVisibilityChange);
+  //     // Register all the event listeners
+  //     document.addEventListener("contextmenu", handleContextMenu);
+  //     document.addEventListener("copy", handleCopy);
+  //     document.addEventListener("cut", handleCut);
+  //     document.addEventListener("paste", handlePaste);
+  //     window.addEventListener("keydown", handleKeyDown);
+  //     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-      // Prevent Back button navigation
-      window.history.pushState(null, "", window.location.href);
-      window.addEventListener("popstate", handlePopState);
+  //     // Prevent Back button navigation
+  //     window.history.pushState(null, "", window.location.href);
+  //     window.addEventListener("popstate", handlePopState);
 
-      // Warn user if they try to close/refresh the page
-      window.addEventListener("beforeunload", handleBeforeUnload);
+  //     // Warn user if they try to close/refresh the page
+  //     window.addEventListener("beforeunload", handleBeforeUnload);
 
-      // Listen for exiting fullscreen
-      document.addEventListener("fullscreenchange", handleFullscreenChange);
+  //     // Listen for exiting fullscreen
+  //     document.addEventListener("fullscreenchange", handleFullscreenChange);
 
-      // Cleanup: remove listeners if exam is submitted or component unmounts
-      return () => {
-        document.removeEventListener("contextmenu", handleContextMenu);
-        document.removeEventListener("copy", handleCopy);
-        document.removeEventListener("cut", handleCut);
-        document.removeEventListener("paste", handlePaste);
-        window.removeEventListener("keydown", handleKeyDown);
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange
-        );
-        window.removeEventListener("popstate", handlePopState);
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        document.removeEventListener(
-          "fullscreenchange",
-          handleFullscreenChange
-        );
-      };
-    }
-  }, [submissionComplete, safeSubmit]);
+  //     // Cleanup: remove listeners if exam is submitted or component unmounts
+  //     return () => {
+  //       document.removeEventListener("contextmenu", handleContextMenu);
+  //       document.removeEventListener("copy", handleCopy);
+  //       document.removeEventListener("cut", handleCut);
+  //       document.removeEventListener("paste", handlePaste);
+  //       window.removeEventListener("keydown", handleKeyDown);
+  //       document.removeEventListener(
+  //         "visibilitychange",
+  //         handleVisibilityChange
+  //       );
+  //       window.removeEventListener("popstate", handlePopState);
+  //       window.removeEventListener("beforeunload", handleBeforeUnload);
+  //       document.removeEventListener(
+  //         "fullscreenchange",
+  //         handleFullscreenChange
+  //       );
+  //     };
+  //   }
+  // }, [submissionComplete, safeSubmit]);
 
   // Show loading state if no exam data
   if (!examData && !submissionComplete) {

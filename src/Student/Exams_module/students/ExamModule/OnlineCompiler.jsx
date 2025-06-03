@@ -10,7 +10,6 @@ import { javascript } from "@codemirror/lang-javascript";
 import { ExamContext } from "./ExamContext";
 import TestCaseTabs from "./TestCaseTabs";
 
-
 const disableClipboardAndDragExtension = EditorView.domEventHandlers({
   paste(event) {
     event.preventDefault(); // Block paste
@@ -33,8 +32,6 @@ const disableClipboardAndDragExtension = EditorView.domEventHandlers({
     return true;
   },
 });
-
-
 
 const OnlineCompiler = () => {
   const {
@@ -286,11 +283,7 @@ const OnlineCompiler = () => {
           height="300px"
           width="100%"
           theme={oneDark}
-           extensions={[
-            EditorView.lineWrapping,
-            languageExtensions[language],
-            disableClipboardAndDragExtension,
-          ]}
+          extensions={[EditorView.lineWrapping, languageExtensions[language]]}
           onChange={handleCodeChange}
         />
       </div>
