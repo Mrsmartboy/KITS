@@ -283,7 +283,11 @@ const OnlineCompiler = () => {
           height="300px"
           width="100%"
           theme={oneDark}
-          extensions={[EditorView.lineWrapping, languageExtensions[language]]}
+          extensions={[
+            EditorView.lineWrapping,
+            languageExtensions[language],
+            disableClipboardAndDragExtension,
+          ]}
           onChange={handleCodeChange}
         />
       </div>
