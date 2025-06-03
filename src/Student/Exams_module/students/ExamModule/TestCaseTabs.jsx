@@ -134,7 +134,9 @@ const TestCaseTabs = ({ testCases }) => {
                   <strong>Input:</strong>
                 </p>
                 <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words max-w-80">
-                  {currentTest.input}
+                  {currentTest.input
+                    .replace(/\\n/g, "\n")
+                    .replace(/\\t/g, "\t")}
                 </pre>
               </>
             )}

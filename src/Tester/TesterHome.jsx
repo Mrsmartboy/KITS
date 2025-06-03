@@ -26,7 +26,9 @@ const TesterHome = () => {
     setError(null);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/tester-curriculum?id=${testerId}`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/v1/tester-curriculum?id=${testerId}`
       );
       if (!response.ok) throw new Error("Failed to fetch curriculum");
       const data = await response.json();
@@ -41,8 +43,7 @@ const TesterHome = () => {
         ([subject, days]) =>
           Object.entries(days).map(([dayId, dayData]) => ({
             subject,
-            DayOrder:
-              dayData.SubTopics[0]?.tag.split(":")[0] || `Day-${dayId}`,
+            DayOrder: dayData.SubTopics[0]?.tag.split(":")[0] || `Day-${dayId}`,
             Topics: dayData.Topics,
             SubTopics: dayData.SubTopics.map((sub) => sub.title),
             originalSubTopics: dayData.SubTopics,
@@ -167,25 +168,6 @@ const TesterHome = () => {
               Subject: {subjects[0] || "Loading..."}
             </h2>
           )}
-          <button
-            onClick={() => navigate("/test-upload")}
-            className="flex items-center gap-2 bg-[#19216F] text-white h-[46px] px-4 rounded-md w-[127px] hover:bg-[#151b5a] transition-colors"
-            aria-label="Upload test"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7 12V3.85L4.4 6.45L3 5L8 0L13 5L11.6 6.45L9 3.85V12H7ZM2 16C1.45 16 0.979333 15.8043 0.588 15.413C0.196666 15.0217 0.000666667 14.5507 0 14V11H2V14H14V11H16V14C16 14.55 15.8043 15.021 15.413 15.413C15.0217 15.805 14.5507 16.0007 14 16H2Z"
-                fill="white"
-              />
-            </svg>
-            Upload
-          </button>
         </div>
 
         {/* Error Message */}
@@ -235,7 +217,7 @@ const TesterHome = () => {
                     openDays[day] ? "max-h-[1000px]" : "max-h-0"
                   }`}
                 >
-                  <div className="border border-t-0 border-[#EFF0F7]">
+                  <div className="border border-t-0 border-[#EFF0F7] max-h-[400px] overflow-y-auto">
                     <table className="table-auto w-full">
                       <thead>
                         <tr className="border border-black bg-[#FFDFDF] h-[53px]">
@@ -314,14 +296,13 @@ const TesterHome = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <nav
-            className="mt-auto flex justify-end"
-            aria-label="Curriculum pagination"
-          >
+          <nav className="flex justify-end" aria-label="Curriculum pagination">
             <div className="flex items-center justify-end gap-3 text-black h-[70px] text-sm">
               <div className="flex gap-1">
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="text-[16px] font-bold disabled:text-gray-400"
                   aria-label="Previous page"
@@ -329,7 +310,9 @@ const TesterHome = () => {
                   {"<"}
                 </button>
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className="hover:underline text-[16px] disabled:text-gray-400 disabled:pointer-events-none"
                 >

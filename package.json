@@ -32,6 +32,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
+    "@uiw/codemirror-theme-github": "^4.23.12",
     "@uiw/react-codemirror": "^4.23.7",
     "axios": "^1.8.4",
     "chart.js": "^4.4.7",

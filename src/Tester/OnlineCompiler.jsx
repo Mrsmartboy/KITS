@@ -6,7 +6,7 @@ import { java } from "@codemirror/lang-java";
 import { cpp } from "@codemirror/lang-cpp";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import TestCaseTabs from "./TestCaseTabs";
 import { toast } from "react-toastify";
 import { decryptData } from "../../cryptoUtils";
@@ -14,6 +14,12 @@ import axios from "axios";
 import { CheckCircle } from "lucide-react";
 
 function OnlineCompiler() {
+  const [searchParams] = useSearchParams();
+  const questionIdFromParams = searchParams.get("questionId") || "";
+  const subjectFromParams = searchParams.get("subject")?.toLowerCase() || "python";
+  const tagsFromParams = searchParams.get("tags")?.toLowerCase() || "day-1:1";
+  const questionTypeFromParams = searchParams.get("questionType") || "code_test";
+
   const location = useLocation();
   const navigate = useNavigate();
   const locationState = location.state || {};
@@ -23,10 +29,12 @@ function OnlineCompiler() {
     questions: initialQuestionsList = [],
     codeMap: initialCodeMap = {},
   } = locationState;
-  const questionId = initialQuestion?.questionId;
-  const subject = initialQuestion?.Subject?.toLowerCase() || "python";
-  const tags = initialQuestion?.Tags?.toLowerCase() || "day-1:1";
-  const questionType = initialQuestion?.Question_Type || "code_test";
+
+  // Use query parameters as fallbacks
+  const questionId = initialQuestion?.questionId || questionIdFromParams;
+  const subject = initialQuestion?.Subject?.toLowerCase() || subjectFromParams;
+  const tags = initialQuestion?.Tags?.toLowerCase() || tagsFromParams;
+  const questionType = initialQuestion?.Question_Type || questionTypeFromParams;
   const testerId = decryptData(sessionStorage.getItem("Testers") || "") || "";
 
   const [question, setQuestion] = useState(initialQuestion);
@@ -58,6 +66,7 @@ function OnlineCompiler() {
       ? initialQuestion.Hidden_Test_Cases
       : [],
   });
+  const [fetchedQuestionsList, setFetchedQuestionsList] = useState(initialQuestionsList);
 
   const languageExtensions = {
     Python: python(),
@@ -67,36 +76,30 @@ function OnlineCompiler() {
     JavaScript: javascript(),
   };
 
+  // Validate testerId
+  useEffect(() => {
+    if (!testerId) {
+      toast.error("Please log in to continue.");
+      navigate("/login");
+    }
+  }, [testerId, navigate]);
+
   // Update state when location.state changes
   useEffect(() => {
     console.log("location.state updated:", locationState);
-    const {
-      question: newQuestion = {},
-      index: newIndex = 0,
-      questions: newQuestionsList = [],
-      codeMap: newCodeMap = {},
-    } = locationState;
-
-    if (
-      !newQuestionsList ||
-      !Array.isArray(newQuestionsList) ||
-      newQuestionsList.length === 0
-    ) {
-      console.warn("Questions list is empty or invalid:", newQuestionsList);
-      toast.error("No questions available to display.");
-      return;
+    if (Object.keys(initialQuestion).length > 0) {
+      setQuestion(initialQuestion);
+      setCodeMap(initialCodeMap);
+      setCode(initialCodeMap[initialIndex] || "");
+      setEditedQuestion({
+        ...initialQuestion,
+        Hidden_Test_Cases: Array.isArray(initialQuestion?.Hidden_Test_Cases)
+          ? initialQuestion.Hidden_Test_Cases
+          : [],
+      });
+      setFetchedQuestionsList(initialQuestionsList);
     }
-
-    setQuestion(newQuestion);
-    setCodeMap(newCodeMap);
-    setCode(newCodeMap[newIndex] || "");
-    setEditedQuestion({
-      ...newQuestion,
-      Hidden_Test_Cases: Array.isArray(newQuestion?.Hidden_Test_Cases)
-        ? newQuestion.Hidden_Test_Cases
-        : [],
-    });
-  }, [locationState]);
+  }, [locationState, initialQuestion, initialIndex, initialCodeMap, initialQuestionsList]);
 
   const processedHiddenTestCases = (hiddenTestCases) => {
     return hiddenTestCases
@@ -136,14 +139,17 @@ function OnlineCompiler() {
           .join("\n")
       : String(question?.Sample_Output ?? "");
 
-  const fetchQuestionData = useCallback(async () => {
-    if (!questionId || question.Question) return;
+  const fetchQuestionData = useCallback(async (signal) => {
+    if (!questionId) {
+      toast.warn("No question ID provided.");
+      return;
+    }
     setIsLoadingQuestion(true);
     try {
       const url = `${
         import.meta.env.VITE_BACKEND_URL
       }/api/v1/question-crud?subject=${subject}&questionId=${questionId}&questionType=${questionType}`;
-      const response = await axios.get(url);
+      const response = await axios.get(url, { signal });
       const data = response.data;
       if (data?.codeQuestions?.length > 0) {
         const fetchedQuestion = data.codeQuestions[0];
@@ -156,23 +162,53 @@ function OnlineCompiler() {
             : [],
         });
       } else {
-        toast.error("Question not found in database.");
+        toast.error("No question found for the provided ID.");
       }
     } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Question fetch cancelled:", error.message);
+        return;
+      }
       console.error("Error fetching question data:", error);
-      toast.error("Failed to load question data.");
+      toast.error(error.response?.data?.message || "Failed to load question data.");
     } finally {
       setIsLoadingQuestion(false);
     }
   }, [questionId, subject, questionType]);
 
-  const fetchVerificationStatus = useCallback(async () => {
+  const fetchQuestionsList = useCallback(async (signal) => {
+    try {
+      const url = `${
+        import.meta.env.VITE_BACKEND_URL
+      }/api/v1/question-crud?subject=${subject}&tags=${tags}&questionType=${questionType}`;
+      const response = await axios.get(url, { signal });
+      const questions = response.data.codeQuestions || [];
+      setFetchedQuestionsList(questions);
+      const fetchedQuestion = questions.find((q) => q.questionId === questionId) || {};
+      setQuestion(fetchedQuestion);
+      setEditedQuestion({
+        ...fetchedQuestion,
+        Hidden_Test_Cases: Array.isArray(fetchedQuestion.Hidden_Test_Cases)
+          ? fetchedQuestion.Hidden_Test_Cases
+          : [],
+      });
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Questions list fetch cancelled:", error.message);
+        return;
+      }
+      console.error("Error fetching questions list:", error);
+      toast.error("Failed to load questions list.");
+    }
+  }, [subject, tags, questionType, questionId]);
+
+  const fetchVerificationStatus = useCallback(async (signal) => {
     if (!questionId || !testerId) return;
     try {
       const url = `${
         import.meta.env.VITE_BACKEND_URL
       }/api/v1/verify-question?internId=${testerId}&subject=${subject}&questionType=${questionType}`;
-      const response = await axios.get(url);
+      const response = await axios.get(url, { signal });
       const data = response.data;
       if (!data.success || !Array.isArray(data.verifications)) {
         throw new Error("Invalid verification response");
@@ -190,15 +226,39 @@ function OnlineCompiler() {
         setCode(sourceCode);
       }
     } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Verification fetch cancelled:", error.message);
+        return;
+      }
       console.error("Error fetching verification status:", error);
       toast.error("Failed to fetch verification status.");
     }
   }, [questionId, testerId, subject, questionType, tags, initialIndex]);
 
+  // Fetch question data
   useEffect(() => {
-    fetchQuestionData();
-    fetchVerificationStatus();
-  }, [fetchQuestionData, fetchVerificationStatus, initialIndex]);
+    const controller = new AbortController();
+    if (questionId && !question.Question) {
+      fetchQuestionData(controller.signal);
+    }
+    return () => controller.abort();
+  }, [questionId, fetchQuestionData]);
+
+  // Fetch verification status
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchVerificationStatus(controller.signal);
+    return () => controller.abort();
+  }, [fetchVerificationStatus]);
+
+  // Fetch questions list if initialQuestionsList is empty
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!initialQuestionsList.length && !fetchedQuestionsList.length && questionId) {
+      fetchQuestionsList(controller.signal);
+    }
+    return () => controller.abort();
+  }, [initialQuestionsList, fetchedQuestionsList, questionId, fetchQuestionsList]);
 
   useEffect(() => {
     setCode(codeMap[initialIndex] || "");
@@ -331,7 +391,7 @@ function OnlineCompiler() {
       hidden_test_cases: hiddenTestCasesWithSample,
       sample_input: editedQuestion.Sample_Input,
       sample_output: editedQuestion.Sample_Output,
-      Score: Number(editedQuestion.Score),
+      Score: editedQuestion.Score,
       type: editedQuestion.Question_Type,
     };
     try {
@@ -339,11 +399,12 @@ function OnlineCompiler() {
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/test-submission`,
         bodyData
       );
+      console.log("Backend response:", response.data); // Debug log
       const { results } = response.data;
 
-      // Process normal test cases (only for custom input)
+      // Process normal test cases (for custom input)
       const normalResults = customInputEnabled
-        ? results.filter((r) => r.type === "normal")
+        ? results.filter((r) => r.type === "normal" || r.type === "custom")
         : [];
       const computedNormalResults = normalResults.map((res) => {
         const passed =
@@ -378,13 +439,22 @@ function OnlineCompiler() {
       );
 
       // Update state
-      setTestCaseResultsMap((prev) => ({
-        ...prev,
-        [initialIndex]: {
-          results: computedNormalResults,
-          summary: normalSummary,
-        },
-      }));
+      setTestCaseResultsMap((prev) => {
+        console.log("Updated testCaseResultsMap:", {
+          ...prev,
+          [initialIndex]: {
+            results: computedNormalResults,
+            summary: normalSummary,
+          },
+        }); // Debug log
+        return {
+          ...prev,
+          [initialIndex]: {
+            results: computedNormalResults,
+            summary: normalSummary,
+          },
+        };
+      });
       setHiddenCaseResultsMap((prev) => ({
         ...prev,
         [initialIndex]: {
@@ -394,90 +464,89 @@ function OnlineCompiler() {
       }));
       setTestCaseSummary(normalSummary);
       setTestCases(computedNormalResults);
+      console.log("Set testCases:", computedNormalResults); // Debug log
       setHiddenTestCaseResults(computedHiddenResults);
       setHiddenTestCaseSummary(hiddenSummary);
     } catch (error) {
       console.error("Error in handleRun:", error);
       setTestCases([]);
       setHiddenTestCaseResults([]);
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Failed to run tests.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleNext = () => {
-    console.log("handleNext called", {
-      initialIndex,
-      questionsList: initialQuestionsList,
-    });
+    const questionsList = fetchedQuestionsList.length ? fetchedQuestionsList : initialQuestionsList;
     if (
-      initialQuestionsList &&
-      initialIndex < initialQuestionsList.length - 1
+      !questionsList ||
+      !Array.isArray(questionsList) ||
+      questionsList.length === 0
     ) {
-      const nextIndex = initialIndex + 1;
-      const nextQuestion = initialQuestionsList[nextIndex];
-      console.log("Navigating to next question:", { nextIndex, nextQuestion });
-      navigate("/testing/compiler", {
+      toast.warn("No questions available.");
+      return;
+    }
+    if (initialIndex >= questionsList.length - 1) {
+      toast.info("This is the last question.");
+      return;
+    }
+    const nextIndex = initialIndex + 1;
+    const nextQuestion = questionsList[nextIndex];
+    navigate(
+      `/testing/compiler?questionId=${nextQuestion.questionId}&subject=${subject}&tags=${tags}&questionType=${questionType}`,
+      {
         state: {
           question: nextQuestion,
           index: nextIndex,
-          questions: initialQuestionsList,
+          questions: questionsList,
           codeMap,
         },
-      });
-    } else {
-      console.log("Cannot navigate to next question");
-      toast.info("No more questions.");
-    }
+      }
+    );
   };
 
   const handlePrevious = () => {
-    console.log("handlePrevious called", {
-      initialIndex,
-      questionsList: initialQuestionsList,
-    });
-    if (initialQuestionsList && initialIndex > 0) {
-      const prevIndex = initialIndex - 1;
-      const prevQuestion = initialQuestionsList[prevIndex];
-      console.log("Navigating to previous question:", {
-        prevIndex,
-        prevQuestion,
-      });
-      navigate("/testing/compiler", {
+    const questionsList = fetchedQuestionsList.length ? fetchedQuestionsList : initialQuestionsList;
+    if (
+      !questionsList ||
+      !Array.isArray(questionsList) ||
+      questionsList.length === 0
+    ) {
+      toast.warn("No questions available.");
+      return;
+    }
+    if (initialIndex <= 0) {
+      toast.info("This is the first question.");
+      return;
+    }
+    const prevIndex = initialIndex - 1;
+    const prevQuestion = questionsList[prevIndex];
+    navigate(
+      `/testing/compiler?questionId=${prevQuestion.questionId}&subject=${subject}&tags=${tags}&questionType=${questionType}`,
+      {
         state: {
           question: prevQuestion,
           index: prevIndex,
-          questions: initialQuestionsList,
+          questions: questionsList,
           codeMap,
         },
-      });
-    } else {
-      console.log("Cannot navigate to previous question");
-      toast.info("This is the first question.");
-    }
+      }
+    );
   };
 
   const handleBack = () => {
-    if (subject && tags) {
-      navigate(`/testing/coding?subject=${subject}&tags=${tags}`);
-    } else {
-      console.warn(
-        "Subject or tags missing, navigating to default coding page"
-      );
-      toast.warn(
-        "Unable to determine subject or tags, returning to coding page."
-      );
-      navigate("/testing/coding");
-    }
+    navigate(`/testing/coding?subject=${subject}&tags=${tags}`);
   };
 
   return (
     <div className="flex flex-col md:flex-row w-full h-screen bg-gray-900 text-white mt-2 p-4 m-4">
       <div className="md:w-1/2 w-full p-4 md:border-r border-gray-700 overflow-y-auto">
         {isLoadingQuestion ? (
-          <p className="text-gray-300">Loading question data...</p>
-        ) : (
+          <div className="flex justify-center items-center h-full">
+            <p className="text-gray-300">Loading question...</p>
+          </div>
+        ) : question?.Question ? (
           <>
             <div className="flex items-center gap-2 mb-4">
               {isVerified ? (
@@ -500,240 +569,237 @@ function OnlineCompiler() {
               <h1 className="text-2xl font-bold">
                 Question {question.Question_No || initialIndex + 1}
               </h1>
-              {!isEditing ? (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="text-blue-400 underline"
-                >
-                  Edit
-                </button>
-              ) : (
-                <div>
-                  <button
-                    onClick={handleSave}
-                    className="text-green-400 underline mr-2"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="text-red-400 underline"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
-            {question?.Question ? (
-              <div className="space-y-3">
-                <div>
-                  <h2 className="text-lg font-semibold">Question:</h2>
-                  {isEditing ? (
-                    <textarea
-                      className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
-                      value={editedQuestion.Question || ""}
-                      onChange={(e) =>
-                        handleInputChange("Question", e.target.value)
-                      }
-                    />
+              {!isVerified && (
+                <>
+                  {!isEditing ? (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="text-blue-400 underline"
+                    >
+                      Edit
+                    </button>
                   ) : (
-                    <p className="text-gray-300">{editedQuestion.Question}</p>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-md font-semibold">Constraints:</h3>
-                  {isEditing ? (
-                    <textarea
-                      className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
-                      value={editedQuestion.Constraints || ""}
-                      onChange={(e) =>
-                        handleInputChange("Constraints", e.target.value)
-                      }
-                    />
-                  ) : (
-                    <p className="text-gray-300">
-                      {editedQuestion.Constraints}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-md font-semibold">Difficulty:</h3>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      className="bg-gray-800 p-2 rounded text-gray-300 w-full"
-                      value={editedQuestion.Difficulty || ""}
-                      onChange={(e) =>
-                        handleInputChange("Difficulty", e.target.value)
-                      }
-                    />
-                  ) : (
-                    <p className="text-gray-300">{editedQuestion.Difficulty}</p>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-md font-semibold">Sample Input:</h3>
-                  {isEditing ? (
-                    <textarea
-                      className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
-                      value={
-                        editedQuestion.Sample_Input !== undefined
-                          ? String(editedQuestion.Sample_Input)
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleInputChange("Sample_Input", e.target.value)
-                      }
-                    />
-                  ) : (
-                    <div className="bg-gray-800 p-2 rounded text-gray-300">
-                      {editedQuestion.Sample_Input !== undefined &&
-                      String(editedQuestion.Sample_Input).trim() ? (
-                        <pre className="whitespace-pre-wrap break-words">
-                          Input:{"\n"}
-                          {cleanedSampleInput}
-                        </pre>
-                      ) : (
-                        <p className="text-gray-300">
-                          No sample input available.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-md font-semibold">Sample Output:</h3>
-                  {isEditing ? (
-                    <textarea
-                      className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
-                      value={
-                        editedQuestion.Sample_Output !== undefined
-                          ? String(editedQuestion.Sample_Output)
-                          : ""
-                      }
-                      onChange={(e) =>
-                        handleInputChange("Sample_Output", e.target.value)
-                      }
-                    />
-                  ) : (
-                    <div className="bg-gray-800 p-2 rounded text-gray-300">
-                      {editedQuestion.Sample_Output !== undefined &&
-                      String(editedQuestion.Sample_Output).trim() ? (
-                        <pre className="whitespace-pre-wrap break-words">
-                          Output:{"\n"}
-                          {cleanedSampleOutput}
-                        </pre>
-                      ) : (
-                        <p className="text-gray-300">
-                          No sample output available.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-md font-semibold">Hidden Test Cases:</h3>
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      {(editedQuestion.Hidden_Test_Cases || []).map(
-                        (tc, index) => (
-                          <div
-                            key={index}
-                            className="border border-gray-600 p-2 rounded"
-                          >
-                            <div>
-                              <label className="text-sm font-semibold">
-                                Input:
-                              </label>
-                              <textarea
-                                className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full mt-1"
-                                value={
-                                  tc.Input !== undefined ? String(tc.Input) : ""
-                                }
-                                onChange={(e) =>
-                                  handleHiddenTestCaseChange(
-                                    index,
-                                    "Input",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="mt-2">
-                              <label className="text-sm font-semibold">
-                                Output:
-                              </label>
-                              <textarea
-                                className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full mt-1"
-                                value={
-                                  tc.Output !== undefined
-                                    ? String(tc.Output)
-                                    : ""
-                                }
-                                onChange={(e) =>
-                                  handleHiddenTestCaseChange(
-                                    index,
-                                    "Output",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                            <button
-                              onClick={() => removeHiddenTestCase(index)}
-                              className="text-red-400 underline mt-2"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        )
-                      )}
+                    <div>
                       <button
-                        onClick={addHiddenTestCase}
-                        className="text-blue-400 underline mt-2"
+                        onClick={handleSave}
+                        className="text-green-400 underline mr-2"
                       >
-                        Add Hidden Test Case
+                        Save
+                      </button>
+                      <button
+                        onClick={handleCancel}
+                        className="text-red-400 underline"
+                      >
+                        Cancel
                       </button>
                     </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {Array.isArray(editedQuestion.Hidden_Test_Cases) &&
-                      editedQuestion.Hidden_Test_Cases.length > 0 ? (
-                        editedQuestion.Hidden_Test_Cases.map((tc, index) => (
-                          <div key={index} className="bg-gray-800 p-2 rounded">
-                            <p className="text-sm font-semibold">
-                              Test Case {index + 1}:
-                            </p>
-                            <pre className="text-gray-300 whitespace-pre-wrap break-words">
-                              Input:{"\n"}
-                              {tc.Input !== undefined
-                                ? String(tc.Input)
-                                : "(empty)"}
-                            </pre>
-                            <pre className="text-gray-300 whitespace-pre-wrap break-words mt-2">
-                              Output:{"\n"}
-                              {tc.Output !== undefined
-                                ? String(tc.Output)
-                                : "(empty)"}
-                            </pre>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-gray-300">
-                          No hidden test cases available.
-                        </p>
-                      )}
-                    </div>
                   )}
-                </div>
+                </>
+              )}
+            </div>
+            <div className="space-y-3">
+              <div>
+                <h2 className="text-lg font-semibold">Question:</h2>
+                {isEditing ? (
+                  <textarea
+                    className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
+                    value={editedQuestion.Question || ""}
+                    onChange={(e) =>
+                      handleInputChange("Question", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p className="text-gray-300">{editedQuestion.Question}</p>
+                )}
               </div>
-            ) : (
-              <p className="text-gray-400">
-                No question data available. Ensure you have the correct question
-                object.
-              </p>
-            )}
+              <div>
+                <h3 className="text-md font-semibold">Constraints:</h3>
+                {isEditing ? (
+                  <textarea
+                    className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
+                    value={editedQuestion.Constraints || ""}
+                    onChange={(e) =>
+                      handleInputChange("Constraints", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p className="text-gray-300">{editedQuestion.Constraints}</p>
+                )}
+              </div>
+              <div>
+                <h3 className="text-md font-semibold">Difficulty:</h3>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="bg-gray-800 p-2 rounded text-gray-300 w-full"
+                    value={editedQuestion.Difficulty || ""}
+                    onChange={(e) =>
+                      handleInputChange("Difficulty", e.target.value)
+                    }
+                  />
+                ) : (
+                  <p className="text-gray-300">{editedQuestion.Difficulty}</p>
+                )}
+              </div>
+              <div>
+                <h3 className="text-md font-semibold">Sample Input:</h3>
+                {isEditing ? (
+                  <textarea
+                    className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
+                    value={
+                      editedQuestion.Sample_Input !== undefined
+                        ? String(editedQuestion.Sample_Input)
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleInputChange("Sample_Input", e.target.value)
+                    }
+                  />
+                ) : (
+                  <div className="bg-gray-800 p-2 rounded text-gray-300">
+                    {editedQuestion.Sample_Input !== undefined &&
+                    String(editedQuestion.Sample_Input).trim() ? (
+                      <pre className="whitespace-pre-wrap break-words">
+                        Input:{"\n"}
+                        {cleanedSampleInput}
+                      </pre>
+                    ) : (
+                      <p className="text-gray-300">No sample input available.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="text-md font-semibold">Sample Output:</h3>
+                {isEditing ? (
+                  <textarea
+                    className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full"
+                    value={
+                      editedQuestion.Sample_Output !== undefined
+                        ? String(editedQuestion.Sample_Output)
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleInputChange("Sample_Output", e.target.value)
+                    }
+                  />
+                ) : (
+                  <div className="bg-gray-800 p-2 rounded text-gray-300">
+                    {editedQuestion.Sample_Output !== undefined &&
+                    String(editedQuestion.Sample_Output).trim() ? (
+                      <pre className="whitespace-pre-wrap break-words">
+                        Output:{"\n"}
+                        {cleanedSampleOutput}
+                      </pre>
+                    ) : (
+                      <p className="text-gray-300">
+                        No sample output available.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="text-md font-semibold">Hidden Test Cases:</h3>
+                {isEditing ? (
+                  <div className="space-y-2">
+                    {(editedQuestion.Hidden_Test_Cases || []).map(
+                      (tc, index) => (
+                        <div
+                          key={index}
+                          className="border border-gray-600 p-2 rounded"
+                        >
+                          <div>
+                            <label className="text-sm font-semibold">
+                              Input:
+                            </label>
+                            <textarea
+                              className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full mt-1"
+                              value={
+                                tc.Input !== undefined ? String(tc.Input) : ""
+                              }
+                              onChange={(e) =>
+                                handleHiddenTestCaseChange(
+                                  index,
+                                  "Input",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                          <div className="mt-2">
+                            <label className="text-sm font-semibold">
+                              Output:
+                            </label>
+                            <textarea
+                              className="bg-gray-800 p-2 rounded text-gray-300 whitespace-pre-wrap w-full mt-1"
+                              value={
+                                tc.Output !== undefined
+                                  ? String(tc.Output)
+                                  : ""
+                              }
+                              onChange={(e) =>
+                                handleHiddenTestCaseChange(
+                                  index,
+                                  "Output",
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                          <button
+                            onClick={() => removeHiddenTestCase(index)}
+                            className="text-red-400 underline mt-2"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )
+                    )}
+                    <button
+                      onClick={addHiddenTestCase}
+                      className="text-blue-400 underline mt-2"
+                    >
+                      Add Hidden Test Case
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {Array.isArray(editedQuestion.Hidden_Test_Cases) &&
+                    editedQuestion.Hidden_Test_Cases.length > 0 ? (
+                      editedQuestion.Hidden_Test_Cases.map((tc, index) => (
+                        <div key={index} className="bg-gray-800 p-2 rounded">
+                          <p className="text-sm font-semibold">
+                            Test Case {index + 1}:
+                          </p>
+                          <pre className="text-gray-300 whitespace-pre-wrap break-words">
+                            Input:{"\n"}
+                            {tc.Input !== undefined
+                              ? String(tc.Input)
+                              : "(empty)"}
+                          </pre>
+                          <pre className="text-gray-300 whitespace-pre-wrap break-words mt-2">
+                            Output:{"\n"}
+                            {tc.Output !== undefined
+                              ? String(tc.Output)
+                              : "(empty)"}
+                          </pre>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-300">
+                        No hidden test cases available.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </>
+        ) : (
+          <p className="text-gray-400">
+            No question data available. Please try again or contact support.
+          </p>
         )}
       </div>
       <div className="md:w-1/2 w-full p-4 flex flex-col overflow-y-auto">
@@ -772,14 +838,23 @@ function OnlineCompiler() {
             </button>
             <button
               onClick={handlePrevious}
-              className="px-4 py-2 text-white bg-purple-600 rounded hover:bg-purple-500"
               disabled={initialIndex === 0}
+              className={`px-4 py-2 text-white rounded ${
+                initialIndex === 0
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-purple-600 hover:bg-purple-500"
+              }`}
             >
               Previous Question
             </button>
             <button
               onClick={handleNext}
-              className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-500"
+              disabled={initialIndex >= (fetchedQuestionsList.length || initialQuestionsList.length) - 1}
+              className={`px-4 py-2 text-white rounded ${
+                initialIndex >= (fetchedQuestionsList.length || initialQuestionsList.length) - 1
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-500"
+              }`}
             >
               Next Question
             </button>
@@ -815,7 +890,7 @@ function OnlineCompiler() {
           )}
         </div>
         <div className="flex flex-col gap-4">
-          <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
+          <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[400px] overflow-y-auto">
             {customInputEnabled ? (
               <>
                 <p className="font-semibold mb-2 text-white">
@@ -837,7 +912,7 @@ function OnlineCompiler() {
             )}
           </div>
           {hiddenTestCaseResults.length > 0 && (
-            <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[200px] overflow-y-auto">
+            <div className="bg-[#1E1E1E] p-3 rounded border border-gray-600 max-h-[400px] overflow-y-auto">
               <p className="font-semibold mb-2 text-white">
                 Hidden Test Case Summary: {hiddenTestCaseSummary.passed} Passed
                 / {hiddenTestCaseSummary.failed} Failed

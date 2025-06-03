@@ -168,25 +168,7 @@ const TesterHome = () => {
               Subject: {subjects[0] || "Loading..."}
             </h2>
           )}
-          <button
-            onClick={() => navigate("/test-upload")}
-            className="flex items-center gap-2 bg-[#19216F] text-white h-[46px] px-4 rounded-md w-[127px] hover:bg-[#151b5a] transition-colors"
-            aria-label="Upload test"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7 12V3.85L4.4 6.45L3 5L8 0L13 5L11.6 6.45L9 3.85V12H7ZM2 16C1.45 16 0.979333 15.8043 0.588 15.413C0.196666 15.0217 0.000666667 14.5507 0 14V11H2V14H14V11H16V14C16 14.55 15.8043 15.021 15.413 15.413C15.0217 15.805 14.5507 16.0007 14 16H2Z"
-                fill="white"
-              />
-            </svg>
-            Upload
-          </button>
+         
         </div>
 
         {/* Error Message */}
@@ -236,7 +218,7 @@ const TesterHome = () => {
                     openDays[day] ? "max-h-[1000px]" : "max-h-0"
                   }`}
                 >
-                  <div className="border border-t-0 border-[#EFF0F7]">
+                  <div className="border border-t-0 border-[#EFF0F7]  max-h-[400px] overflow-y-auto">
                     <table className="table-auto w-full">
                       <thead>
                         <tr className="border border-black bg-[#FFDFDF] h-[53px]">
@@ -250,7 +232,7 @@ const TesterHome = () => {
                       </thead>
                       <tbody>
                         {items.map((item, index) => (
-                          <tr key={index} className="border border-black">
+                          <tr key={index} className="border border-black ">
                             <td className="align-middle px-[55px] py-4 text-[18px]">
                               {item.Topics}
                             </td>

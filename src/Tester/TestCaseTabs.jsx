@@ -1,7 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { FiLock } from "react-icons/fi";
 
 const TestCaseTabs = ({ testCases }) => {
   const [activeTab, setActiveTab] = useState(0);
+
+  // Reset activeTab if testCases changes and activeTab is out of bounds
+  useEffect(() => {
+    console.log("TestCaseTabs received testCases:", testCases); // Debug log
+    if (testCases && activeTab >= testCases.length) {
+      setActiveTab(0);
+    }
+  }, [testCases, activeTab]);
 
   if (!testCases || !testCases.length) {
     return null;
@@ -13,15 +22,25 @@ const TestCaseTabs = ({ testCases }) => {
 
   // Parse ASCII-like output (replace \s with space and \n with newline)
   const parseOutput = (text = "") => {
+    if (typeof text !== "string") {
+      return "";
+    }
     if (text.includes("\\n") || text.includes("\\s")) {
-      return String(text).replace(/\\s/g, " ").replace(/\\n/g, "\n");
+      return text.replace(/\\s/g, " ").replace(/\\n/g, "\n");
     }
     return text;
   };
 
   const currentTest = testCases[activeTab];
-  const parsedExpectedOutput = parseOutput(currentTest?.expected_output);
-  const parsedActualOutput = parseOutput(currentTest?.actual_output);
+  if (!currentTest) {
+    return null;
+  }
+
+  const parsedExpectedOutput = parseOutput(currentTest.expected_output ?? "");
+  const parsedActualOutput =
+    parseOutput(currentTest.actual_output ?? "") === ""
+      ? "No output"
+      : parseOutput(currentTest.actual_output ?? "");
 
   return (
     <div className="rounded-md overflow-hidden max-h-72 overflow-y-auto">
@@ -52,7 +71,16 @@ const TestCaseTabs = ({ testCases }) => {
         {currentTest.type === "custom" ? (
           <div className="flex flex-col gap-2">
             <h4 className="mb-2 font-semibold">
-              Custom Input: {currentTest.input}
+              Custom Input: {currentTest.input}{" "}
+              <span
+                className={
+                  currentTest.status === "Passed"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
+                {currentTest.status}
+              </span>
             </h4>
             <p className="mb-1">
               <strong>Your Output:</strong>
@@ -60,14 +88,54 @@ const TestCaseTabs = ({ testCases }) => {
             <pre className="bg-gray-800 p-2 rounded overflow-x-auto whitespace-pre-wrap break-words">
               {parsedActualOutput}
             </pre>
+            {parsedExpectedOutput && (
+              <>
+                <p className="mb-1">
+                  <strong>Expected Output:</strong>
+                </p>
+                <pre className="bg-gray-800 p-2 rounded overflow-x-auto whitespace-pre-wrap break-words">
+                  {parsedExpectedOutput}
+                </pre>
+              </>
+            )}
+          </div>
+        ) : currentTest.type === "hidden" ? (
+          <div className="flex flex-col gap-2">
+            <h4 className="mb-2 font-semibold flex items-center">
+              <FiLock className="mr-2" />
+              Hidden Test Case {activeTab + 1}:{" "}
+              <span
+                className={
+                  currentTest.status === "Passed"
+                    ? "text-green-400"
+                    : "text-red-400"
+                }
+              >
+                {currentTest.status}
+              </span>
+            </h4>
+            <div className="flex flex-col max-w-80">
+              {/* Expected Output */}
+              <div className="flex-1 min-w-0">
+                <strong>Expected Output:</strong>
+                <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words">
+                  {parsedExpectedOutput}
+                </pre>
+              </div>
+
+              {/* Your Output */}
+              <div className="flex-1 min-w-0">
+                <strong>Your Output:</strong>
+                <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words">
+                  {parsedActualOutput}
+                </pre>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             <h4 className="mb-2 font-semibold text-lg">
-              {currentTest.type === "hidden"
-                ? `Hidden Test Case ${activeTab + 1}`
-                : `Test Case ${activeTab + 1}`}
-              :{" "}
+              Test Case {activeTab + 1}:{" "}
               <span
                 className={
                   currentTest.status === "Passed"
@@ -81,16 +149,14 @@ const TestCaseTabs = ({ testCases }) => {
 
             {/* Show Input only if it's not hidden */}
             {currentTest.type !== "hidden" && (
-              <p className="mb-1">
-                <strong>Input:</strong>
-              </p>
-            )}
-
-            {/* Input Field */}
-            {currentTest.input && (
-              <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words max-w-80">
-                {currentTest.input}
-              </pre>
+              <>
+                <p className="mb-1">
+                  <strong>Input:</strong>
+                </p>
+                <pre className="bg-gray-800 p-2 rounded mt-1 overflow-x-auto whitespace-pre-wrap break-words max-w-80">
+                  {currentTest.input}
+                </pre>
+              </>
             )}
 
             <div className="flex flex-col max-w-80">

@@ -116,10 +116,6 @@ export const SidebarV = ({
     superAdmin: "ADMIN",
   };
 
-  // 3) We no longer need local fetchProfilePicture or effect,
-  //    because the context handles that.
-
-  // We do create a local "userProfile" object for convenience
   const userProfile = {
     avatarUrl: profilePicture,
     name: studentDetails?.name,
@@ -254,13 +250,10 @@ export const SidebarV = ({
             path: "/testing",
             icon: FaChartBar,
           },
-
-          // { label: "Test Upload", path: "/test-upload", icon: FaBook },
           { label: "Create Questions", path: "/test-upload-new", icon: FaBook },
 
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
-
       case "superAdmin":
         return [
           {
@@ -335,6 +328,21 @@ export const SidebarV = ({
                 label: "Exam Statistics",
                 path: "/exam-statistics",
                 icon: FaChartBar,
+              },
+            ],
+          },
+          {
+            label: "Testers",
+            items: [
+              {
+                label: "Testers",
+                path: "/testers",
+                icon: FaUserCheck,
+              },
+              {
+                label: "Tester Progress",
+                path: "/intern-progress",
+                icon: FaChartLine,
               },
             ],
           },
