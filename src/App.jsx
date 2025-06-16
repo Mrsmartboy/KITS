@@ -679,14 +679,14 @@ export default function App() {
                   />
                 </>
               )}
-              <Route
+              {/* <Route
                 path="/leaderboard"
                 element={
                   <ProtectedRoute allowedRoles={["student_login_details"]}>
                     <LeaderBoard />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
               <Route
                 path="/compiler"
                 element={

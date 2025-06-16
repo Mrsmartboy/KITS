@@ -153,7 +153,7 @@ export const SidebarV = ({
             path: "/mock-interviews",
             icon: MockInterviewIcon,
           },
-          { label: "Leaderboard", path: "/leaderboard", icon: FaChartBar },
+          // { label: "Leaderboard", path: "/leaderboard", icon: FaChartBar },
           { label: "Logout", action: handleLogout, icon: FaSignOutAlt },
         ];
         if (codePlaygroundStatus) {
